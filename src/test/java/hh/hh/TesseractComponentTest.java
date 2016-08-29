@@ -1,4 +1,5 @@
 package hh.hh;
+
 import static org.bytedeco.javacpp.lept.pixDestroy;
 import static org.bytedeco.javacpp.lept.pixRead;
 import static org.junit.Assert.assertTrue;
@@ -8,8 +9,8 @@ import org.bytedeco.javacpp.lept.PIX;
 import org.bytedeco.javacpp.tesseract.TessBaseAPI;
 import org.junit.Test;
 
-public class BasicTesseractExampleTest {
-
+public class TesseractComponentTest {
+	
     @Test
     public void givenTessBaseApi_whenImageOcrd_thenTextDisplayed() throws Exception {
         BytePointer outText;
@@ -37,4 +38,5 @@ public class BasicTesseractExampleTest {
         outText.deallocate();
         pixDestroy(image);
     }
+
 }
