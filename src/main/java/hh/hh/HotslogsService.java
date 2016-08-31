@@ -10,12 +10,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import feign.Param;
 import feign.RequestLine;
 
+@RestController
 @RequestMapping("hh")
 public class HotslogsService {
 
@@ -27,20 +30,18 @@ public class HotslogsService {
 
     interface Hotslogs {
         @RequestLine("GET /PlayerSearch?Name={name}")
-                String playerSearch(@Param("name") String name);
+        String playerSearch(@Param("name") String name);
 
         @RequestLine("GET /Player/Profile?PlayerID={id}")
-                String playerDetail(@Param("id") String id);
+        String playerDetail(@Param("id") String id);
     }
 
     interface HotslogsApi {
         @RequestLine("GET /Players/{id}")
-                String getHotsLogsPlayerDetailsByPlayerId(@Param("id") int id);
+        String getHotsLogsPlayerDetailsByPlayerId(@Param("id") int id);
 
         @RequestLine("GET /Players/{region}/{battleTag}")
-                String getHotsLogsPlayerDetailsByBattleTag(@Param("region") int region,
-                        @Param("battleTag") String battleTag);
-
+        String getHotsLogsPlayerDetailsByBattleTag(@Param("region") int region, @Param("battleTag") String battleTag);
     }
 
     static class Contributor {
@@ -48,25 +49,55 @@ public class HotslogsService {
         int contributions;
     }
 
-    @RequestMapping(value = "/api/name/{name}", method = GET)
-    public List<Integer> getHotsIds(@PathVariable String name) {
+    @RequestMapping(value = "/api/name/{name}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Player> getHotsIds(@PathVariable String name) {
         System.out.println("HotslogsApi.getHotsIds()");
-        List<Integer> result = new ArrayList<>();
-
+        List<Player> result = new ArrayList<>();
         Document doc = Jsoup.parse(hotslogs.playerSearch(name));
-        Elements links = doc.getElementsContainingOwnText("View Match History");
+        Elements titles = doc.getElementsByTag("title");
 
-        for (Element link : links) {
-            // <a title="View Match History" href="/Player/MatchHistory?PlayerID=6436392">View Match History</a>
-            // 01234567890123456789012345678901234567890123456789012345678901234567890123456789
-            // 00000000001111111111222222222233333333334444444444555555555566666666667777777777
-            int end = link.toString().indexOf(">V");
-            String id = link.toString().substring(66, end - 1);
-            result.add(Integer.parseInt(id));
+        for (Element title : titles) {
 
-            System.out.println(id);
+            if (title.toString().contains("Player Search")) {
+                handleResultTable(name, result, doc);
+
+            } else {
+                handleSingleResult(name, result, doc, title);
+            }
         }
+        for (Player player : result) {
+            player.setNumberOfMatches(result.size());
+        }
+
         return result;
+    }
+
+    private void handleSingleResult(String name, List<Player> result, Document doc, Element title) {
+        Element form = doc.getElementById("ctl01");
+        // <form method="post" action="./Profile?PlayerID=4387231" id="ctl01">
+        String attr = form.attr("action");
+
+        Player player = new Player(TagHelper.getPlayerIdFromLink(attr));
+        player.setName(name);
+        player.setRegion(TagHelper.getRegionFromTitle(title));
+        player.setMmr(TagHelper.getMmrFromDetailPage(doc));
+        player.setNumberOfGames(TagHelper.getNumberOfGamesFromDetailPage(doc));
+        player.setNumberOfMatches(1);
+        result.add(player);
+    }
+
+    private void handleResultTable(String name, List<Player> result, Document doc) {
+        Elements tables = doc.getElementsByTag("tbody");
+        for (Element tbody : tables) {
+            Elements rows = tbody.getElementsByTag("tr");
+            for (Element tr : rows) {
+                // <tr class="rgRow" id="__0">
+                Player player = TagHelper.getPlayerFromResultRow(tr, name);
+                if (player != null) {
+                    result.add(player);
+                }
+            }
+        }
     }
 
     @RequestMapping(value = "/api/details/{id}", method = GET)
@@ -90,7 +121,8 @@ public class HotslogsService {
         // let isDefaultSort = sort == HOTS_LOGS_DEFAULT_SORT;
         // // if sorting by the default, scan only the number of rows requested
         // // otherwise, scan all rows, then sort and limit
-        // $grid.slice(0, isDefaultSort ? limit : undefined).each( function (index, ele) {
+        // $grid.slice(0, isDefaultSort ? limit : undefined).each( function
+        // (index, ele) {
         // let hero = {};
         // let $ele = $(ele);
         // let $tds = $ele.children('td');;
@@ -122,7 +154,5 @@ public class HotslogsService {
     public String getDetailsForBattleTag(@PathVariable String battleTag) {
 
         return hotslogsapi.getHotsLogsPlayerDetailsByBattleTag(2, battleTag.replace('#', '_'));
-
     }
-
 }
