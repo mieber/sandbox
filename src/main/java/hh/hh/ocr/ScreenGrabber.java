@@ -1,9 +1,7 @@
-package hh.hh;
-
-import static org.bytedeco.javacpp.lept.pixDestroy;
-import static org.bytedeco.javacpp.lept.pixRead;
+package hh.hh.ocr;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -11,24 +9,17 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.tesseract;
 import org.bytedeco.javacpp.lept.PIX;
-import org.bytedeco.javacpp.tesseract.TessBaseAPI;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
 import com.github.axet.lookup.Capture;
+
+import hh.hh.Conf;
+import hh.hh.ocr.TesseractHelper.OcrMode;
 
 public class ScreenGrabber {
 
@@ -113,6 +104,21 @@ public class ScreenGrabber {
         }
         return this;
     }
+    
+    public ScreenGrabber addCaseHint(String string, int additionalWidth) {
+    	
+    	BufferedImage t = new BufferedImage(image.getWidth() + additionalWidth, image.getHeight(), image.getType());
+    	Graphics2D g = t.createGraphics();
+    	g.drawImage(image, additionalWidth, 0, null);
+    	g.setFont(new Font("Metronic W01 SemiBold", Font.BOLD, 25));
+    	g.setColor(Color.WHITE);
+    	g.drawString(string, 3, image.getHeight() - 5);
+    	g.dispose();
+    	
+    	image = t;
+		
+		return this;
+	}
 
     public static void createNameImages(String pathToScreenshot, String writePath, String namePrefix, String extension) {
 
@@ -140,13 +146,18 @@ public class ScreenGrabber {
         rectanglesRight.add(new Rectangle(2380, 642, 172, 183));
         rectanglesRight.add(new Rectangle(2252, 868, 172, 183));
         rectanglesRight.add(new Rectangle(2380, 1094, 172, 183));
-
-        doitfirst(rectanglesRight, "/real.jpg", "E:/vhp/hh/sandbox/src/main/resources/output", "r", "MetronicW01-Bold");
-         doitfirst(rectanglesRight, "/real.jpg", "E:/vhp/hh/sandbox/src/main/resources/output", "r", "MetronicW01-Regular");
-         doitfirst(rectanglesRight, "/real.jpg", "E:/vhp/hh/sandbox/src/main/resources/output", "r", "deu");
-        doitfirst(rectanglesRight, "/real2.jpg", "E:/vhp/hh/sandbox/src/main/resources/output", "r2", "MetronicW01-Bold");
-         doitfirst(rectanglesRight, "/real2.jpg", "E:/vhp/hh/sandbox/src/main/resources/output", "r2", "MetronicW01-Regular");
-         doitfirst(rectanglesRight, "/real2.jpg", "E:/vhp/hh/sandbox/src/main/resources/output", "r2", "deu");
+        
+//        doitfirst(rectanglesRight, "/real.jpg", Conf.ROOT + "/src/main/resources/output", "r", "MetronicW01-Bold", OcrMode.ORIGINAL);
+//        doitfirst(rectanglesRight, "/real.jpg", Conf.ROOT + "/src/main/resources/output", "r", "MetronicW01-Regular", OcrMode.ORIGINAL);
+//         doitfirst(rectanglesRight, "/real.jpg", Conf.ROOT + "/src/main/resources/output", "r", "bat", OcrMode.ORIGINAL);
+//         doitfirst(rectanglesRight, "/real.jpg", Conf.ROOT + "/src/main/resources/output", "r", "deu", OcrMode.ORIGINAL);
+//         doitfirst(rectanglesRight, "/real.jpg", Conf.ROOT + "/src/main/resources/output", "r", "eng2", OcrMode.ORIGINAL);
+//        doitfirst(rectanglesRight, "/real2.jpg", Conf.ROOT + "/src/main/resources/output", "r2", "MetronicW01-Bold", OcrMode.ORIGINAL);
+//         doitfirst(rectanglesRight, "/real2.jpg", Conf.ROOT + "/src/main/resources/output", "r2", "MetronicW01-Regular", OcrMode.ORIGINAL);
+         doitfirst(rectanglesRight, "/draft.png", Conf.ROOT + "/src/main/resources/output", "r", "bat", OcrMode.ORIGINAL);
+         doitfirst(rectanglesRight, "/real2.jpg", Conf.ROOT + "/src/main/resources/output", "r2", "bat", OcrMode.ORIGINAL);
+//         doitfirst(rectanglesRight, "/real2.jpg", Conf.ROOT + "/src/main/resources/output", "r2", "deu", OcrMode.ORIGINAL);
+//         doitfirst(rectanglesRight, "/real2.jpg", Conf.ROOT + "/src/main/resources/output", "r2", "eng2", OcrMode.ORIGINAL);
 
     }
 
@@ -174,9 +185,9 @@ public class ScreenGrabber {
     }
 
     private static void doitfirst(List<Rectangle> rectanglesRight, String pathToScreenshot, String writePath, String namePrefix,
-            String data) {
+            String data, OcrMode mode) {
 
-        doit(rectanglesRight, pathToScreenshot, writePath, namePrefix, data, 175, 0, 0);
+        doit(rectanglesRight, pathToScreenshot, writePath, namePrefix, data, 175, 0, 0, mode);
         // doit(rectanglesRight, pathToScreenshot, writePath, namePrefix, data, 175, 10, 10);
         // doit(rectanglesRight, pathToScreenshot, writePath, namePrefix, data, 175, 20, 20);
         // doit(rectanglesRight, pathToScreenshot, writePath, namePrefix, data, 175, 30, 30);
@@ -206,7 +217,9 @@ public class ScreenGrabber {
     }
 
     private static void doit(List<Rectangle> rs, String pathToScreenshot, String writePath, String namePrefix, String data, int threshold,
-            int darker, int lighter) {
+            int darker, int lighter, OcrMode mode) {
+    	
+    	String caseString = "Pa";
 
         String[] names = new String[5];
 
@@ -219,6 +232,7 @@ public class ScreenGrabber {
                 .crop(r)
                 .rotate(30.5)
                 .crop(new Rectangle(6, 62, 165, 32))
+                .addCaseHint(caseString, 30)
                  // .invertImage()
                  // .monoInvert(threshold, darker, lighter)
                 .write(true, writePath, filename, "png");
@@ -226,11 +240,11 @@ public class ScreenGrabber {
             doOpencv(writePath, filename + ".png", filename + ".png");
             doLeptonica(writePath, filename + ".png", filename + ".tif");
             PIX p = TesseractHelper.getPixFromPath(writePath + "/" + filename + ".tif");
-            names[i] = TesseractHelper.getTextFromPicture(p, data).trim();
+            names[i] = TesseractHelper.getTextFromPicture(p, data, mode).trim().substring(caseString.length() + 1);
         }
 
         System.out.println(threshold + "/" + darker + "/" + lighter + ": \t" + names[0] + "\t" + names[1] + "\t" + names[2] + "\t"
-                + names[3] + "\t" + names[4] + "\t(" + data + ")");
+                + names[3] + "\t" + names[4] + "\t(" + data + "/" + mode.name() + ")");
 
     }
 

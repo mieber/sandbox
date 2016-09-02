@@ -17,14 +17,14 @@ public class TesseractComponentTest {
 
         TessBaseAPI api = new TessBaseAPI();
         // Initialize tesseract-ocr with English, without specifying tessdata path
-        if (api.Init("E:/vhp/hh/sandbox/src/main/resources", "ENG2") != 0) {
+        if (api.Init(Conf.ROOT + "/src/main/resources", "ENG2") != 0) {
             System.err.println("Could not initialize tesseract.");
             System.exit(1);
         }
 
         // Open input image with leptonica library
         System.out.println("BasicTesseractExampleTest.givenTessBaseApi_whenImageOcrd_thenTextDisplayed()");
-        PIX image = pixRead("E:/vhp/hh/sandbox/src/main/resources/output/b_fifth.png");
+        PIX image = pixRead(Conf.ROOT + "/src/main/resources/output/b_fifth.png");
         System.out.println(image);
         api.SetImage(image);
         // Get OCR result
@@ -37,6 +37,7 @@ public class TesseractComponentTest {
         api.End();
         outText.deallocate();
         pixDestroy(image);
+        api.close();
     }
 
 }

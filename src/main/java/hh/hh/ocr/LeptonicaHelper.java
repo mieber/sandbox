@@ -1,4 +1,4 @@
-package hh.hh;
+package hh.hh.ocr;
 
 import org.bytedeco.javacpp.lept;
 import org.bytedeco.javacpp.lept.*;
@@ -10,7 +10,7 @@ public class LeptonicaHelper {
     public static final int LEPT_OK = 0;
     public static final int LEPT_ERROR = 1;
 
-    public static void doMagic(String path, String sourceFile, String targetFile) {
+    public static int doMagic(String path, String sourceFile, String targetFile) {
 // @formatter:off
 //        int main(int argc, char *argv[])
 //        {
@@ -67,12 +67,12 @@ public class LeptonicaHelper {
 //          {
 // @formatter:on
 
-        int perform_negate = 2;
+//        int perform_negate = 2;
         float dark_bg_threshold = 0.5f;
-        boolean perform_scale = true;
+//        boolean perform_scale = true;
         float scale_factor = 3.5f;
         boolean perform_unsharp_mask = true;
-        int usm_halfwidth = 5;
+        int usm_halfwidth = 3;
         float usm_fract = 2.5f;
         boolean perform_otsu_binarize = true;
         int otsu_sx = 2000;
@@ -80,7 +80,7 @@ public class LeptonicaHelper {
         int otsu_smoothx = 0;
         int otsu_smoothy = 0;
         float otsu_scorefract = 0.0f;
-        int remove_furigana = 0;
+//        int remove_furigana = 0;
 
 // @formatter:off
 //            strcpy_s(source_file, MAX_FILE_LEN, argv[1]);
@@ -254,6 +254,8 @@ public class LeptonicaHelper {
 //
         } /* main */
 // @formatter:on
+          
+          return status;
     }
 
 }

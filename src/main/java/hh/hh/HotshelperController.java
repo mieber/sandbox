@@ -3,8 +3,6 @@ package hh.hh;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.bytedeco.javacpp.lept.PIX;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -18,14 +16,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import hh.hh.hotslogs.HotslogsService;
+import hh.hh.hotslogs.Player;
+import hh.hh.hotslogs.PlayerFilter;
+import hh.hh.ocr.ScreenGrabber;
+import hh.hh.ocr.TesseractHelper;
+import hh.hh.ui.Greeting;
+import hh.hh.ui.HelloMessage;
+
 @Controller
 @EnableAutoConfiguration
 @EnableScheduling
 @ComponentScan(basePackages = { "hh.hh" })
 public class HotshelperController {
-    
-    @Autowired
-    private MainWatch watcher;
     
     @Autowired
     private HotslogsService hotslogs;
@@ -48,13 +51,13 @@ public class HotshelperController {
     @ResponseBody
     String baseInfo() {
 
-        ScreenGrabber.createNameImages("/draft.png", "E:/vhp/hh/sandbox/src/main/resources/output", "r", "png");
+        ScreenGrabber.createNameImages("/draft.png", Conf.ROOT + "/src/main/resources/output", "r", "png");
 
         String[] names = new String[5];
         for (int i = 0; i < 5; i++) {
-            PIX p = TesseractHelper.getPixFromPath("E:/vhp/hh/sandbox/src/main/resources/output/r" + i + ".png");
-            names[i] = TesseractHelper.getTextFromPicture(p, null).trim();
-            System.out.println("E:/vhp/hh/sandbox/src/main/resources/output/r" + i + ".png: " + names[i]);
+            PIX p = TesseractHelper.getPixFromPath(Conf.ROOT + "/src/main/resources/output/r" + i + ".png");
+            names[i] = TesseractHelper.getTextFromPicture(p).trim();
+            System.out.println(Conf.ROOT + "/src/main/resources/output/r" + i + ".png: " + names[i]);
         }
 
         names[0] = "PandaAttack";

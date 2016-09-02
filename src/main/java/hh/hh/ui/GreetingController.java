@@ -1,4 +1,4 @@
-package hh.hh;
+package hh.hh.ui;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

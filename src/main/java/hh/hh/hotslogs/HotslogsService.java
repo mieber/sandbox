@@ -1,4 +1,4 @@
-package hh.hh;
+package hh.hh.hotslogs;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 

@@ -54,7 +54,7 @@ public class TextToGraphics {
 
             // File file = new File("E:\\vhp\\workspace_mars\\hh\\src\\main\\java\\hh\\hh\\fonts\\generated",
             // "%" + String.format("%02x", (int) c) + ".png");
-            File file = new File("E:\\vhp\\workspace_mars\\hh\\src\\main\\java\\hh\\hh\\fonts\\generated",
+            File file = new File(Conf.ROOT + "/src/main/java/hh/hh/fonts/generated",
  c + ".png");
             if (file.exists()) {
                 file.delete();

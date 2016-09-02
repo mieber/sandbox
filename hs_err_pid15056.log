@@ -1,0 +1,271 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x0000000068b889f5, pid=15056, tid=1220
+#
+# JRE version: Java(TM) SE Runtime Environment (8.0_60-b27) (build 1.8.0_60-b27)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (25.60-b23 mixed mode windows-amd64 compressed oops)
+# Problematic frame:
+# C  [libtesseract-3.dll+0x1889f5]
+#
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00000000028fa000):  JavaThread "main" [_thread_in_native, id=1220, stack(0x0000000002c30000,0x0000000002d30000)]
+
+siginfo: ExceptionCode=0xc0000005, reading address 0x0000000000000000
+
+Registers:
+RAX=0x0000000000000000, RBX=0x0000000002d2e9b0, RCX=0x000007feff0e1638, RDX=0x0000000000000002
+RSP=0x0000000002d2e980, RBP=0x0000000068be16e0, RSI=0x0000000000000002, RDI=0x0000000002d2e9db
+R8 =0x0000000000000000, R9 =0x0000000000000000, R10=0x6164737365742620, R11=0x00000000225c30b9
+R12=0x0000000068c6c808, R13=0x0000000001ba9660, R14=0x0000000000000000, R15=0x0000000000000000
+RIP=0x0000000068b889f5, EFLAGS=0x0000000000010246
+
+Top of Stack: (sp=0x0000000002d2e980)
+0x0000000002d2e980:   0000000002d2e9b0 000007feff0e2ae0
+0x0000000002d2e990:   0000000000000002 0000000000000000
+0x0000000002d2e9a0:   0000000000000000 0000000002d2ee00
+0x0000000002d2e9b0:   6275635f74696e69 7463656a626f5f65
+0x0000000002d2e9c0:   202c657572742873 7461647373657426
+0x0000000002d2e9d0:   6567616e616d5f61 726f7272453a2972
+0x0000000002d2e9e0:   207472657373413a 693a64656c696166
+0x0000000002d2e9f0:   7420656c6966206e 2e74696465737365
+0x0000000002d2ea00:   6e696c202c707063 00000a3431322065
+0x0000000002d2ea10:   000000002258d418 000007feff0510c8
+0x0000000002d2ea20:   0000000000000000 0000000000000000
+0x0000000002d2ea30:   0000000000000080 000000002258b7e8
+0x0000000002d2ea40:   000000002258c8d8 0000000000000003
+0x0000000002d2ea50:   000000002258c8c8 000007feff0510c8
+0x0000000002d2ea60:   0000000000000000 000000004d00004d
+0x0000000002d2ea70:   0000000022590d20 000000002258a748 
+
+Instructions: (pc=0x0000000068b889f5)
+0x0000000068b889d5:   ff 15 39 52 3c 00 48 8d 50 60 48 89 d9 e8 19 15
+0x0000000068b889e5:   03 00 83 fe ff 7c 14 85 f6 7e 2d 83 fe 02 7f 0b
+0x0000000068b889f5:   8b 04 25 00 00 00 00 0f 0b 66 90 48 8d 15 e6 83
+0x0000000068b88a05:   07 00 48 8d 0d e2 77 32 00 45 31 c9 41 b8 02 00 
+
+
+Register to memory mapping:
+
+RAX=0x0000000000000000 is an unknown value
+RBX=0x0000000002d2e9b0 is pointing into the stack for thread: 0x00000000028fa000
+RCX=0x000007feff0e1638 is an unknown value
+RDX=0x0000000000000002 is an unknown value
+RSP=0x0000000002d2e980 is pointing into the stack for thread: 0x00000000028fa000
+RBP=0x0000000068be16e0 is an unknown value
+RSI=0x0000000000000002 is an unknown value
+RDI=0x0000000002d2e9db is pointing into the stack for thread: 0x00000000028fa000
+R8 =0x0000000000000000 is an unknown value
+R9 =0x0000000000000000 is an unknown value
+R10=0x6164737365742620 is an unknown value
+R11=0x00000000225c30b9 is an unknown value
+R12=0x0000000068c6c808 is an unknown value
+R13=0x0000000001ba9660 is an unknown value
+R14=0x0000000000000000 is an unknown value
+R15=0x0000000000000000 is an unknown value
+
+
+Stack: [0x0000000002c30000,0x0000000002d30000],  sp=0x0000000002d2e980,  free space=1018k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [libtesseract-3.dll+0x1889f5]
+C  [libtesseract-3.dll+0x49919]
+C  [libtesseract-3.dll+0x49a0b]
+C  [libtesseract-3.dll+0x4a469]
+C  [libtesseract-3.dll+0x2388]
+C  [jnitesseract.dll+0xa3f0]
+C  0x0000000003015e34
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  org.bytedeco.javacpp.tesseract$TessBaseAPI.Init(Ljava/lang/String;Ljava/lang/String;I)I+0
+j  hh.hh.TesseractHelper.getTextFromPicture(Lorg/bytedeco/javacpp/lept$PIX;Ljava/lang/String;Lhh/hh/TesseractHelper$OcrMode;)Ljava/lang/String;+22
+j  hh.hh.ScreenGrabber.doit(Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIILhh/hh/TesseractHelper$OcrMode;)V+279
+j  hh.hh.ScreenGrabber.doitfirst(Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lhh/hh/TesseractHelper$OcrMode;)V+13
+j  hh.hh.ScreenGrabber.main([Ljava/lang/String;)V+150
+v  ~StubRoutines::call_stub
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x000000001fea7800 JavaThread "Java2D Disposer" daemon [_thread_blocked, id=16988, stack(0x0000000020670000,0x0000000020770000)]
+  0x000000001dc58800 JavaThread "Service Thread" daemon [_thread_blocked, id=12672, stack(0x000000001f6d0000,0x000000001f7d0000)]
+  0x000000001dbcd000 JavaThread "C1 CompilerThread3" daemon [_thread_blocked, id=15304, stack(0x000000001f7d0000,0x000000001f8d0000)]
+  0x000000001dbc3800 JavaThread "C2 CompilerThread2" daemon [_thread_blocked, id=14476, stack(0x000000001f5d0000,0x000000001f6d0000)]
+  0x000000001dbbe800 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=16200, stack(0x000000001f300000,0x000000001f400000)]
+  0x000000001dbb4000 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=12996, stack(0x000000001f4c0000,0x000000001f5c0000)]
+  0x000000001dbb3000 JavaThread "Attach Listener" daemon [_thread_blocked, id=17136, stack(0x000000001f1d0000,0x000000001f2d0000)]
+  0x000000001dbb2000 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=17028, stack(0x000000001f0c0000,0x000000001f1c0000)]
+  0x000000001cd21000 JavaThread "Finalizer" daemon [_thread_blocked, id=16904, stack(0x000000001ee60000,0x000000001ef60000)]
+  0x000000001cd1a000 JavaThread "Reference Handler" daemon [_thread_blocked, id=10332, stack(0x000000001ec80000,0x000000001ed80000)]
+=>0x00000000028fa000 JavaThread "main" [_thread_in_native, id=1220, stack(0x0000000002c30000,0x0000000002d30000)]
+
+Other Threads:
+  0x000000001cd13000 VMThread [stack: 0x000000001eb40000,0x000000001ec40000] [id=13272]
+  0x000000001dc77000 WatcherThread [stack: 0x000000001fa30000,0x000000001fb30000] [id=11720]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap:
+ PSYoungGen      total 76288K, used 39521K [0x000000076b400000, 0x0000000770900000, 0x00000007c0000000)
+  eden space 65536K, 60% used [0x000000076b400000,0x000000076da985d8,0x000000076f400000)
+  from space 10752K, 0% used [0x000000076fe80000,0x000000076fe80000,0x0000000770900000)
+  to   space 10752K, 0% used [0x000000076f400000,0x000000076f400000,0x000000076fe80000)
+ ParOldGen       total 175104K, used 0K [0x00000006c1c00000, 0x00000006cc700000, 0x000000076b400000)
+  object space 175104K, 0% used [0x00000006c1c00000,0x00000006c1c00000,0x00000006cc700000)
+ Metaspace       used 9536K, capacity 9698K, committed 9728K, reserved 1058816K
+  class space    used 948K, capacity 1017K, committed 1024K, reserved 1048576K
+
+Card table byte_map: [0x00000000123c0000,0x0000000012bc0000] byte_map_base: 0x000000000edb2000
+
+Marking Bits: (ParMarkBitMap*) 0x000000006fcea5b0
+ Begin Bits: [0x0000000013c10000, 0x0000000017ba0000)
+ End Bits:   [0x0000000017ba0000, 0x000000001bb30000)
+
+Polling page: 0x0000000000260000
+
+CodeCache: size=245760Kb used=2714Kb max_used=2714Kb free=243045Kb
+ bounds [0x0000000003000000, 0x00000000032b0000, 0x0000000012000000]
+ total_blobs=1249 nmethods=594 adapters=568
+ compilation: enabled
+
+Compilation events (10 events):
+Event: 1.068 Thread 0x000000001dbcd000  588       3       java.util.Arrays$ArrayList::<init> (16 bytes)
+Event: 1.069 Thread 0x000000001dbcd000 nmethod 588 0x000000000329a990 code [0x000000000329ab20, 0x000000000329af08]
+Event: 1.071 Thread 0x000000001dbcd000  589       3       java.io.File::getName (42 bytes)
+Event: 1.071 Thread 0x000000001dbcd000 nmethod 589 0x000000000329a190 code [0x000000000329a320, 0x000000000329a808]
+Event: 1.074 Thread 0x000000001dbcd000  590   !   3       java.lang.ClassLoader::loadLibrary0 (407 bytes)
+Event: 1.077 Thread 0x000000001dbcd000 nmethod 590 0x000000000329c190 code [0x000000000329c8a0, 0x00000000032a21f8]
+Event: 1.077 Thread 0x000000001dbcd000  592       3       java.lang.ClassLoader$3::<init> (10 bytes)
+Event: 1.078 Thread 0x000000001dbcd000 nmethod 592 0x0000000003299650 code [0x00000000032997a0, 0x0000000003299970]
+Event: 1.078 Thread 0x000000001dbcd000  594   !   3       sun.misc.URLClassPath::check (123 bytes)
+Event: 1.078 Thread 0x000000001dbcd000 nmethod 594 0x00000000032a6550 code [0x00000000032a6820, 0x00000000032a80a8]
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (1 events):
+Event: 0.219 Thread 0x00000000028fa000 Uncommon trap: reason=null_check action=make_not_entrant pc=0x00000000031715dc method=java.lang.String.equals(Ljava/lang/Object;)Z @ 8
+
+Internal exceptions (10 events):
+Event: 0.273 Thread 0x00000000028fa000 Exception <a 'java/security/PrivilegedActionException'> (0x000000076b97f120) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u60\4407\hotspot\src\share\vm\prims\jvm.cpp, line 1386]
+Event: 0.273 Thread 0x00000000028fa000 Exception <a 'java/security/PrivilegedActionException'> (0x000000076b9807c8) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u60\4407\hotspot\src\share\vm\prims\jvm.cpp, line 1386]
+Event: 0.273 Thread 0x00000000028fa000 Exception <a 'java/security/PrivilegedActionException'> (0x000000076b980bc0) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u60\4407\hotspot\src\share\vm\prims\jvm.cpp, line 1386]
+Event: 0.274 Thread 0x00000000028fa000 Exception <a 'java/security/PrivilegedActionException'> (0x000000076b982230) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u60\4407\hotspot\src\share\vm\prims\jvm.cpp, line 1386]
+Event: 0.274 Thread 0x00000000028fa000 Exception <a 'java/security/PrivilegedActionException'> (0x000000076b982628) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u60\4407\hotspot\src\share\vm\prims\jvm.cpp, line 1386]
+Event: 0.274 Thread 0x00000000028fa000 Exception <a 'java/security/PrivilegedActionException'> (0x000000076b983d08) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u60\4407\hotspot\src\share\vm\prims\jvm.cpp, line 1386]
+Event: 0.274 Thread 0x00000000028fa000 Exception <a 'java/security/PrivilegedActionException'> (0x000000076b984100) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u60\4407\hotspot\src\share\vm\prims\jvm.cpp, line 1386]
+Event: 0.274 Thread 0x00000000028fa000 Exception <a 'java/security/PrivilegedActionException'> (0x000000076b985640) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u60\4407\hotspot\src\share\vm\prims\jvm.cpp, line 1386]
+Event: 0.274 Thread 0x00000000028fa000 Exception <a 'java/security/PrivilegedActionException'> (0x000000076b985a38) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u60\4407\hotspot\src\share\vm\prims\jvm.cpp, line 1386]
+Event: 0.561 Thread 0x00000000028fa000 Exception <a 'java/io/FileNotFoundException'> (0x000000076cf66c30) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u60\4407\hotspot\src\share\vm\prims\jni.cpp, line 709]
+
+Events (10 events):
+Event: 1.066 loading class org/bytedeco/javacpp/tesseract$CharClearCallback
+Event: 1.066 loading class org/bytedeco/javacpp/tesseract$CharClearCallback done
+Event: 1.067 loading class org/bytedeco/javacpp/tesseract$TessCallbackUtils_
+Event: 1.067 loading class org/bytedeco/javacpp/tesseract$TessCallbackUtils_ done
+Event: 1.067 loading class org/bytedeco/javacpp/tesseract$UNICHAR$const_iterator
+Event: 1.067 loading class org/bytedeco/javacpp/tesseract$UNICHAR$const_iterator done
+Event: 1.067 loading class org/bytedeco/javacpp/tesseract$UNICHAR
+Event: 1.067 loading class org/bytedeco/javacpp/tesseract$UNICHAR done
+Event: 1.067 loading class org/bytedeco/javacpp/tesseract$TessResultRenderer
+Event: 1.067 loading class org/bytedeco/javacpp/tesseract$TessResultRenderer done
+
+
+Dynamic libraries:
+0x000000013fc80000 - 0x000000013fcb7000 	E:\hh\dev\jdk1.8.0_60\bin\javaw.exe
+0x0000000077880000 - 0x0000000077a2a000 	C:\Windows\SYSTEM32\ntdll.dll
+0x0000000077660000 - 0x000000007777f000 	C:\Windows\system32\kernel32.dll
+0x000007fefd810000 - 0x000007fefd87a000 	C:\Windows\system32\KERNELBASE.dll
+0x000007fefd330000 - 0x000007fefd3b4000 	C:\Windows\system32\tmumh\20019\AddOn\6.80.0.1007\TmUmEvt64.dll
+0x0000000077a50000 - 0x0000000077a57000 	C:\Windows\system32\PSAPI.DLL
+0x000007feff820000 - 0x000007feff891000 	C:\Windows\system32\SHLWAPI.dll
+0x000007feff3c0000 - 0x000007feff427000 	C:\Windows\system32\GDI32.dll
+0x0000000077780000 - 0x000000007787a000 	C:\Windows\system32\USER32.dll
+0x000007feffb80000 - 0x000007feffb8e000 	C:\Windows\system32\LPK.dll
+0x000007fefe110000 - 0x000007fefe1da000 	C:\Windows\system32\USP10.dll
+0x000007feff050000 - 0x000007feff0ef000 	C:\Windows\system32\msvcrt.dll
+0x000007fefdbb0000 - 0x000007fefdc8b000 	C:\Windows\system32\ADVAPI32.dll
+0x000007fefddb0000 - 0x000007fefddcf000 	C:\Windows\SYSTEM32\sechost.dll
+0x000007feffa50000 - 0x000007feffb7d000 	C:\Windows\system32\RPCRT4.dll
+0x0000000075240000 - 0x000000007535e000 	C:\Windows\system32\tmumh\20019\TmMon\1.6.0.1163\tmmon64.dll
+0x000007fefd980000 - 0x000007fefd9ae000 	C:\Windows\system32\IMM32.DLL
+0x000007feff8a0000 - 0x000007feff9a9000 	C:\Windows\system32\MSCTF.dll
+0x000007fefd4f0000 - 0x000007fefd52c000 	C:\Windows\system32\nvinitx.dll
+0x000007fefb880000 - 0x000007fefba74000 	C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.7601.18837_none_fa3b1e3d17594757\COMCTL32.dll
+0x00000000792c0000 - 0x0000000079392000 	E:\hh\dev\jdk1.8.0_60\jre\bin\msvcr100.dll
+0x000000006f4e0000 - 0x000000006fd69000 	E:\hh\dev\jdk1.8.0_60\jre\bin\server\jvm.dll
+0x000007fefb680000 - 0x000007fefb689000 	C:\Windows\system32\WSOCK32.dll
+0x000007fefd9b0000 - 0x000007fefd9fd000 	C:\Windows\system32\WS2_32.dll
+0x000007fefde30000 - 0x000007fefde38000 	C:\Windows\system32\NSI.dll
+0x000007fefbf30000 - 0x000007fefbf6b000 	C:\Windows\system32\WINMM.dll
+0x000007fefc580000 - 0x000007fefc58c000 	C:\Windows\system32\VERSION.dll
+0x0000000070000000 - 0x000000007000f000 	E:\hh\dev\jdk1.8.0_60\jre\bin\verify.dll
+0x000000006ce40000 - 0x000000006ce69000 	E:\hh\dev\jdk1.8.0_60\jre\bin\java.dll
+0x0000000070c70000 - 0x0000000070c86000 	E:\hh\dev\jdk1.8.0_60\jre\bin\zip.dll
+0x000007fefe2c0000 - 0x000007feff04c000 	C:\Windows\system32\SHELL32.dll
+0x000007feff610000 - 0x000007feff813000 	C:\Windows\system32\ole32.dll
+0x000007fefd5d0000 - 0x000007fefd5df000 	C:\Windows\system32\profapi.dll
+0x000000006c5f0000 - 0x000000006c788000 	E:\hh\dev\jdk1.8.0_60\jre\bin\awt.dll
+0x000007fefe1e0000 - 0x000007fefe2b8000 	C:\Windows\system32\OLEAUT32.dll
+0x000007fefcd30000 - 0x000007fefcd48000 	C:\Windows\system32\CRYPTSP.dll
+0x000007fefca30000 - 0x000007fefca77000 	C:\Windows\system32\rsaenh.dll
+0x000007fefd950000 - 0x000007fefd96e000 	C:\Windows\system32\USERENV.dll
+0x000007fefd420000 - 0x000007fefd42f000 	C:\Windows\system32\CRYPTBASE.dll
+0x0000000001c20000 - 0x0000000001c3a000 	E:\hh\dev\jdk1.8.0_60\jre\bin\net.dll
+0x000007fefccd0000 - 0x000007fefcd25000 	C:\Windows\system32\mswsock.dll
+0x000007fefccc0000 - 0x000007fefccc7000 	C:\Windows\System32\wship6.dll
+0x000007fefb650000 - 0x000007fefb677000 	C:\Windows\system32\IPHLPAPI.DLL
+0x000007fefb640000 - 0x000007fefb64b000 	C:\Windows\system32\WINNSI.DLL
+0x000007fef9fa0000 - 0x000007fef9fb1000 	C:\Windows\system32\dhcpcsvc6.DLL
+0x000007fefa3c0000 - 0x000007fefa3d8000 	C:\Windows\system32\dhcpcsvc.DLL
+0x0000000001c60000 - 0x0000000001c71000 	E:\hh\dev\jdk1.8.0_60\jre\bin\nio.dll
+0x00000000022b0000 - 0x00000000022e1000 	E:\hh\dev\jdk1.8.0_60\jre\bin\jpeg.dll
+0x000007fefab90000 - 0x000007fefaba8000 	C:\Windows\system32\DWMAPI.DLL
+0x000000006f240000 - 0x000000006f2e2000 	E:\hh\dev\jdk1.8.0_60\jre\bin\mlib_image.dll
+0x0000000064940000 - 0x0000000064955000 	C:\Users\msieber1\AppData\Local\Temp\javacpp105610265468991\libwinpthread-1.dll
+0x0000000061440000 - 0x000000006145c000 	C:\Users\msieber1\AppData\Local\Temp\javacpp105610265468991\libgcc_s_seh-1.dll
+0x0000000020330000 - 0x0000000020492000 	C:\Users\msieber1\AppData\Local\Temp\javacpp105610265468991\libstdc++-6.dll
+0x0000000021740000 - 0x0000000021b0a000 	C:\Users\msieber1\AppData\Local\Temp\javacpp105610265468991\liblept-5.dll
+0x000000006bf40000 - 0x000000006c238000 	C:\Users\msieber1\AppData\Local\Temp\javacpp105610265468991\jnilept.dll
+0x0000000068a00000 - 0x0000000068f54000 	C:\Users\msieber1\AppData\Local\Temp\javacpp105610265468991\libtesseract-3.dll
+0x0000000065440000 - 0x00000000654cd000 	C:\Users\msieber1\AppData\Local\Temp\javacpp105610265468991\jnitesseract.dll
+0x000007fefb690000 - 0x000007fefb7b5000 	C:\Windows\system32\dbghelp.dll
+
+VM Arguments:
+jvm_args: -Dfile.encoding=UTF-8 
+java_command: hh.hh.ScreenGrabber
+java_class_path (initial): E:\hh\git\sandbox\target\classes;C:\Users\msieber1\.m2\repository\org\javaopencvbook\opencvjar\3.0.0\opencvjar-3.0.0.jar;E:\hh\git\sandbox\repo\org\javaopencvbook\opencvjar-runtime\3.0.0\opencvjar-runtime-3.0.0-natives-windows-x86_64.jar;C:\Users\msieber1\.m2\repository\org\springframework\boot\spring-boot-starter-web\1.4.0.RELEASE\spring-boot-starter-web-1.4.0.RELEASE.jar;C:\Users\msieber1\.m2\repository\org\springframework\boot\spring-boot-starter\1.4.0.RELEASE\spring-boot-starter-1.4.0.RELEASE.jar;C:\Users\msieber1\.m2\repository\org\springframework\boot\spring-boot\1.4.0.RELEASE\spring-boot-1.4.0.RELEASE.jar;C:\Users\msieber1\.m2\repository\org\springframework\boot\spring-boot-autoconfigure\1.4.0.RELEASE\spring-boot-autoconfigure-1.4.0.RELEASE.jar;C:\Users\msieber1\.m2\repository\org\springframework\boot\spring-boot-starter-logging\1.4.0.RELEASE\spring-boot-starter-logging-1.4.0.RELEASE.jar;C:\Users\msieber1\.m2\repository\ch\qos\logback\logback-classic\1.1.7\logback-classic-1.1.7.jar;C:\Users\msieber1\.m2\repository\ch\qos\logback\logback-core\1.1.7\logback-core-1.1.7.jar;C:\Users\msieber1\.m2\repository\org\slf4j\slf4j-api\1.7.20\slf4j-api-1.7.20.jar;C:\Users\msieber1\.m2\repository\org\slf4j\jcl-over-slf4j\1.7.21\jcl-over-slf4j-1.7.21.jar;C:\Users\msieber1\.m2\repository\org\slf4j\jul-to-slf4j\1.7.21\jul-to-slf4j-1.7.21.jar;C:\Users\msieber1\.m2\repository\org\slf4j\log4j-over-slf4j\1.7.21\log4j-over-slf4j-1.7.21.jar;C:\Users\msieber1\.m2\repository\org\yaml\snakeyaml\1.17\snakeyaml-1.17.jar;C:\Users\msieber1\.m2\repository\org\springframework\boot\spring-boot-starter-tomcat\1.4.0.RELEASE\spring-boot-starter-tomcat-1.4.0.RELEASE.jar;C:\Users\msieber1\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\8.5.4\tomcat-embed-core-8.5.4.jar;C:\Users\msieber1\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\8.5.4\tomcat-embed-el-8.5.4.jar;C:\Users\msieber1\.m2\repository\org\apache\tomcat\embed\tomcat-embed-websocket\8.5.4\tom
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+JAVA_HOME=e:\vhp\dev\jdk1.8.0_60\
+PATH=C:/Program Files/Java/jre1.8.0_77/bin/server;C:/Program Files/Java/jre1.8.0_77/bin;C:/Program Files/Java/jre1.8.0_77/lib/amd64;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\system32\Empirum;C:\Program Files\T-Systems\Global Remote;C:\Windows\SysWOW64\Empirum;c:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\;c:\Program Files\Microsoft SQL Server\110\Tools\Binn\;c:\Program Files\Microsoft SQL Server\110\DTS\Binn\;c:\Program Files (x86)\Microsoft SQL Server\110\Tools\Binn\ManagementStudio\;c:\Program Files (x86)\Microsoft SQL Server\110\DTS\Binn\;C:\Program Files\TortoiseSVN\bin;e:\vhp\maven\bin\;C:\Program Files (x86)\Sennheiser\SoftphoneSDK\;E:\vhp\dev\Tesseract-OCR;e:\hh\dev\eclipse;
+USERNAME=msieber1
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 42 Stepping 7, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 7 , 64 bit Build 7601 (6.1.7601.23418)
+
+CPU:total 8 (4 cores per cpu, 2 threads per core) family 6 model 42 stepping 7, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, aes, clmul, ht, tsc, tscinvbit
+
+Memory: 4k page, physical 16655372k(2449692k free), swap 18701512k(2156948k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (25.60-b23) for windows-amd64 JRE (1.8.0_60-b27), built on Aug  4 2015 11:06:27 by "java_re" with MS VC++ 10.0 (VS2010)
+
+time: Thu Sep 01 13:12:26 2016
+elapsed time: 1 seconds (0d 0h 0m 1s)
+

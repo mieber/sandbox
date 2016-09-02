@@ -39,7 +39,7 @@
 			<version>3.0.0</version>
 			<classifier>natives-windows-x86_64</classifier>
 			<scope>system</scope>
-			<systemPath>e:\vhp\hh\sandbox\repo\org\javaopencvbook\opencvjar-runtime\3.0.0\opencvjar-runtime-3.0.0-natives-windows-x86_64.jar</systemPath>
+			<systemPath>e:\hh\git\sandbox\repo\org\javaopencvbook\opencvjar-runtime\3.0.0\opencvjar-runtime-3.0.0-natives-windows-x86_64.jar</systemPath>
 		</dependency>
 
 		<dependency>

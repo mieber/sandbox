@@ -1,4 +1,4 @@
-package hh.hh;
+package hh.hh.ui;
 public class HelloMessage {
 
     private String name;

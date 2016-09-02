@@ -1,4 +1,4 @@
-package hh.hh;
+package hh.hh.filewatch;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
@@ -19,6 +19,8 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import hh.hh.ui.GreetingController;
 
 @Component
 public class MainWatch {

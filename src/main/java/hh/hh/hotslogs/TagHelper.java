@@ -1,4 +1,4 @@
-package hh.hh;
+package hh.hh.hotslogs;
 
 import java.util.Iterator;
 
