@@ -1,0 +1,22 @@
+﻿Create Tiff from txt file and box file in one step
+ ../dev/tesseract_3.05/text2image.exe --text=trainlangdata/testdata.txt --outputbase=out/bat.Metronic_W01_Bold.exp0 --font='MetronicW01-Bold Bold' --fonts_dir=
+ ../dev/tesseract_3.05/text2image.exe --text=trainlangdata/testdata.txt --outputbase=out/bat.Metronic_W01_Regular.exp0 --font='MetronicW01-Regular' --fonts_dir=
+ ../dev/tesseract_3.05/text2image.exe --text=trainlangdata/testdata.txt --outputbase=out/bat.Metronic_W01_Semibold.exp0 --font='MetronicW01-Semibold Semi-Bold' --fonts_dir=
+
+Check box with jTessBoxEditor / compare the text files (first column of box file with the generated on column file from above)
+
+Create train data:
+ ../dev/tesseract_3.05/tesseract.exe ./out/bat.Metronic_W01_Bold.exp0.tif ./out/bat.Metronic_W01_Bold.exp0 box.train.stderr
+ ../dev/tesseract_3.05/tesseract.exe ./out/bat.Metronic_W01_Regular.exp0.tif ./out/bat.Metronic_W01_Regular.exp0 box.train.stderr
+ ../dev/tesseract_3.05/tesseract.exe ./out/bat.Metronic_W01_Semibold.exp0.tif ./out/bat.Metronic_W01_Semibold.exp0 box.train.stderr
+
+Generate unicharset
+../dev/tesseract_3.05/unicharset_extractor.exe ./out/bat.Metronic_W01_Bold.exp0.box ./out/bat.Metronic_W01_Regular.exp0.box ./out/bat.Metronic_W01_Semibold.exp0.box
+../dev/tesseract_3.05/set_unicharset_properties.exe -U ./unicharset -O ./unicharset_with_properties --script_dir=./trainlangdata
+mftraining
+../dev/tesseract_3.05/mftraining.exe -F ./trainlangdata/font_properties -U unicharset_with_properties -O bat.unicharset ./out/bat.Metronic_W01_Bold.exp0.tr ./out/bat.Metronic_W01_Semibold.exp0.tr ./out/bat.Metronic_W01_Regular.exp0.tr
+
+cntraining
+../dev/tesseract_3.05/cntraining.exe ./out/bat.Metronic_W01_Bold.exp0.tr ./out/bat.Metronic_W01_Semibold.exp0.tr ./out/bat.Metronic_W01_Regular.exp0.tr    
+Put shapetable,normproto, inttemp, pffmtable, unicharset into single folder and combine:
+../../dev/tesseract_3.05/combine_tessdata.exe bat.
