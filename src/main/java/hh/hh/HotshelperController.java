@@ -51,20 +51,7 @@ public class HotshelperController {
     @ResponseBody
     String baseInfo() {
 
-        ScreenGrabber.createNameImages("/draft.png", Conf.ROOT + "/src/main/resources/output", "r", "png");
-
-        String[] names = new String[5];
-        for (int i = 0; i < 5; i++) {
-            PIX p = TesseractHelper.getPixFromPath(Conf.ROOT + "/src/main/resources/output/r" + i + ".png");
-            names[i] = TesseractHelper.getTextFromPicture(p).trim();
-            System.out.println(Conf.ROOT + "/src/main/resources/output/r" + i + ".png: " + names[i]);
-        }
-
-        names[0] = "PandaAttack";
-        names[1] = "Dunkelqwert";
-        names[2] = "Rohan";
-        names[3] = "TinyTina";
-        names[4] = "xxHawkxx";
+        String[] names = ScreenGrabber.extractNames("/real.jpg");
 
         Player[] foundPlayers = new Player[5];
 

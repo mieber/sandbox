@@ -13,10 +13,12 @@ Create train data:
 Generate unicharset
 ../dev/tesseract_3.05/unicharset_extractor.exe ./out/bat.Metronic_W01_Bold.exp0.box ./out/bat.Metronic_W01_Regular.exp0.box ./out/bat.Metronic_W01_Semibold.exp0.box
 ../dev/tesseract_3.05/set_unicharset_properties.exe -U ./unicharset -O ./unicharset_with_properties --script_dir=./trainlangdata
+
 mftraining
 ../dev/tesseract_3.05/mftraining.exe -F ./trainlangdata/font_properties -U unicharset_with_properties -O bat.unicharset ./out/bat.Metronic_W01_Bold.exp0.tr ./out/bat.Metronic_W01_Semibold.exp0.tr ./out/bat.Metronic_W01_Regular.exp0.tr
 
 cntraining
-../dev/tesseract_3.05/cntraining.exe ./out/bat.Metronic_W01_Bold.exp0.tr ./out/bat.Metronic_W01_Semibold.exp0.tr ./out/bat.Metronic_W01_Regular.exp0.tr    
+../dev/tesseract_3.05/cntraining.exe ./out/bat.Metronic_W01_Bold.exp0.tr ./out/bat.Metronic_W01_Semibold.exp0.tr ./out/bat.Metronic_W01_Regular.exp0.tr
+    
 Put shapetable,normproto, inttemp, pffmtable, unicharset into single folder and combine:
 ../../dev/tesseract_3.05/combine_tessdata.exe bat.
