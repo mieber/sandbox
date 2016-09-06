@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import hh.hh.hotslogs.data.Player;
+
 public class PlayerFilter {
     
     private List<Player> input;

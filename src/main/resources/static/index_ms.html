@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- The HTML 4.01 Transitional DOCTYPE declaration-->
+<!-- above set at the top of the file will set     -->
+<!-- the browser's rendering engine into           -->
+<!-- "Quirks Mode". Replacing this declaration     -->
+<!-- with a "Standards Mode" doctype is supported, -->
+<!-- but may lead to some differences in layout.   -->
+
+<html>
+<head>
+
+    <script src="/webjars/angularjs/1.5.7/angular.js"></script>
+	<script src="/webjars/angularjs/1.5.7/angular-resource.js"></script>
+	<script src="/webjars/angularjs/1.5.7/angular-route.js"></script>
+	<script type="text/javascript" src="./js/msi_controller.js"></script>
+	<script type="text/javascript" src="./js/msi_view.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Hello App Engine</title>
+</head>
+
+<body data-ng-app="msi_training">
+	<h1>Hello App Engine!</h1>
+
+	<table>
+		<tr>
+			<td colspan="2" style="font-weight: bold;">Available Servlets:</td>
+		</tr>
+		<tr>
+			<td><a href="msiangjs">Msiangjs</a></td>
+		</tr>
+
+
+	</table>
+
+	<div data-ng-controller="msi_controller">
+
+		<p>
+			<label>Firstname: </label><input type="text"
+				data-ng-model="firstname">
+		</p>
+		<p>
+			<label>Lastname: </label><input type="text" data-ng-model="lastname">
+		</p>
+		<p>
+			<input type="button" data-ng-controller="msi_view"
+				data-ng-value="add_button" data-ng-click="add()">
+		</p>
+		PERSONS:
+		<table>
+			<tr data-ng-if="persons.length > 0">
+				<th data-ng-controller="msi_view">{{headers.values[0]}}</th>
+				<th data-ng-controller="msi_view">{{headers.values[1]}}</th>
+				<th data-ng-controller="msi_view">{{headers.values[2]}}</th>
+				<th data-ng-controller="msi_view">{{headers.values[3]}}</th>
+			</tr>
+			<tr data-ng-repeat="n in persons">
+				<td>[{{$index + 1}}]</td>
+				<td>{{n.getFirstname()}}</td>
+				<td>{{n.getLastname()}}</td>
+				<td><input type="button" value="Delete Person"
+					data-ng-click="remove(n)"></td>
+			</tr>
+		</table>
+		<div data-ng-if="persons.length == 0">
+			<strong>No results found...</strong>
+		</div>
+	</div>
+
+
+</body>
+</html>

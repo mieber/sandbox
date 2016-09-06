@@ -5,18 +5,18 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class GreetingController {
+public class ScreenUpdateController {
 
     private SimpMessagingTemplate template;
 
     @Autowired
-    public GreetingController(SimpMessagingTemplate template) {
+    public ScreenUpdateController(SimpMessagingTemplate template) {
         this.template = template;
     }
 
-    public void greet(String greeting) {
-         Greeting greet = new Greeting("Hello, " + greeting + "!");
-        this.template.convertAndSend("/topic/greetings", greet);
+    public void greet(String greeting, String[] enemies) {
+         ScreenUpdate greet = new ScreenUpdate("Hello, " + greeting + "!", "TEST2", enemies);
+        this.template.convertAndSend("/topic/updates", greet);
     }
 
 }

@@ -5,12 +5,29 @@ import org.bytedeco.javacpp.lept.*;
 
 public class LeptonicaHelper {
 
-    public static final int LEPT_TRUE = 1;
-    public static final int LEPT_FALSE = 0;
-    public static final int LEPT_OK = 0;
-    public static final int LEPT_ERROR = 1;
+	public static final int LEPT_TRUE = 1;
+	public static final int LEPT_FALSE = 0;
+	public static final int LEPT_OK = 0;
+	public static final int LEPT_ERROR = 1;
 
-    public static int doMagic(String path, String sourceFile, String targetFile) {
+	private static final int otsu_sx = 2000;
+	private static final int otsu_sy = 2000;
+	private static final int otsu_smoothx = 0;
+	private static final int otsu_smoothy = 0;
+	private static final float otsu_scorefract = 0.0f;
+	private static final float dark_bg_threshold = 0.5f;
+
+	private static final float scale_factor = 3.5f;
+	private static final boolean perform_unsharp_mask = true;
+	private static final int usm_halfwidth = 3;
+	private static final float usm_fract = 2.5f;
+	private static final boolean perform_otsu_binarize = true;
+
+	// private static final int perform_negate = 2;
+	// private static final boolean perform_scale = true;
+	// private static final int remove_furigana = 0;
+
+	public static int doMagic(String path, String sourceFile, String targetFile) {
 // @formatter:off
 //        int main(int argc, char *argv[])
 //        {
@@ -37,7 +54,6 @@ public class LeptonicaHelper {
 //          Remove_furigana_enum remove_furigana = REMOVE_FURIGANA_NO;
 //
           int status = LEPT_ERROR;
-          float border_avg = 0.0f;
           PIX pixs = null;
 //          char *ext = NULL;
 //
@@ -66,21 +82,6 @@ public class LeptonicaHelper {
 //          if (argc >= 17)
 //          {
 // @formatter:on
-
-//        int perform_negate = 2;
-        float dark_bg_threshold = 0.5f;
-//        boolean perform_scale = true;
-        float scale_factor = 3.5f;
-        boolean perform_unsharp_mask = true;
-        int usm_halfwidth = 3;
-        float usm_fract = 2.5f;
-        boolean perform_otsu_binarize = true;
-        int otsu_sx = 2000;
-        int otsu_sy = 2000;
-        int otsu_smoothx = 0;
-        int otsu_smoothy = 0;
-        float otsu_scorefract = 0.0f;
-//        int remove_furigana = 0;
 
 // @formatter:off
 //            strcpy_s(source_file, MAX_FILE_LEN, argv[1]);
@@ -145,7 +146,7 @@ public class LeptonicaHelper {
 //
 //            /* Get the average intensity of the border pixels,
 //            with average of 0.0 being completely white and 1.0 being completely black. */
-            border_avg =  lept.pixAverageOnLine(otsu_pixs, 0, 0, otsu_pixs.w() - 1, 0, 1);                               /* Top */
+            float border_avg =  lept.pixAverageOnLine(otsu_pixs, 0, 0, otsu_pixs.w() - 1, 0, 1);                               /* Top */
             border_avg += lept.pixAverageOnLine(otsu_pixs, 0, otsu_pixs.h() - 1, otsu_pixs.w() - 1, otsu_pixs.h() - 1, 1); /* Bottom */
             border_avg += lept.pixAverageOnLine(otsu_pixs, 0, 0, 0, otsu_pixs.h() - 1, 1);                               /* Left */
             border_avg += lept.pixAverageOnLine(otsu_pixs, otsu_pixs.w() - 1, 0, otsu_pixs.w() - 1, otsu_pixs.h() - 1, 1); /* Right */
@@ -254,8 +255,32 @@ public class LeptonicaHelper {
 //
         } /* main */
 // @formatter:on
-          
-          return status;
-    }
+
+		return status;
+	}
+
+	public static boolean needsInversion(String writePath, String source) {
+
+		PIX pixs = lept.pixRead(writePath + "/" + source);
+
+		pixs = lept.pixConvertRGBToGray(pixs, 0.0f, 0.0f, 0.0f);
+
+		PIX otsu_pixs = new PIX();
+
+		lept.pixOtsuAdaptiveThreshold(pixs, otsu_sx, otsu_sy, otsu_smoothx, otsu_smoothy, otsu_scorefract, null,
+				otsu_pixs);
+
+		float border_avg = lept.pixAverageOnLine(otsu_pixs, 0, 0, otsu_pixs.w() - 1, 0, 1); /* Top */
+		border_avg += lept.pixAverageOnLine(otsu_pixs, 0, otsu_pixs.h() - 1, otsu_pixs.w() - 1, otsu_pixs.h() - 1,
+				1); /* Bottom */
+		border_avg += lept.pixAverageOnLine(otsu_pixs, 0, 0, 0, otsu_pixs.h() - 1, 1); /* Left */
+		border_avg += lept.pixAverageOnLine(otsu_pixs, otsu_pixs.w() - 1, 0, otsu_pixs.w() - 1, otsu_pixs.h() - 1,
+				1); /* Right */
+		border_avg /= 4.0f;
+		lept.pixDestroy(otsu_pixs);
+		lept.pixDestroy(pixs);
+
+		return border_avg > dark_bg_threshold;
+	}
 
 }

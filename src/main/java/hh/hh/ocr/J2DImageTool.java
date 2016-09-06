@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.IOUtils;
 import org.bytedeco.javacpp.lept.PIX;
 
 import com.github.axet.lookup.Capture;
@@ -21,24 +22,29 @@ import com.github.axet.lookup.Capture;
 import hh.hh.Conf;
 import hh.hh.ocr.TesseractHelper.OcrMode;
 
-public class ScreenGrabber {
+public class J2DImageTool {
 
 	private BufferedImage image;
 
-	private ScreenGrabber(String path) {
-		image = Capture.load(ScreenGrabber.class, path);
+	private J2DImageTool(BufferedImage image) {
+		this.image = image;
+	}
+	
+	public static J2DImageTool get(BufferedImage image) {
+		return new J2DImageTool(image);
 	}
 
-	public static ScreenGrabber get(String path) {
-		return new ScreenGrabber(path);
+	public static J2DImageTool getFromClasspath(String path) {
+		BufferedImage image = Capture.load(J2DImageTool.class, path);
+		return new J2DImageTool(image);
 	}
 
-	public ScreenGrabber crop(Rectangle rect) {
+	public J2DImageTool crop(Rectangle rect) {
 		image = image.getSubimage(rect.x, rect.y, rect.width, rect.height);
 		return this;
 	}
 
-	public ScreenGrabber rotate(double angle) {
+	public J2DImageTool rotate(double angle) {
 		Graphics2D g2d = image.createGraphics();
 		double rotationRequired = Math.toRadians(angle);
 		double locationX = image.getWidth() / 2;
@@ -49,7 +55,7 @@ public class ScreenGrabber {
 		return this;
 	}
 
-	public ScreenGrabber monoInvert(int threshold, int darker, int lighter) {
+	public J2DImageTool monoInvert(int threshold, int darker, int lighter) {
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
 				int rgba = image.getRGB(x, y);
@@ -79,7 +85,7 @@ public class ScreenGrabber {
 		return image;
 	}
 
-	public ScreenGrabber write(boolean overwrite, String path, String name, String extension) {
+	public J2DImageTool write(boolean overwrite, String path, String name, String extension) {
 		try {
 			File file = new File(path, name + "." + extension);
 			if (overwrite && file.exists()) {
@@ -92,7 +98,7 @@ public class ScreenGrabber {
 		return this;
 	}
 
-	public ScreenGrabber invertImage() {
+	public J2DImageTool invertImage() {
 
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
@@ -105,25 +111,41 @@ public class ScreenGrabber {
 		return this;
 	}
 
-	public ScreenGrabber addCaseHint(String string, int additionalWidth) {
+	public J2DImageTool addCaseHint(String string, boolean needsInversion, int additionalWidth) {
 
 		BufferedImage t = new BufferedImage(image.getWidth() + additionalWidth, image.getHeight(), image.getType());
 		Graphics2D g = t.createGraphics();
 		g.drawImage(image, additionalWidth, 0, null);
 		g.setFont(new Font("Metronic W01 SemiBold", Font.BOLD, 25));
-		g.setColor(Color.WHITE);
+		Color front;
+		Color back;
+		if (needsInversion) {
+			front = Color.WHITE;
+			back = Color.BLACK;
+		} else {
+			front = Color.BLACK;
+			back = Color.WHITE;
+		}
+		g.setColor(back);
+		g.fillRect(0, 0, additionalWidth, image.getHeight());
+		g.setColor(front);
 		g.drawString(string, 3, image.getHeight() - 5);
+		
 		g.dispose();
 
 		image = t;
 
 		return this;
 	}
-
+	
 	public static String[] extractNames(String pathToScreenshot) {
+		return extractNames(pathToScreenshot, "r");
+		
+	}
+
+	public static String[] extractNames(String pathToScreenshot, String prefix) {
 
 		String writePath = Conf.ROOT + "/src/main/resources/output";
-		String prefix = "r";
 
 		List<Rectangle> rectanglesRight = new ArrayList<>();
 		rectanglesRight.add(new Rectangle(2380, 190, 172, 183));
@@ -139,83 +161,49 @@ public class ScreenGrabber {
 		for (int i = 0; i < 5; i++) {
 			Rectangle r = rectanglesRight.get(i);
 			//@formatter:off
-            ScreenGrabber
-                .get(pathToScreenshot)
+            J2DImageTool
+                .getFromClasspath(pathToScreenshot)
                 .crop(r)
                 .rotate(30.5)
                 .crop(new Rectangle(6, 62, 165, 32))
-                .addCaseHint(caseString, 30)
+//                .addCaseHint(caseString, 40)
                  // .monoInvert(threshold, darker, lighter)
                 .write(true, writePath, prefix + i, "png");
             //@formatter:on
-
-			String source = prefix + i + ".png";
+            
+            String source = prefix + i + ".png";
 			String target = prefix + i + ".tif";
+            
+            boolean needsInversion = LeptonicaHelper.needsInversion(writePath, source);
+
+            
+            
+            //@formatter:off
+            try {
+				J2DImageTool
+					.get(ImageIO.read(new File(writePath + "/" + source)))
+					.addCaseHint(caseString, needsInversion, 40)
+					.write(true, writePath, prefix + i, "png");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            //@formatter:on
 
 			LeptonicaHelper.doMagic(writePath, source, target);
-
+			
 			PIX p = TesseractHelper.getPixFromPath(writePath + "/" + target);
-			names[i] = TesseractHelper.getTextFromPicture(p, TesseractHelper.DEFAULT_LANG, OcrMode.ORIGINAL).trim()
-					.substring(caseString.length() + 1);
+			
+			String name = TesseractHelper.getTextFromPicture(p, TesseractHelper.DEFAULT_LANG, OcrMode.ORIGINAL).trim();
+			
+			if (name != null && name.length() > caseString.length() + 1 ) {
+				names[i] = name.substring(caseString.length() + 1);
+			} else {
+				names[i] = null;
+			}
 		}
 
 		return names;
-
-	}
-
-	public static void main(String... args) {
-
-		List<Rectangle> rectanglesRight = new ArrayList<>();
-		rectanglesRight.add(new Rectangle(2380, 190, 172, 183));
-		rectanglesRight.add(new Rectangle(2252, 416, 172, 183));
-		rectanglesRight.add(new Rectangle(2380, 642, 172, 183));
-		rectanglesRight.add(new Rectangle(2252, 868, 172, 183));
-		rectanglesRight.add(new Rectangle(2380, 1094, 172, 183));
-
-		doitfirst(rectanglesRight, "/draft.png", Conf.ROOT + "/src/main/resources/output", "r", "bat",
-				OcrMode.ORIGINAL);
-		doitfirst(rectanglesRight, "/draft1.png", Conf.ROOT + "/src/main/resources/output", "r2", "bat",
-				OcrMode.ORIGINAL);
-		doitfirst(rectanglesRight, "/real.jpg", Conf.ROOT + "/src/main/resources/output", "r3", "bat",
-				OcrMode.ORIGINAL);
-		doitfirst(rectanglesRight, "/real2.jpg", Conf.ROOT + "/src/main/resources/output", "r4", "bat",
-				OcrMode.ORIGINAL);
-
-	}
-
-	private static void doitfirst(List<Rectangle> rectanglesRight, String pathToScreenshot, String writePath,
-			String namePrefix, String data, OcrMode mode) {
-
-		doit(rectanglesRight, pathToScreenshot, writePath, namePrefix, data, 175, 0, 0, mode);
-	}
-
-	private static void doit(List<Rectangle> rs, String pathToScreenshot, String writePath, String namePrefix,
-			String data, int threshold, int darker, int lighter, OcrMode mode) {
-
-		String caseString = "Pa";
-
-		String[] names = new String[5];
-
-		for (int i = 0; i < 5; i++) {
-			Rectangle r = rs.get(i);
-			String filename = namePrefix + "_" + data + "_" + i + "_" + threshold + "_" + darker + "_" + lighter;
-			//@formatter:off
-            ScreenGrabber
-                .get(pathToScreenshot)
-                .crop(r)
-                .rotate(30.5)
-                .crop(new Rectangle(6, 62, 165, 32))
-                .addCaseHint(caseString, 30)
-                 // .monoInvert(threshold, darker, lighter)
-                .write(true, writePath, filename, "png");
-            //@formatter:on
-			LeptonicaHelper.doMagic(writePath, filename + ".png", filename + ".tif");
-			PIX p = TesseractHelper.getPixFromPath(writePath + "/" + filename + ".tif");
-			names[i] = TesseractHelper.getTextFromPicture(p, data, mode).trim().substring(caseString.length() + 1);
-		}
-
-		System.out.println(threshold + "/" + darker + "/" + lighter + ": \t" + names[0] + "\t" + names[1] + "\t"
-				+ names[2] + "\t" + names[3] + "\t" + names[4] + "\t(" + data + "/" + mode.name() + ")");
 
 	}
 

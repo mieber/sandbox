@@ -6,6 +6,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import hh.hh.hotslogs.data.History;
+import hh.hh.hotslogs.data.Player;
+
 public class TagHelper {
 
     public static String getRegionFromTitle(Element title) {
@@ -56,6 +59,66 @@ public class TagHelper {
         // @formatter:on
 
         return player;
+    }
+    
+    public static History getHistoryFromResultRow(Element tr) {
+    	
+    	History h = new History();
+    	
+    	Elements cells = tr.getElementsByTag("td");
+        if (cells.size() < 13) {
+            return null;
+        }
+
+        Iterator<Element> iterator = cells.iterator();
+        
+    	// @formatter:off
+//    	<tr class="rgRow" id="__0" bgcolor="#4F4F4F">
+//			<td class="details-control"><font color="#3BE33B">&nbsp;</font></td>
+        Element td = iterator.next();
+//			<td style="display:none;"><font color="#3BE33B">84551850</font></td>
+        td = iterator.next();
+        h.setId(td.text());
+//			<td><font color="#3BE33B">Garden of Terror</font></td>
+        td = iterator.next();
+        h.setMap(td.text());
+//			<td><font color="#3BE33B">00:21:23</font></td>
+        td = iterator.next();
+        h.setLength(td.text());
+//			<td><font color="#3BE33B"><a title="Jaina" href="/Sitewide/HeroDetails?Hero=Jaina"><font color="#3BE33B">Jaina</font></a></font></td>
+        td = iterator.next();
+//			<td style="display:none;"><font color="#3BE33B">Jaina</font></td>
+        td = iterator.next();
+        h.setHero(td.text());
+//			<td><font color="#3BE33B">8</font></td>
+        td = iterator.next();
+        h.setLvl(td.text());
+//			<td style="display:none;"><font color="#3BE33B">1</font></td>
+        td = iterator.next();
+//			<td><font color="#3BE33B">2014</font></td>
+        td = iterator.next();
+        h.setMmr(td.text());
+//			<td><font color="#3BE33B">16</font></td>
+        td = iterator.next();
+        h.setMmrChange(td.text());
+//			<td><font color="#3BE33B">9/5/2016 11:49:31 PM</font></td>
+        td = iterator.next();
+        h.setDate(td.text());
+//			<td style="display:none;"><font color="#3BE33B">636087161710000000</font></td>
+        td = iterator.next();
+//			<td style="display:none;"><font color="#3BE33B"><a href="/Replays/ShareReplay?ReplayID="><font color="#3BE33B"></font></a>&nbsp;</font></td>
+        td = iterator.next();
+//			<td style="display:none;"><font color="#3BE33B"><a title="View Details" href="/Player/MatchDetails?ReplayID=84551850"><font color="#3BE33B">View Details</font></a></font></td>
+        td = iterator.next();
+//			<td style="display:none;"><font color="#3BE33B">Assassin</font></td>
+        td = iterator.next();
+//			<td style="display:none;"><font color="#3BE33B">Burst Damage</font></td>
+        td = iterator.next();
+//		</tr>
+		//@formatter:on 
+        
+
+        return h;
     }
 
     public static int getIntFromText(String number) {

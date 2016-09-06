@@ -1,16 +1,10 @@
-var app = angular.module('app', ['ngRoute','ngResource']);
-app.config(function($routeProvider){
-    $routeProvider
-        .when('/users',{
-            templateUrl: '/views/users.html',
-            controller: 'usersController'
-        })
-        .when('/roles',{
-            templateUrl: '/views/roles.html',
-            controller: 'rolesController'
-        })
-        .otherwise(
-            { redirectTo: '/'}
-        );
+var app = angular.module('hh_app', []).controller("hh_view", function($scope) {
+
+	$scope.headers = {
+		values : [ "Map", "Hero", "Won" ]
+	}
+	
+	$scope.add_button = "Add Person";
+
 });
 

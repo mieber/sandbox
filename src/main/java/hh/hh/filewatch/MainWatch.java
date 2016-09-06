@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import hh.hh.ui.GreetingController;
+import hh.hh.ui.ScreenUpdateController;
 
 @Component
 public class MainWatch {
@@ -28,7 +28,7 @@ public class MainWatch {
     private WatchService service;
 
     @Autowired
-    GreetingController greetings;
+    ScreenUpdateController update;
 
     @PostConstruct
     public void setUp() {
@@ -56,11 +56,11 @@ public class MainWatch {
     @Scheduled(fixedRate = 5000)
     public void watchDirectoryPath() {
 
-        System.out.println("Checking path");
+        System.out.print(".");
 
         WatchKey key = service.poll();
         if (key == null) {
-            System.out.println("No Key event");
+            System.out.print("-");
             return;
         }
 
@@ -77,14 +77,15 @@ public class MainWatch {
                 // Output
                 System.out.println("New path created: " + newPath);
 
-                greetings.greet(newPath.toString());
-            } else if (ENTRY_MODIFY == kind) {
-                // modified
-                Path newPath = ((WatchEvent<Path>) watchEvent).context();
-                // Output
-                System.out.println("New path modified: " + newPath);
-                greetings.greet(newPath.toString());
-            }
+                update.greet(newPath.toString(), new String[] {"Barsig", "Gürkchen", "Murat", "s3phster", "HellBreath"});
+            } 
+//            else if (ENTRY_MODIFY == kind) {
+//                // modified
+//                Path newPath = ((WatchEvent<Path>) watchEvent).context();
+//                // Output
+//                System.out.println("New path modified: " + newPath);
+//                update.greet(newPath.toString());
+//            }
         }
         key.reset();
         

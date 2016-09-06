@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import hh.hh.hotslogs.HotslogsService;
-import hh.hh.hotslogs.Player;
 import hh.hh.hotslogs.PlayerFilter;
-import hh.hh.ocr.ScreenGrabber;
+import hh.hh.hotslogs.data.Player;
+import hh.hh.ocr.J2DImageTool;
 import hh.hh.ocr.TesseractHelper;
-import hh.hh.ui.Greeting;
+import hh.hh.ui.ScreenUpdate;
 import hh.hh.ui.HelloMessage;
 
 @Controller
@@ -39,11 +39,11 @@ public class HotshelperController {
         return "index";
     }
     
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public Greeting greeting(HelloMessage message) throws Exception {
+    @MessageMapping("/screenupdate")
+    @SendTo("/topic/updates")
+    public ScreenUpdate greeting(HelloMessage message) throws Exception {
         Thread.sleep(3000); // simulated delay
-        return new Greeting("Hello, " + message.getName() + "!");
+        return new ScreenUpdate("Hello, " + message.getName() + "!", "TEST", null);
     }
     
 
@@ -51,7 +51,7 @@ public class HotshelperController {
     @ResponseBody
     String baseInfo() {
 
-        String[] names = ScreenGrabber.extractNames("/real.jpg");
+        String[] names = J2DImageTool.extractNames("/real.jpg");
 
         Player[] foundPlayers = new Player[5];
 
@@ -67,6 +67,9 @@ public class HotshelperController {
             foundPlayers[i] = bestMatch;
 
         }
+        
+        
+        
 
         return Arrays.toString(foundPlayers);
     }

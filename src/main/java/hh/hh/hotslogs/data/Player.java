@@ -1,4 +1,4 @@
-package hh.hh.hotslogs;
+package hh.hh.hotslogs.data;
 
 import java.util.Comparator;
 

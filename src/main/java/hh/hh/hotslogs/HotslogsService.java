@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import feign.Param;
 import feign.RequestLine;
+import hh.hh.hotslogs.data.History;
+import hh.hh.hotslogs.data.Player;
 
 @RestController
 @RequestMapping("hh")
@@ -34,6 +36,9 @@ public class HotslogsService {
 
         @RequestLine("GET /Player/Profile?PlayerID={id}")
         String playerDetail(@Param("id") String id);
+        
+        @RequestLine("GET /Player/MatchHistory?PlayerID={id}")
+        String history(@Param("id") String id);
     }
 
     interface HotslogsApi {
@@ -71,6 +76,28 @@ public class HotslogsService {
 
         return result;
     }
+    
+    @RequestMapping(value = "/api/history/{id}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<History> getMatchHistory(@PathVariable String id) {
+        System.out.println("HotslogsApi.getMatchHistory()");
+        List<History> result = new ArrayList<>();
+        Document doc = Jsoup.parse(hotslogs.history(id));
+        Elements bodies = doc.getElementsByTag("tbody");
+
+        for (Element tbody :  bodies) {
+
+        	Elements rows = tbody.getElementsByTag("tr");
+        	for (Element tr : rows) {
+				History h = TagHelper.getHistoryFromResultRow(tr);
+				if (h != null) {
+					result.add(h);
+				}
+			}
+        }
+
+        return result;
+    }
+    
 
     private void handleSingleResult(String name, List<Player> result, Document doc, Element title) {
         Element form = doc.getElementById("ctl01");
