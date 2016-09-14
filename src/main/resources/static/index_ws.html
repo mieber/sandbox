@@ -29,87 +29,19 @@
 				ng-disabled="stompConnected" /> <input id="disconnectBtn" type="button" ng-controller="hh_view" value="disconnect"
 				ng-click="disconnect()" ng-disabled="stompConnected" />
 		</div>
-
-
-		<p>
-			<input type="button" ng-controller="hh_view" ng-value="add_button" ng-click="add()" />
-		</p>
 		
 		<md-content class="md-padding">
 		<div layout="column" layout-gt-xs="row">
-			<md-card flex>
-			<h4>Name: {{enemyName1}}</h4>
-			<h4>Id: {{enemyId1}}</h4>
-			<h4>MMR: {{enemyMmr1}}</h4>
-			<h4>Region: {{enemyRegion1}}</h4>
-			<h4>Hits: {{enemyMatches1}}</h4>
+			<md-card flex ng-repeat="e in enemies">
+			<h4>Name: {{e.name}}</h4>
+			<h4>Id: {{e.id}}</h4>
+			<h4>MMR: {{e.mmr}}</h4>
+			<h4>Region: {{e.region}}</h4>
+			<h4>Games: {{e.numberOfGames}}</h4>
+			<h4>Hits: {{e.numberOfMatches}}</h4>
 			<md-card-content>
 			<table>
-				<tr ng-repeat="n in matches1">
-					<td>{{n.map}}</td>
-					<td>{{n.hero}}</td>
-					<td>{{n.lvl}}</td>
-				</tr>
-			</table>
-			</md-card-content> </md-card>
-
-			<md-card flex>
-			<h4>Name: {{enemyName2}}</h4>
-			<h4>Id: {{enemyId2}}</h4>
-			<h4>MMR: {{enemyMmr2}}</h4>
-			<h4>Region: {{enemyRegion2}}</h4>
-			<h4>Hits: {{enemyMatches2}}</h4>
-			<md-card-content>
-			<table>
-				<tr ng-repeat="n in matches2">
-					<td>{{n.map}}</td>
-					<td>{{n.hero}}</td>
-					<td>{{n.lvl}}</td>
-				</tr>
-			</table>
-			</md-card-content> </md-card>
-
-			<md-card flex>
-			<h4>Name: {{enemyName3}}</h4>
-			<h4>Id: {{enemyId3}}</h4>
-			<h4>MMR: {{enemyMmr3}}</h4>
-			<h4>Region: {{enemyRegion3}}</h4>
-			<h4>Hits: {{enemyMatches3}}</h4>
-			<md-card-content>
-			<table>
-				<tr ng-repeat="n in matches3">
-					<td>{{n.map}}</td>
-					<td>{{n.hero}}</td>
-					<td>{{n.lvl}}</td>
-				</tr>
-			</table>
-			</md-card-content> </md-card>
-
-			<md-card flex>
-			<h4>Name: {{enemyName4}}</h4>
-			<h4>Id: {{enemyId4}}</h4>
-			<h4>MMR: {{enemyMmr4}}</h4>
-			<h4>Region: {{enemyRegion4}}</h4>
-			<h4>Hits: {{enemyMatches4}}</h4>
-			<md-card-content>
-			<table>
-				<tr ng-repeat="n in matches4">
-					<td>{{n.map}}</td>
-					<td>{{n.hero}}</td>
-					<td>{{n.lvl}}</td>
-				</tr>
-			</table>
-			</md-card-content> </md-card>
-
-			<md-card flex>
-			<h4>Name: {{enemyName5}}</h4>
-			<h4>Id: {{enemyId5}}</h4>
-			<h4>MMR: {{enemyMmr5}}</h4>
-			<h4>Region: {{enemyRegion5}}</h4>
-			<h4>Hits: {{enemyMatches5}}</h4>
-			<md-card-content>
-			<table>
-				<tr ng-repeat="n in matches5">
+				<tr ng-repeat="n in e.matches">
 					<td>{{n.map}}</td>
 					<td>{{n.hero}}</td>
 					<td>{{n.lvl}}</td>

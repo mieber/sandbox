@@ -4,7 +4,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+import org.apache.commons.lang.math.RandomUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -80,7 +82,7 @@ public class HotslogsService {
     
     @RequestMapping(value = "/api/bestmatch/{name}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Player getBestMatch(@PathVariable String name) {
-        System.out.println("HotslogsApi.getBestMatch()");
+        System.out.println("HotslogsApi.getBestMatch(): " + name);
         List<Player> players = getHotsIds(name);
         Player bestMatch = new PlayerFilter(players).getBestMatch();
         System.out.println("Best Match: " + bestMatch);
