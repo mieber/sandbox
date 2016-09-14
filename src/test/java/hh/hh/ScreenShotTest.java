@@ -119,7 +119,7 @@ public class ScreenShotTest {
 	
 
 	private void compare(String file, String prefix, String[] expected) {
-		String[] names = J2DImageTool.extractNames("/" + file, prefix);
+		String[] names = J2DImageTool.extractNames("/" + file, prefix).getEnemies();
 
 		System.out.println("***** " + prefix + " / " + file + ":");
 		System.out.println("Marker\tExpected\tActual");

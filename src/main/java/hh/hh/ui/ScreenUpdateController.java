@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import hh.hh.ocr.ScreenGrabResult;
+
 @Controller
 public class ScreenUpdateController {
 
@@ -14,9 +16,8 @@ public class ScreenUpdateController {
         this.template = template;
     }
 
-    public void greet(String greeting, String[] enemies) {
-         ScreenUpdate greet = new ScreenUpdate("Hello, " + greeting + "!", "TEST2", enemies);
-        this.template.convertAndSend("/topic/updates", greet);
+    public void update(ScreenGrabResult update) {
+        this.template.convertAndSend("/topic/updates", update);
     }
 
 }

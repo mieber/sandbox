@@ -13,26 +13,26 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import hh.hh.ui.ScreenUpdateController;
+import hh.hh.Conf;
 
 @Component
 public class MainWatch {
 
     private WatchService service;
 
-    @Autowired
-    ScreenUpdateController update;
+    private List<FileEventListener> listeners = new ArrayList<>();
 
     @PostConstruct
     public void setUp() {
-        File dir = new File("C:/Users/msieber1/Pictures/screens");
+        File dir = new File(Conf.FILEWATCH_ROOT);
         Path path = dir.toPath();
         System.out.println("Watching path: " + path);
 
@@ -50,6 +50,10 @@ public class MainWatch {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+    }
+    
+    public void addListener(FileEventListener listener) {
+    	listeners.add(listener);
     }
 
     @SuppressWarnings("unchecked")
@@ -74,10 +78,16 @@ public class MainWatch {
             } else if (ENTRY_CREATE == kind) {
                 // A new Path was created
                 Path newPath = ((WatchEvent<Path>) watchEvent).context();
+                Path absolutePath = newPath.toAbsolutePath();
                 // Output
                 System.out.println("New path created: " + newPath);
-
-                update.greet(newPath.toString(), new String[] {"Barsig", "Gürkchen", "Murat", "s3phster", "HellBreath"});
+                for (FileEventListener listener : listeners) {
+                	try {
+                		listener.inform(Conf.FILEWATCH_ROOT + "/" + newPath.toString(), ENTRY_CREATE);
+                	} catch (Exception e) {
+                		e.printStackTrace();
+                	}
+				}
             } 
 //            else if (ENTRY_MODIFY == kind) {
 //                // modified

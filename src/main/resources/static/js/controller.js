@@ -24,8 +24,28 @@ app.controller('hh_controller', function($scope, $log, hhHistory) {
 		var firstname = 'A';
 		var lastname = 'b';
 
-		var person = Person(firstname, lastname);
+//		private String id;
+//
+//		private boolean win;
+//
+//		private String map;
+//
+//		private String length;
+//
+//		private String Hero;
+//
+//		private String Lvl;
+//
+//		private String mmr;
+//
+//		private String mmrChange;
+//
+//		private String date;
+		var person = {id: 4387231, map: "Test", hero: "Hero", lvl: "12"};
 		$log.info("Adding: " + person);
+		if ($scope.matches == null) {
+			$scope.matches = [];
+		}
 		$scope.matches.push(person);
 	}
 
@@ -49,6 +69,7 @@ app.controller('hh_controller', function($scope, $log, hhHistory) {
 	$scope.disconnect = function() {
 		
 		var history = hhHistory.get({ id: 4387231}, function(history) {
+			$log.info(history.rows);
 			$scope.matches = history.rows;
 		});
 //		stompClient.disconnect();

@@ -20,8 +20,8 @@ import hh.hh.hotslogs.HotslogsService;
 import hh.hh.hotslogs.PlayerFilter;
 import hh.hh.hotslogs.data.Player;
 import hh.hh.ocr.J2DImageTool;
+import hh.hh.ocr.ScreenGrabResult;
 import hh.hh.ocr.TesseractHelper;
-import hh.hh.ui.ScreenUpdate;
 import hh.hh.ui.HelloMessage;
 
 @Controller
@@ -41,9 +41,9 @@ public class HotshelperController {
     
     @MessageMapping("/screenupdate")
     @SendTo("/topic/updates")
-    public ScreenUpdate greeting(HelloMessage message) throws Exception {
+    public ScreenGrabResult greeting(ScreenGrabResult message) throws Exception {
         Thread.sleep(3000); // simulated delay
-        return new ScreenUpdate("Hello, " + message.getName() + "!", "TEST", null);
+        return message;
     }
     
 
@@ -51,7 +51,7 @@ public class HotshelperController {
     @ResponseBody
     String baseInfo() {
 
-        String[] names = J2DImageTool.extractNames("/real.jpg");
+        String[] names = J2DImageTool.extractNames("/real.jpg").getEnemies();
 
         Player[] foundPlayers = new Player[5];
 

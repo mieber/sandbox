@@ -138,12 +138,12 @@ public class J2DImageTool {
 		return this;
 	}
 	
-	public static String[] extractNames(String pathToScreenshot) {
+	public static ScreenGrabResult extractNames(String pathToScreenshot) {
 		return extractNames(pathToScreenshot, "r");
 		
 	}
 
-	public static String[] extractNames(String pathToScreenshot, String prefix) {
+	public static ScreenGrabResult extractNames(String pathToScreenshot, String prefix) {
 
 		String writePath = Conf.ROOT + "/src/main/resources/output";
 
@@ -157,12 +157,25 @@ public class J2DImageTool {
 		String caseString = "Pa";
 
 		String[] names = new String[5];
+		
+		System.out.println("Going to read: " + pathToScreenshot);
+		
+		BufferedImage bufferedImage = null;
+		try {
+			bufferedImage = ImageIO.read(new File(pathToScreenshot));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 
 		for (int i = 0; i < 5; i++) {
 			Rectangle r = rectanglesRight.get(i);
+			
+			
 			//@formatter:off
             J2DImageTool
-                .getFromClasspath(pathToScreenshot)
+                .get(bufferedImage)
                 .crop(r)
                 .rotate(30.5)
                 .crop(new Rectangle(6, 62, 165, 32))
@@ -202,8 +215,11 @@ public class J2DImageTool {
 				names[i] = null;
 			}
 		}
+		
+		ScreenGrabResult result = new ScreenGrabResult();
+		result.setEnemies(names);
 
-		return names;
+		return result;
 
 	}
 

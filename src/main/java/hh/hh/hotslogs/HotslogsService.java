@@ -78,6 +78,16 @@ public class HotslogsService {
         return result;
     }
     
+    @RequestMapping(value = "/api/bestmatch/{name}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Player getBestMatch(@PathVariable String name) {
+        System.out.println("HotslogsApi.getBestMatch()");
+        List<Player> players = getHotsIds(name);
+        Player bestMatch = new PlayerFilter(players).getBestMatch();
+        System.out.println("Best Match: " + bestMatch);
+
+        return bestMatch;
+    }
+    
     @RequestMapping(value = "/api/history/{id}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public HistoryResult getMatchHistory(@PathVariable String id) {
         System.out.println("HotslogsApi.getMatchHistory()");
