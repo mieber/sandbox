@@ -99,6 +99,7 @@ public class TagHelper {
         }
 //			<td style="display:none;"><font color="#3BE33B">1</font></td>
         td = iterator.next();
+        h.setWin("1".equals(td.text()));
 //			<td><font color="#3BE33B">2014</font></td>
         td = iterator.next();
         h.setMmr(td.text());

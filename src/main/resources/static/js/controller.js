@@ -68,6 +68,34 @@ app.controller('hh_controller', function($scope, $log, hhHistory, hhBestMatch) {
 		 $log.info("Disconnected");
 	}
 	
+	$scope.update = function(index) {
+
+		 $log.info("Update: " + index);
+		 $log.info("Update: " + $scope.enemies[index].name);
+		 
+		 
+		 var bestMatch = hhBestMatch.get({ name : $scope.enemies[index].name
+			}, function(bestMatch) {
+				bestMatch.matches =  [ {
+					map : "loading",
+					hero : "loading",
+					lvl : "0"
+				} ];
+				
+				if (!(angular.isUndefined(bestMatch.id) || bestMatch.id === null)) {
+					hhHistory.get({
+						id : bestMatch.id
+					}, function(history) {
+						bestMatch.matches = history.rows;
+						bestMatch.statistics = history.statistics;
+					});
+				}
+				
+			});
+			
+			$scope.enemies[index] = bestMatch;
+	}
+	
 	$scope.test = function() {
 		
 		$log.info("Test");

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Hello WebSocket3</title>
+<title>HHelper</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="js/sockjs-0.3.4.js"></script>
 <script src="js/stomp.js"></script>
@@ -17,6 +17,7 @@
 <script type="text/javascript" src="js/app.js"></script>
 <script type="text/javascript" src="js/controller.js"></script>
 
+<link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="/webjars/angular-material/1.1.0/angular-material.min.css">
 <link rel="stylesheet" href="/webjars/angular-material/1.1.0/layouts/angular-material.layouts.css">
 </head>
@@ -32,7 +33,10 @@
 			<div layout="column" layout-gt-xs="row">
 				<md-card flex ng-repeat="e in enemies"> 
 					<md-card-content> 
-						<md-subheader class="md-no-sticky">{{e.name}} ({{e.region}})</md-subheader> 
+						<md-input-container class="md-block">
+				          <input ng-model="e.name" aria-label="Name">
+				          <md-button class="md-raised" ng-click="update($index)">update</md-button>
+				        </md-input-container>
 						<md-list-item class="md-2-line">
 						<div class="md-list-item-text">
 							<p>Id: {{e.id}}</p>
@@ -50,7 +54,7 @@
 						<md-divider></md-divider>
 						<md-list-item class="md-2-line">
 						<div class="md-list-item-text">
-							<p ng-repeat="n in e.matches | limitTo:50">{{n.hero}} ({{n.lvl}})</p>
+							<p ng-repeat="n in e.matches | limitTo:50" ng-class='{historywin : n.win, historylose: !n.win}'>{{n.date.substr(0, n.date.indexOf(' '))}} {{n.hero}} ({{n.lvl}})</p>
 						</div>
 						<md-divider></md-divider>
 						</md-list-item> 
