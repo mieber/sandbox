@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.lept.PIX;
 import org.bytedeco.javacpp.tesseract;
-import org.bytedeco.javacpp.tesseract.StringGenericVector;
 import org.bytedeco.javacpp.tesseract.TessBaseAPI;
 
 import hh.hh.Conf;

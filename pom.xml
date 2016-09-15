@@ -8,8 +8,6 @@
 	<packaging>jar</packaging>
 	<name>hh</name>
 
-
-
 	<repositories>
 		<repository>
 			<id>data-local</id>
@@ -24,10 +22,6 @@
 		<feign.version>9.0.0</feign.version>
 		<java.version>1.8.0</java.version>
 	</properties>
-
-
-
-
 
 	<dependencies>
 

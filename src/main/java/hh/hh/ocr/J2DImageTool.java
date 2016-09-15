@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.IOUtils;
 import org.bytedeco.javacpp.lept.PIX;
 
 import com.github.axet.lookup.Capture;
