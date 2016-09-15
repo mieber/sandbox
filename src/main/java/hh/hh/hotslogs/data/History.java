@@ -12,7 +12,7 @@ public class History {
 
 	private String Hero;
 
-	private String Lvl;
+	private int lvl;
 
 	private String mmr;
 
@@ -53,14 +53,6 @@ public class History {
 		Hero = hero;
 	}
 
-	public String getLvl() {
-		return Lvl;
-	}
-
-	public void setLvl(String lvl) {
-		Lvl = lvl;
-	}
-
 	public String getMmr() {
 		return mmr;
 	}
@@ -94,10 +86,19 @@ public class History {
 		this.mmrChange = mmrChange;
 	}
 
+	public int getLvl() {
+		return lvl;
+	}
+
+	public void setLvl(int lvl) {
+		this.lvl = lvl;
+	}
+
 	@Override
 	public String toString() {
 		return "History [id=" + id + ", win=" + win + ", map=" + map + ", length=" + length + ", Hero=" + Hero
-				+ ", Lvl=" + Lvl + ", mmr=" + mmr + ", mmrChange=" + mmrChange + ", date=" + date + "]";
+				+ ", lvl=" + lvl + ", mmr=" + mmr + ", mmrChange=" + mmrChange + ", date=" + date + "]";
 	}
+
 
 }

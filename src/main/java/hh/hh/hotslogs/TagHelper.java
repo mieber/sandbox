@@ -92,7 +92,11 @@ public class TagHelper {
         h.setHero(td.text());
 //			<td><font color="#3BE33B">8</font></td>
         td = iterator.next();
-        h.setLvl(td.text());
+        try {
+        	h.setLvl(Integer.parseInt(td.text()));
+        } catch (NumberFormatException nfe) {
+        	 h.setLvl(0);
+        }
 //			<td style="display:none;"><font color="#3BE33B">1</font></td>
         td = iterator.next();
 //			<td><font color="#3BE33B">2014</font></td>

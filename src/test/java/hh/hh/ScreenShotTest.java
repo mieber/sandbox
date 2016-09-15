@@ -4,14 +4,10 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bytedeco.javacpp.lept.PIX;
 import org.junit.Before;
 import org.junit.Test;
 
-import hh.hh.ocr.LeptonicaHelper;
 import hh.hh.ocr.J2DImageTool;
-import hh.hh.ocr.TesseractHelper;
-import hh.hh.ocr.TesseractHelper.OcrMode;
 
 public class ScreenShotTest {
 

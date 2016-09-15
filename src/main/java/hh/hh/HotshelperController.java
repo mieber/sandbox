@@ -3,10 +3,10 @@ package hh.hh;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bytedeco.javacpp.lept.PIX;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -21,12 +21,11 @@ import hh.hh.hotslogs.PlayerFilter;
 import hh.hh.hotslogs.data.Player;
 import hh.hh.ocr.J2DImageTool;
 import hh.hh.ocr.ScreenGrabResult;
-import hh.hh.ocr.TesseractHelper;
-import hh.hh.ui.HelloMessage;
 
 @Controller
 @EnableAutoConfiguration
 @EnableScheduling
+@EnableCaching
 @ComponentScan(basePackages = { "hh.hh" })
 public class HotshelperController {
     

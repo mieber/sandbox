@@ -78,7 +78,6 @@ public class MainWatch {
             } else if (ENTRY_CREATE == kind) {
                 // A new Path was created
                 Path newPath = ((WatchEvent<Path>) watchEvent).context();
-                Path absolutePath = newPath.toAbsolutePath();
                 // Output
                 System.out.println("New path created: " + newPath);
                 for (FileEventListener listener : listeners) {
