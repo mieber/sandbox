@@ -8,6 +8,8 @@ public class Statistic {
 	
 	private String percentage;
 	
+	private String winrate;
+	
 	private long number;
 
 	public String getHero() {
@@ -40,6 +42,14 @@ public class Statistic {
 
 	public void setLvl(int lvl) {
 		this.lvl = lvl;
+	}
+
+	public String getWinrate() {
+		return winrate;
+	}
+
+	public void setWinrate(String winrate) {
+		this.winrate = winrate;
 	}
 
 }

@@ -48,13 +48,33 @@
 						<md-divider></md-divider>
 						<md-list-item class="md-2-line">
 						<div class="md-list-item-text">
-							<p ng-repeat="s in e.statistics">{{s.hero}}({{s.lvl}}) {{s.percentage}}% #{{s.number}}</p>
+							<table>
+								<tr>
+									<td>Hero</td>
+									<td>Lvl</td>
+									<td>play%</td>
+									<td>win%</td>
+									<td>#</td>
+								</tr>
+								<tr ng-repeat="s in e.statistics">
+									<td>{{s.hero}}</td>
+									<td>{{s.lvl}}</td>
+									<td>{{s.percentage.substr(0, s.percentage.indexOf('.'))}}%</td>
+									<td>{{s.winrate.substr(0, s.winrate.indexOf('.'))}}%</td>
+									<td>{{s.number}}</td>
+								</tr>
+							<table>
 						</div>
 						</md-list-item> 
 						<md-divider></md-divider>
 						<md-list-item class="md-2-line">
 						<div class="md-list-item-text">
-							<p ng-repeat="n in e.matches | limitTo:50" ng-class='{historywin : n.win, historylose: !n.win}'>{{n.date.substr(0, n.date.indexOf(' '))}} {{n.hero}} ({{n.lvl}})</p>
+						<table>
+							<tr ng-repeat="n in e.matches | limitTo:50" ng-class='{historywin : n.win, historylose: !n.win}'>
+								<td>{{n.date.substr(0, n.date.indexOf(' '))}}</td>
+								<td>{{n.hero}}</td>
+							</tr>
+						</table>
 						</div>
 						<md-divider></md-divider>
 						</md-list-item> 

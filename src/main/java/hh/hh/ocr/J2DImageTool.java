@@ -144,7 +144,7 @@ public class J2DImageTool {
 
 	public static ScreenGrabResult extractNames(String pathToScreenshot, String prefix) {
 
-		String writePath = Conf.ROOT + "/src/main/resources/output";
+		String writePath = Conf.FILE_OUTPUT;
 
 		List<Rectangle> rectanglesRight = new ArrayList<>();
 		rectanglesRight.add(new Rectangle(2380, 190, 172, 183));
