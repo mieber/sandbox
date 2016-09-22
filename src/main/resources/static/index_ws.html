@@ -23,47 +23,89 @@
 </head>
 <body ng-app="hh_app">
 	<div ng-controller="hh_controller" ng-cloak>
-		<md-content>
-		<section layout="row" layout-sm="column" layout-align="center center" layout-wrap="">
-			<md-button class="md-raised" ng-click="connect()">connect</md-button>
-			<md-button class="md-raised" ng-click="disconnect()">disconnect</md-button>
-			<md-button class="md-raised" ng-click="test()">test</md-button>
-		</section>
-		<section layout="row" layout-sm="column" layout-align="center center" layout-wrap="">
-			<div layout="column" layout-gt-xs="row">
-				<md-card flex ng-repeat="e in enemies"> 
-					<md-card-content> 
-						<md-input-container class="md-block">
-				          <input ng-model="e.name" aria-label="Name">
-				          <md-button class="md-raised" ng-click="update($index)">update</md-button>
-				        </md-input-container>
-						<md-list-item class="md-2-line">
-						<div class="md-list-item-text">
-							<p>Id: {{e.id}}</p>
-							<p>MMR: {{e.mmr}}</p>
-							<p>Games: {{e.numberOfGames}}</p>
-							<p>Hits: {{e.numberOfMatches}}</p>
-						</div>
-						</md-list-item> 
-						<md-divider></md-divider>
-						<md-list-item class="md-2-line">
-						<div class="md-list-item-text">
-							<p ng-repeat="s in e.statistics">{{s.hero}}({{s.lvl}}) {{s.percentage}}% #{{s.number}}</p>
-						</div>
-						</md-list-item> 
-						<md-divider></md-divider>
-						<md-list-item class="md-2-line">
-						<div class="md-list-item-text">
-							<p ng-repeat="n in e.matches | limitTo:50" ng-class='{historywin : n.win, historylose: !n.win}'>{{n.date.substr(0, n.date.indexOf(' '))}} {{n.hero}} ({{n.lvl}})</p>
-						</div>
-						<md-divider></md-divider>
-						</md-list-item> 
-					</md-card-content> 
-				</md-card>
-			</div>
-		</section>
-		
+		<md-tabs md-dynamic-height="" md-border-bottom="">
+	      <md-tab label="Draft Helper">
+	        <md-content class="md-padding">
+			<section layout="row" layout-sm="column" layout-align="center center" layout-wrap="">
+				<md-button class="md-raised" ng-click="connect()">connect</md-button>
+				<md-button class="md-raised" ng-click="disconnect()">disconnect</md-button>
+				<md-button class="md-raised" ng-click="test()">test</md-button>
+			</section>
+			<section layout="row" layout-sm="column" layout-align="center center" layout-wrap="">
+				<div layout="column" layout-gt-xs="row">
+					<md-card flex ng-repeat="e in enemies"> 
+						<md-card-content> 
+							<md-input-container class="md-block">
+					          <input ng-model="e.name" aria-label="Name">
+					          <md-button class="md-raised" ng-click="update($index)">update</md-button>
+					        </md-input-container>
+							<md-list-item class="md-2-line">
+							<div class="md-list-item-text">
+								<p>Id: {{e.id}}</p>
+								<p>MMR: {{e.mmr}}</p>
+								<p>Games: {{e.numberOfGames}}</p>
+								<p>Hits: {{e.numberOfMatches}}</p>
+							</div>
+							</md-list-item> 
+							<md-divider></md-divider>
+							<md-list-item class="md-2-line">
+							<div class="md-list-item-text">
+							<table>
+								<tr>
+									<td>Hero</td>
+									<td>Lvl</td>
+									<td>play%</td>
+									<td>win%</td>
+									<td>#</td>
+								</tr>
+								<tr ng-repeat="s in e.statistics">
+									<td>{{s.hero}}</td>
+									<td>{{s.lvl}}</td>
+									<td>{{s.percentage.substr(0, s.percentage.indexOf('.'))}}%</td>
+									<td>{{s.winrate.substr(0, s.winrate.indexOf('.'))}}%</td>
+									<td>{{s.number}}</td>
+								</tr>
+							<table>
+							</div>
+							</md-list-item> 
+							<md-divider></md-divider>
+							<md-list-item class="md-2-line">
+							<div class="md-list-item-text">
+						<table>
+							<tr ng-repeat="n in e.matches | limitTo:50" ng-class='{historywin : n.win, historylose: !n.win}'>
+								<td>{{n.date.substr(0, n.date.indexOf(' '))}}</td>
+								<td>{{n.hero}}</td>
+							</tr>
+						</table>
+							</div>
+							<md-divider></md-divider>
+							</md-list-item> 
+						</md-card-content> 
+					</md-card>
+				</div>
+			</section>
+			
 		</md-content>
+		</md-tab>
+		<md-tab label="Settings">
+		  <md-content layout-padding="">
+		      <form name="settings">
+		        <div layout-gt-sm="row">
+		          <md-input-container class="md-block" flex-gt-sm="">
+		            <label>Hots Profile</label>
+		            <input ng-model="settings.ownProfilw">
+		          </md-input-container>
+		
+        		  <md-input-container class="md-block" flex-gt-sm="">
+		            <label>First name</label>
+		            <input ng-model="user.firstName">
+		          </md-input-container>
+
+		        </div>
+		
+		      </form>
+		  </md-content>
+		</md-tab>
 	</div>
 
 

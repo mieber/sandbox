@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BinaryOperator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -175,44 +176,64 @@ public class HotslogsService {
 
 		int maxRecords = 200;
 
-		Map<String, Long> counts = input.stream().limit(maxRecords)
+		// number of games per hero
+		Map<String, Long> mappingHeroToNumberOfGames = input.stream().limit(maxRecords)
 				.collect(Collectors.groupingBy(History::getHero, Collectors.counting()));
 
-		Map<String, Optional<History>> max = input.stream().limit(maxRecords).collect(
+		// number of wins per hero
+		Map<String, Long> mappingHeroToNumberOfWins = input.stream().limit(maxRecords).filter(History::isWin)
+				.collect(Collectors.groupingBy(History::getHero, Collectors.counting()));
+
+		// max hero lvl over all games
+		Map<String, Optional<History>> mappingHeroToMaxLvl = input.stream().limit(maxRecords).collect(
 				Collectors.groupingBy(History::getHero, Collectors.maxBy(Comparator.comparingInt(History::getLvl))));
 
-		Map<String, Long> sorted = new LinkedHashMap<>();
-		counts.entrySet().stream().sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-				.forEachOrdered(e -> sorted.put(e.getKey(), e.getValue()));
+		// sort desc by number of games
+		Map<String, Long> sortedMappingHeroToNumberOfGames = new LinkedHashMap<>();
+		mappingHeroToNumberOfGames.entrySet().stream().sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+				.forEachOrdered(e -> sortedMappingHeroToNumberOfGames.put(e.getKey(), e.getValue()));
 
 		List<Statistic> result = new ArrayList<>();
 		int i = 0;
-		for (Entry<String, Long> entry : sorted.entrySet()) {
-			if (i++ > 5) {
+		for (Entry<String, Long> numberOfGamesPerHero : sortedMappingHeroToNumberOfGames.entrySet()) {
+			// only create stat for top 6 heroes
+			if (i++ >= 6) {
 				break;
 			}
+			String heroName = numberOfGamesPerHero.getKey();
+			Long numberOfGames = numberOfGamesPerHero.getValue();
+			
 			Statistic s = new Statistic();
-			s.setHero(entry.getKey());
-			s.setNumber(entry.getValue());
-			Optional<History> o = max.get(entry.getKey());
+			s.setHero(heroName);
+			s.setNumber(numberOfGames);
+			Optional<History> o = mappingHeroToMaxLvl.get(heroName);
 			if (o.isPresent()) {
 				s.setLvl(o.get().getLvl());
 			} else {
 				s.setLvl(0);
 			}
 
-			Long count = entry.getValue();
-			int size = input.size();
-			if (size > maxRecords) {
-				size = maxRecords;
+			int sizeOfHistory = input.size();
+			if (input.size() > maxRecords) {
+				sizeOfHistory = maxRecords;
+			}
+			
+			BigDecimal countOfGamesPerHero = new BigDecimal(numberOfGamesPerHero.getValue());
+			BigDecimal size = new BigDecimal(sizeOfHistory);
+			
+
+			BigDecimal percentage = countOfGamesPerHero.divide(size, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+			
+			if (mappingHeroToNumberOfWins.get(heroName) != null) {
+				BigDecimal wins = new BigDecimal(mappingHeroToNumberOfWins.get(heroName));
+				BigDecimal winrate = wins.divide(countOfGamesPerHero, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+				s.setWinrate(winrate.toString());
+			} else {
+				s.setWinrate("0");
 			}
 
-			BigDecimal bCount = new BigDecimal(count);
-			BigDecimal bSize = new BigDecimal(size);
-
-			BigDecimal percentage = bCount.divide(bSize, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
-
 			s.setPercentage(percentage.toString());
+			
 
 			result.add(s);
 		}
