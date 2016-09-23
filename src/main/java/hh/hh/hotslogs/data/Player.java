@@ -23,7 +23,7 @@ public class Player {
     private int mmr;
     private String region;
     private int numberOfGames;
-    private int numberOfMatches;
+    private int hits;
 
     public Player(int id) {
         this.id = id;
@@ -65,22 +65,22 @@ public class Player {
         return numberOfGames;
     }
 
-    public void setNumberOfGames(int numberOfGames) {
-        this.numberOfGames = numberOfGames;
+    public void setNumberOfGames(int hits) {
+        this.numberOfGames = hits;
     }
 
-    public int getNumberOfMatches() {
-        return numberOfMatches;
+    public int getHits() {
+        return hits;
     }
 
-    public void setNumberOfMatches(int numberOfMatches) {
-        this.numberOfMatches = numberOfMatches;
+    public void setHits(int hits) {
+        this.hits = hits;
     }
 
     @Override
     public String toString() {
         return "Player [name=" + name + ", id=" + id + ", mmr=" + mmr + ", region=" + region + ", numberOfGames=" + numberOfGames
-                + ", numberOfMatches=" + numberOfMatches + "]";
+                + ", hits=" + hits + "]";
     }
 
 }

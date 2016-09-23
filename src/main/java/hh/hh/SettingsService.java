@@ -15,11 +15,11 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class SettingsService {
-	
+
 	public static final String USER_HOME = System.getProperty("user.home");
 	public static final String HH_HOME = USER_HOME + File.separator + "hhelper";
 	public static final String TESSDATA_SUBPATH = "tessdata";
-	public static final String PROPERTIES_FILE_NAME = "hh.properties";
+	public static final String PROPERTIES_FILE_PATH = HH_HOME + File.separator + "hh.properties";
 
 	public enum SettingsParam {
 		FILE_OUTPUT(HH_HOME + File.separator + "ocr_temp"), //
@@ -28,7 +28,9 @@ public class SettingsService {
 		TESSDATA_PATH(HH_HOME), //
 		PROXY_ENABLED(BooleanUtils.toStringYesNo(false)), //
 		PROXY_URL("127.0.0.1"), //
-		PROXY_PORT("80");
+		PROXY_PORT("80"), //
+		REGION("EU"), //
+		MMR("1867");
 		private String defaultValue;
 
 		private SettingsParam(String defaultValue) {
@@ -41,27 +43,9 @@ public class SettingsService {
 	@PostConstruct
 	private void createSettings() {
 		initData();
+		checkForUpdates();
 		checkFolders();
 		exportTessdata();
-	}
-
-	private void checkFolders() {
-
-		File writeDirectory = new File(getTessdataPath() + File.separator + TESSDATA_SUBPATH);
-		if (!writeDirectory.exists()) {
-			writeDirectory.mkdirs();
-		}
-
-		writeDirectory = new File(getFileOutput());
-		if (!writeDirectory.exists()) {
-			writeDirectory.mkdirs();
-		}
-
-		writeDirectory = new File(getFilewatchRoot());
-		if (!writeDirectory.exists()) {
-			writeDirectory.mkdirs();
-		}
-
 	}
 
 	public boolean isProxyEnabled() {
@@ -93,13 +77,66 @@ public class SettingsService {
 		return properties.getProperty(SettingsParam.TESSDATA_PATH.name());
 	}
 
+	public String getRegion() {
+		return properties.getProperty(SettingsParam.REGION.name());
+	}
+
+	public int getMmr() {
+		try {
+			return Integer.valueOf(properties.getProperty(SettingsParam.MMR.name()));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return 1800;
+		}
+	}
+
+	private void checkForUpdates() {
+
+		boolean update = false;
+		for (SettingsParam s : SettingsParam.values()) {
+			String p = properties.getProperty(s.name());
+			if (p == null) {
+				properties.setProperty(s.name(), s.defaultValue);
+				update = true;
+			}
+		}
+
+		if (update) {
+			try {
+				properties.store(new FileOutputStream(PROPERTIES_FILE_PATH), "initial load");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void checkFolders() {
+
+		File writeDirectory = new File(getTessdataPath() + File.separator + TESSDATA_SUBPATH);
+		if (!writeDirectory.exists()) {
+			writeDirectory.mkdirs();
+		}
+
+		writeDirectory = new File(getFileOutput());
+		if (!writeDirectory.exists()) {
+			writeDirectory.mkdirs();
+		}
+
+		writeDirectory = new File(getFilewatchRoot());
+		if (!writeDirectory.exists()) {
+			writeDirectory.mkdirs();
+		}
+
+	}
+
 	private void initData() {
 
 		if (!new File(HH_HOME).exists()) {
 			new File(HH_HOME).mkdirs();
 		}
 
-		File propertyFile = new File(HH_HOME + File.separator + PROPERTIES_FILE_NAME);
+		File propertyFile = new File(PROPERTIES_FILE_PATH);
+
 		if (!propertyFile.exists()) {
 			Properties p = new Properties();
 			for (SettingsParam s : SettingsParam.values()) {

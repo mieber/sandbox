@@ -23,7 +23,7 @@ public class TagHelper {
         return text.substring(start, end);
     }
 
-    public static Player getPlayerFromResultRow(Element tr, String name) {
+    public static Player getPlayerFromResultRow(Element tr) {
         Elements cells = tr.getElementsByTag("td");
         if (cells.size() < 7) {
             return null;
@@ -34,7 +34,6 @@ public class TagHelper {
         // <td style="display:none;">4387231</td>
         Element td = iterator.next();
         Player player = new Player(TagHelper.getIntFromText(td.text()));
-        player.setName(name);
         // <td style="display:none;">8/9/2016 6:44:51 AM</td>
         td = iterator.next();
         // <td>EU</td>
@@ -45,6 +44,8 @@ public class TagHelper {
         //    <a title="PandaAttack" href="/Player/Profile?PlayerID=4387231">PandaAttack</a>
         // </td>
         td = iterator.next();
+        Element link = td.getElementsByTag("a").get(0);
+        player.setName(link.text());
         // <td>1890</td>
         td = iterator.next();
         player.setMmr(TagHelper.getIntFromText(td.text()));

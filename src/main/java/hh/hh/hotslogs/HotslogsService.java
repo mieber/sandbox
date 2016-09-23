@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import feign.Param;
 import feign.RequestLine;
+import hh.hh.SettingsService;
 import hh.hh.hotslogs.data.History;
 import hh.hh.hotslogs.data.HistoryResult;
 import hh.hh.hotslogs.data.Player;
@@ -40,6 +41,9 @@ public class HotslogsService {
 
 	@Autowired
 	private HotslogsApi hotslogsapi;
+	
+	@Autowired
+	private SettingsService settings;
 
 	interface Hotslogs {
 		@RequestLine("GET /PlayerSearch?Name={name}")
@@ -76,14 +80,14 @@ public class HotslogsService {
 		for (Element title : titles) {
 
 			if (title.toString().contains("Player Search")) {
-				handleResultTable(name, result, doc);
+				handleResultTable(result, doc);
 
 			} else {
 				handleSingleResult(name, result, doc, title);
 			}
 		}
 		for (Player player : result) {
-			player.setNumberOfMatches(result.size());
+			player.setHits(result.size());
 		}
 
 		return result;
@@ -94,7 +98,7 @@ public class HotslogsService {
 	public Player getBestMatch(@PathVariable String name) {
 		System.out.println("HotslogsApi.getBestMatch(): " + name);
 		List<Player> players = getHotsIds(name);
-		Player bestMatch = new PlayerFilter(players).getBestMatch();
+		Player bestMatch = new PlayerFilter(players, settings, name).getBestMatch();
 		System.out.println("Best Match: " + bestMatch);
 
 		return bestMatch;
@@ -268,17 +272,17 @@ public class HotslogsService {
 		player.setRegion(TagHelper.getRegionFromTitle(title));
 		player.setMmr(TagHelper.getMmrFromDetailPage(doc));
 		player.setNumberOfGames(TagHelper.getNumberOfGamesFromDetailPage(doc));
-		player.setNumberOfMatches(1);
+		player.setHits(1);
 		result.add(player);
 	}
 
-	private void handleResultTable(String name, List<Player> result, Document doc) {
+	private void handleResultTable(List<Player> result, Document doc) {
 		Elements tables = doc.getElementsByTag("tbody");
 		for (Element tbody : tables) {
 			Elements rows = tbody.getElementsByTag("tr");
 			for (Element tr : rows) {
 				// <tr class="rgRow" id="__0">
-				Player player = TagHelper.getPlayerFromResultRow(tr, name);
+				Player player = TagHelper.getPlayerFromResultRow(tr);
 				if (player != null) {
 					result.add(player);
 				}
