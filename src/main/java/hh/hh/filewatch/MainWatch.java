@@ -64,11 +64,8 @@ public class MainWatch {
     @Scheduled(fixedRate = 5000)
     public void watchDirectoryPath() {
 
-        System.out.print(".");
-
         WatchKey key = service.poll();
         if (key == null) {
-            System.out.print("-");
             return;
         }
 
