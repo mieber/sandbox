@@ -18,7 +18,6 @@ import org.bytedeco.javacpp.lept.PIX;
 
 import com.github.axet.lookup.Capture;
 
-import hh.hh.Conf;
 import hh.hh.ocr.TesseractHelper.OcrMode;
 
 public class J2DImageTool {
@@ -137,14 +136,22 @@ public class J2DImageTool {
 		return this;
 	}
 	
-	public static ScreenGrabResult extractNames(String pathToScreenshot) {
-		return extractNames(pathToScreenshot, "r");
+	public static ScreenGrabResult extractNames(String pathToScreenshot, String outputPath, String tessDataPath) {
+		System.out.println("Going to read: " + pathToScreenshot);
 		
+		BufferedImage bufferedImage = null;
+		try {
+			bufferedImage = ImageIO.read(new File(pathToScreenshot));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		return extractNames(bufferedImage, outputPath, tessDataPath);
 	}
 
-	public static ScreenGrabResult extractNames(String pathToScreenshot, String prefix) {
-
-		String writePath = Conf.FILE_OUTPUT;
+	public static ScreenGrabResult extractNames(BufferedImage bufferedImage, String outputPath, String tessDataPath) {
+		
+		String prefix = "r";
 
 		List<Rectangle> rectanglesRight = new ArrayList<>();
 		rectanglesRight.add(new Rectangle(2380, 190, 172, 183));
@@ -153,25 +160,12 @@ public class J2DImageTool {
 		rectanglesRight.add(new Rectangle(2252, 868, 172, 183));
 		rectanglesRight.add(new Rectangle(2380, 1094, 172, 183));
 
-		String caseString = "Pa";
+		String caseString = "0p";
 
 		String[] names = new String[5];
-		
-		System.out.println("Going to read: " + pathToScreenshot);
-		
-		BufferedImage bufferedImage = null;
-		try {
-			bufferedImage = ImageIO.read(new File(pathToScreenshot));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
 
 		for (int i = 0; i < 5; i++) {
 			Rectangle r = rectanglesRight.get(i);
-			
-			
 			//@formatter:off
             J2DImageTool
                 .get(bufferedImage)
@@ -180,36 +174,36 @@ public class J2DImageTool {
                 .crop(new Rectangle(6, 62, 165, 32))
 //                .addCaseHint(caseString, 40)
                  // .monoInvert(threshold, darker, lighter)
-                .write(true, writePath, prefix + i, "png");
+                .write(true, outputPath, prefix + i, "png");
             //@formatter:on
             
             String source = prefix + i + ".png";
 			String target = prefix + i + ".tif";
             
-            boolean needsInversion = LeptonicaHelper.needsInversion(writePath, source);
+            boolean needsInversion = LeptonicaHelper.needsInversion(outputPath, source);
 
             
             
             //@formatter:off
             try {
 				J2DImageTool
-					.get(ImageIO.read(new File(writePath + "/" + source)))
+					.get(ImageIO.read(new File(outputPath + "/" + source)))
 					.addCaseHint(caseString, needsInversion, 40)
-					.write(true, writePath, prefix + i, "png");
+					.write(true, outputPath, prefix + i, "png");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
             //@formatter:on
 
-			LeptonicaHelper.doMagic(writePath, source, target);
+			LeptonicaHelper.doMagic(outputPath, source, target);
 			
-			PIX p = TesseractHelper.getPixFromPath(writePath + "/" + target);
+			PIX p = TesseractHelper.getPixFromPath(outputPath + "/" + target);
 			
-			String name = TesseractHelper.getTextFromPicture(p, TesseractHelper.DEFAULT_LANG, OcrMode.ORIGINAL).trim();
+			String name = TesseractHelper.getTextFromPicture(p, TesseractHelper.DEFAULT_LANG, OcrMode.ORIGINAL, tessDataPath).trim();
 			
 			if (name != null && name.length() > caseString.length() + 1 ) {
-				names[i] = name.substring(caseString.length() + 1);
+				names[i] = name.substring(caseString.length() + 1).trim();
 			} else {
 				names[i] = null;
 			}

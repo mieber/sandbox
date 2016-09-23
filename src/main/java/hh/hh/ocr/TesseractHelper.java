@@ -10,8 +10,6 @@ import org.bytedeco.javacpp.lept.PIX;
 import org.bytedeco.javacpp.tesseract;
 import org.bytedeco.javacpp.tesseract.TessBaseAPI;
 
-import hh.hh.Conf;
-
 public class TesseractHelper {
 
 	/**
@@ -46,12 +44,12 @@ public class TesseractHelper {
 		return image;
 	}
 
-	public static String getTextFromPicture(PIX image) {
-		return getTextFromPicture(image, DEFAULT_LANG, OcrMode.ORIGINAL);
+	public static String getTextFromPicture(PIX image, String tessDataPath) {
+		return getTextFromPicture(image, DEFAULT_LANG, OcrMode.ORIGINAL, tessDataPath);
 
 	}
 
-	public static String getTextFromPicture(PIX image, String tessData, OcrMode mode) {
+	public static String getTextFromPicture(PIX image, String tessData, OcrMode mode, String tessDataPath) {
 		BytePointer outText;
 
 		TessBaseAPI api = new TessBaseAPI();
@@ -85,8 +83,8 @@ public class TesseractHelper {
 			vars_values.addPut(new tesseract.STRING("false"));
 			
 			@formatter:on*/
-
-			if (api.Init(Conf.ROOT + "/src/main/resources", tessData, mode.type()) != 0) { // , new byte[]{}, 2, vars_vec, vars_values, false) != 0) {
+			
+			if (api.Init(tessDataPath, tessData, mode.type()) != 0) { // , new byte[]{}, 2, vars_vec, vars_values, false) != 0) {
 				System.err.println("Could not initialize tesseract.");
 				System.exit(1);
 			}

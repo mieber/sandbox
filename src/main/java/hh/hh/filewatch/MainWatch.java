@@ -18,13 +18,17 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import hh.hh.Conf;
+import hh.hh.SettingsService;
 
 @Component
 public class MainWatch {
+	
+	@Autowired
+	private SettingsService settings;
 
     private WatchService service;
 
@@ -32,7 +36,7 @@ public class MainWatch {
 
     @PostConstruct
     public void setUp() {
-        File dir = new File(Conf.FILEWATCH_ROOT);
+        File dir = new File(settings.getFilewatchRoot());
         Path path = dir.toPath();
         System.out.println("Watching path: " + path);
 
@@ -82,7 +86,7 @@ public class MainWatch {
                 System.out.println("New path created: " + newPath);
                 for (FileEventListener listener : listeners) {
                 	try {
-                		listener.inform(Conf.FILEWATCH_ROOT + "/" + newPath.toString(), ENTRY_CREATE);
+                		listener.inform(settings.getFilewatchRoot() + "/" + newPath.toString(), ENTRY_CREATE);
                 	} catch (Exception e) {
                 		e.printStackTrace();
                 	}
