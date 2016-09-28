@@ -44,8 +44,7 @@ public class TagHelper {
         //    <a title="PandaAttack" href="/Player/Profile?PlayerID=4387231">PandaAttack</a>
         // </td>
         td = iterator.next();
-        Element link = td.getElementsByTag("a").get(0);
-        player.setName(link.text());
+        player.setName(getTextFromTdLink(td));
         // <td>1890</td>
         td = iterator.next();
         player.setMmr(TagHelper.getIntFromText(td.text()));
@@ -134,6 +133,28 @@ public class TagHelper {
             return 0;
         }
     }
+    
+    public static double getDoubleFromPercentageText(String number) {
+        try {
+        	number = number.replace('%', ' ').trim();
+            return Double.parseDouble(number);
+        } catch (NumberFormatException nfe) {
+            return 0;
+        }
+    }
+    
+    public static String getTextFromTdLink(Element td) {
+    	if (td == null) {
+    		return "";
+    	}
+    	
+    	Elements a = td.getElementsByTag("a");
+    	if (a == null || a.size() == 0) {
+    		return "";
+    	}
+    	
+    	return a.text();
+    }
 
     public static int getPlayerIdFromLink(String link) {
         int start = link.toString().indexOf("PlayerID=") + 9;
@@ -195,7 +216,6 @@ public class TagHelper {
         int games = 0;
         Elements es = doc.getElementsContainingOwnText("Total Games Played");
         for (Element e : es) {
-            System.out.println(e);
             
             Element nextElementSibling = e.nextElementSibling();
             String text = nextElementSibling.text();

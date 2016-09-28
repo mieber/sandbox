@@ -1,0 +1,5 @@
+spring:
+    logging:
+      level:
+        com.gargoylesoftware.htmlunit: INFO
+        org.apache.http.wire: INFO

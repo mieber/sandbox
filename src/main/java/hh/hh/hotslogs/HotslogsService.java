@@ -31,6 +31,10 @@ import hh.hh.hotslogs.data.History;
 import hh.hh.hotslogs.data.HistoryResult;
 import hh.hh.hotslogs.data.Player;
 import hh.hh.hotslogs.data.Statistic;
+import hh.hh.hotslogs.grab.Html2DataConvert;
+import hh.hh.hotslogs.grab.MapStatistics;
+import hh.hh.storage.DBController;
+import hh.hh.storage.HeroMapStat;
 
 @RestController
 @RequestMapping("hh")
@@ -41,9 +45,12 @@ public class HotslogsService {
 
 	@Autowired
 	private HotslogsApi hotslogsapi;
-	
+
 	@Autowired
 	private SettingsService settings;
+
+	@Autowired
+	private DBController db;
 
 	interface Hotslogs {
 		@RequestLine("GET /PlayerSearch?Name={name}")
@@ -118,6 +125,22 @@ public class HotslogsService {
 
 		return wrapper;
 	}
+
+	@RequestMapping(value = "/api/stats/{map}/{hero}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<HeroMapStat> getHeroMapStat(@PathVariable String map, @PathVariable String hero) {
+		return db.load(map);
+	}
+	
+	@RequestMapping(value = "/api/updatestats", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void updateStatData() {
+		
+		System.out.println("HotslogsApi.getHeroMapStat()");
+		String page = MapStatistics.loadMapStatisticsPage(settings.getFirefoxDriverPath(), MapStatistics.League.Gold,
+				MapStatistics.League.Silver);
+		List<HeroMapStat> data = Html2DataConvert.convert(page);
+		db.storeAndDropOld(data);
+	}	
+	
 
 	@RequestMapping(value = "/api/details/{id}", method = GET)
 	public List<String> getDetails(@PathVariable String id) {
@@ -205,7 +228,7 @@ public class HotslogsService {
 			}
 			String heroName = numberOfGamesPerHero.getKey();
 			Long numberOfGames = numberOfGamesPerHero.getValue();
-			
+
 			Statistic s = new Statistic();
 			s.setHero(heroName);
 			s.setNumber(numberOfGames);
@@ -220,23 +243,23 @@ public class HotslogsService {
 			if (input.size() > maxRecords) {
 				sizeOfHistory = maxRecords;
 			}
-			
+
 			BigDecimal countOfGamesPerHero = new BigDecimal(numberOfGamesPerHero.getValue());
 			BigDecimal size = new BigDecimal(sizeOfHistory);
-			
 
-			BigDecimal percentage = countOfGamesPerHero.divide(size, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
-			
+			BigDecimal percentage = countOfGamesPerHero.divide(size, 2, RoundingMode.HALF_UP)
+					.multiply(BigDecimal.valueOf(100));
+
 			if (mappingHeroToNumberOfWins.get(heroName) != null) {
 				BigDecimal wins = new BigDecimal(mappingHeroToNumberOfWins.get(heroName));
-				BigDecimal winrate = wins.divide(countOfGamesPerHero, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+				BigDecimal winrate = wins.divide(countOfGamesPerHero, 2, RoundingMode.HALF_UP)
+						.multiply(BigDecimal.valueOf(100));
 				s.setWinrate(winrate.toString());
 			} else {
 				s.setWinrate("0");
 			}
 
 			s.setPercentage(percentage.toString());
-			
 
 			result.add(s);
 		}

@@ -30,7 +30,9 @@ public class SettingsService {
 		PROXY_URL("127.0.0.1"), //
 		PROXY_PORT("80"), //
 		REGION("EU"), //
-		MMR("1867");
+		MMR("1867"), //
+		DB_PATH(HH_HOME + File.separator + "hh.db"), //
+		GECKODRIVER_PATH(HH_HOME + File.separator + "geckodriver" + File.separator + "geckodriver.exe");
 		private String defaultValue;
 
 		private SettingsParam(String defaultValue) {
@@ -46,8 +48,9 @@ public class SettingsService {
 		checkForUpdates();
 		checkFolders();
 		exportTessdata();
+		exportFirefoxdriver();
 	}
-
+	
 	public boolean isProxyEnabled() {
 		return BooleanUtils.toBoolean(properties.getProperty(SettingsParam.PROXY_ENABLED.name()));
 	}
@@ -62,6 +65,10 @@ public class SettingsService {
 
 	public String getProxyUrl() {
 		return properties.getProperty(SettingsParam.PROXY_URL.name());
+	}
+	
+	public String getDbPath() {
+		return properties.getProperty(SettingsParam.DB_PATH.name());
 	}
 
 	public int getProxyPort() {
@@ -88,6 +95,10 @@ public class SettingsService {
 			e.printStackTrace();
 			return 1800;
 		}
+	}
+
+	public String getFirefoxDriverPath() {
+		return properties.getProperty(SettingsParam.GECKODRIVER_PATH.name());
 	}
 
 	private void checkForUpdates() {
@@ -123,6 +134,11 @@ public class SettingsService {
 		}
 
 		writeDirectory = new File(getFilewatchRoot());
+		if (!writeDirectory.exists()) {
+			writeDirectory.mkdirs();
+		}
+
+		writeDirectory = new File(getFirefoxDriverPath());
 		if (!writeDirectory.exists()) {
 			writeDirectory.mkdirs();
 		}
@@ -172,6 +188,29 @@ public class SettingsService {
 				OutputStream resStreamOut = new FileOutputStream(outputFile);) {
 			if (stream == null) {
 				throw new Exception("Cannot get resource 'bat.traineddata' from Jar file.");
+			}
+
+			int readBytes;
+			byte[] buffer = new byte[4096];
+			while ((readBytes = stream.read(buffer)) > 0) {
+				resStreamOut.write(buffer, 0, readBytes);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	private void exportFirefoxdriver() {
+		File outputFile = new File(getFirefoxDriverPath());
+		if (outputFile.exists()) {
+			return;
+		}
+
+		try (InputStream stream = SettingsService.class.getResourceAsStream("/geckodriver/geckodriver.exe");
+				OutputStream resStreamOut = new FileOutputStream(outputFile);) {
+			if (stream == null) {
+				throw new Exception("Cannot get resource 'geckodriver.exe' from Jar file.");
 			}
 
 			int readBytes;

@@ -1,14 +1,16 @@
 package hh.hh;
 
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.github.axet.lookup.Capture;
 
 import hh.hh.ocr.J2DImageTool;
 
@@ -26,7 +28,7 @@ public class ScreenShotTest {
 	}
 
 	@Test
-	public void test01() {
+	public void test01() throws IOException {
 		int good = 0;
 		good += compare("Screenshot2016-08-18 21_33_27.jpg", "r01", new String[]{"Cokyno", "Agni", "ZaZa", "Monczek", "VlaVe"});
 		good += compare("Screenshot2016-08-19 09_04_51.jpg", "r02", new String[]{"RamboRainer", "Sirkillalot", "Fraiyn", null, "sCarMute"});
@@ -54,8 +56,10 @@ public class ScreenShotTest {
 	}
 	
 
-	private int compare(String file, String prefix, String[] expected) {
-		String[] names = J2DImageTool.extractNames(Capture.load(ScreenShotTest.class, "/" + file), SettingsService.HH_HOME, SettingsService.HH_HOME).getEnemies();
+	private int compare(String file, String prefix, String[] expected) throws IOException {
+		
+		BufferedImage image = ImageIO.read(J2DImageTool.class.getResourceAsStream("/" + file));
+		String[] names = J2DImageTool.extractNames(image, SettingsService.HH_HOME, SettingsService.HH_HOME).getEnemies();
 
 		System.out.println("***** " + prefix + " / " + file + ":");
 		System.out.println("Marker\tExpected\tActual");

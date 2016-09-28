@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -14,8 +15,6 @@ import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import com.github.axet.lookup.Capture;
 
 class ColorToBlackAndWhite {
 
@@ -38,7 +37,7 @@ class ColorToBlackAndWhite {
     }
 
     public static void main(String[] args) throws Exception {
-    	BufferedImage colorImage = Capture.load(ColorToBlackAndWhite.class, "/output/first.png");
+    	BufferedImage colorImage =  ImageIO.read(ColorToBlackAndWhite.class.getResourceAsStream("/output/first.png"));
 
         float[] scales = {2f, 2f, 2f};
         float[] offsets = new float[4];

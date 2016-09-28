@@ -16,8 +16,6 @@ import javax.imageio.ImageIO;
 
 import org.bytedeco.javacpp.lept.PIX;
 
-import com.github.axet.lookup.Capture;
-
 import hh.hh.ocr.TesseractHelper.OcrMode;
 
 public class J2DImageTool {
@@ -33,8 +31,12 @@ public class J2DImageTool {
 	}
 
 	public static J2DImageTool getFromClasspath(String path) {
-		BufferedImage image = Capture.load(J2DImageTool.class, path);
-		return new J2DImageTool(image);
+		try {
+			return new J2DImageTool(ImageIO.read(J2DImageTool.class.getResourceAsStream(path)));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public J2DImageTool crop(Rectangle rect) {

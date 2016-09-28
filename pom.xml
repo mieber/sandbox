@@ -54,6 +54,18 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<version>1.4.0.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.192</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-messaging</artifactId>
 			<version>4.3.2.RELEASE</version>
@@ -112,9 +124,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.axet</groupId>
-			<artifactId>lookup</artifactId>
-			<version>0.2.15</version>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
 		</dependency>
 
 		<dependency>
@@ -122,6 +134,16 @@
 			<artifactId>tesseract</artifactId>
 			<version>3.04.01-1.2</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server</artifactId>
+			<version>3.0.0-beta3</version>
+		</dependency>
+
+
+
+
 	</dependencies>
 
 	<build>

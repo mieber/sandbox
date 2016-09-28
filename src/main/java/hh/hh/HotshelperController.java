@@ -19,22 +19,23 @@ import hh.hh.ocr.ScreenGrabResult;
 @EnableCaching
 @ComponentScan(basePackages = { "hh.hh" })
 public class HotshelperController {
-    
-    @RequestMapping(value="/",method = RequestMethod.GET)
-    String home() {
 
-        return "index";
-    }
-    
-    @MessageMapping("/screenupdate")
-    @SendTo("/topic/updates")
-    public ScreenGrabResult greeting(ScreenGrabResult message) throws Exception {
-        Thread.sleep(3000); // simulated delay
-        return message;
-    }
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	String home() {
 
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(HotshelperController.class, args);
-    }
+		return "index";
+	}
+
+	@MessageMapping("/screenupdate")
+	@SendTo("/topic/updates")
+	public ScreenGrabResult greeting(ScreenGrabResult message) throws Exception {
+		Thread.sleep(3000); // simulated delay
+		return message;
+	}
+
+	public static void main(String[] args) throws Exception {
+		SpringApplication.run(HotshelperController.class, args);
+
+	}
 
 }
