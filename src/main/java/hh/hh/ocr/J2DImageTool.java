@@ -25,7 +25,7 @@ public class J2DImageTool {
 	private J2DImageTool(BufferedImage image) {
 		this.image = image;
 	}
-	
+
 	public static J2DImageTool get(BufferedImage image) {
 		return new J2DImageTool(image);
 	}
@@ -130,29 +130,136 @@ public class J2DImageTool {
 		g.fillRect(0, 0, additionalWidth, image.getHeight());
 		g.setColor(front);
 		g.drawString(string, 3, image.getHeight() - 5);
-		
+
 		g.dispose();
 
 		image = t;
 
 		return this;
 	}
-	
+
 	public static ScreenGrabResult extractNames(String pathToScreenshot, String outputPath, String tessDataPath) {
 		System.out.println("Going to read: " + pathToScreenshot);
-		
+
 		BufferedImage bufferedImage = null;
 		try {
 			bufferedImage = ImageIO.read(new File(pathToScreenshot));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		return extractNames(bufferedImage, outputPath, tessDataPath);
 	}
 
 	public static ScreenGrabResult extractNames(BufferedImage bufferedImage, String outputPath, String tessDataPath) {
+
+		String[] enemies = extractEnemyNames(bufferedImage, outputPath, tessDataPath);
+		String[] allies = extractAllyNames(bufferedImage, outputPath, tessDataPath);
+		String map = extractMapName(bufferedImage, outputPath, tessDataPath);
+
+		ScreenGrabResult result = new ScreenGrabResult();
+		result.setEnemies(enemies);
+		result.setFriends(allies);
+		result.setMap(map);
+
+		return result;
+
+	}
+
+	private static String extractMapName(BufferedImage bufferedImage, String outputPath, String tessDataPath) {
+
+		// upper left: 746,9
+		// size: 1128 x 42
+
+		// public Rectangle(int x, int y, int width, int height)
+		Rectangle r = new Rectangle(746, 9, 1128, 42);
+
+		//@formatter:off
+		J2DImageTool
+			.get(bufferedImage)
+			.crop(r)
+			.write(true, outputPath, "map", "png");
+		//@formatter:on
 		
+		
+		//@formatter:off
+        try {
+			J2DImageTool
+				.get(ImageIO.read(new File(outputPath + "/" + "map.png")))
+				.write(true, outputPath, "map", "png");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        //@formatter:on
+        
+        LeptonicaHelper.doMagic(outputPath, "map.png", "map.tif");
+
+		PIX p = TesseractHelper.getPixFromPath(outputPath + "/" + "map.tif");
+
+		String name = TesseractHelper
+				.getTextFromPicture(p, TesseractHelper.MAP_LANG, OcrMode.ORIGINAL, tessDataPath).trim();
+        
+		return name;
+	}
+
+	private static String[] extractAllyNames(BufferedImage bufferedImage, String outputPath, String tessDataPath) {
+		String prefix = "l";
+
+		List<Rectangle> rs = new ArrayList<>();
+		rs.add(new Rectangle(0, 190, 172, 183));
+		rs.add(new Rectangle(132, 416, 172, 183));
+		rs.add(new Rectangle(0, 642, 172, 183));
+		rs.add(new Rectangle(132, 868, 172, 183));
+		rs.add(new Rectangle(0, 1094, 172, 183));
+
+		String caseString = "0p";
+
+		String[] names = new String[5];
+
+		for (int i = 0; i < 5; i++) {
+			Rectangle r = rs.get(i);
+			//@formatter:off
+            J2DImageTool
+                .get(bufferedImage)
+                .crop(r)
+                .rotate(-30.5)
+                .crop(new Rectangle(6, 54, 158, 32))
+                .write(true, outputPath, prefix + i, "png");
+            //@formatter:on
+
+			String source = prefix + i + ".png";
+			String target = prefix + i + ".tif";
+
+			boolean needsInversion = LeptonicaHelper.needsInversion(outputPath, source);
+
+			//@formatter:off
+            try {
+				J2DImageTool
+					.get(ImageIO.read(new File(outputPath + "/" + source)))
+					.addCaseHint(caseString, needsInversion, 40)
+					.write(true, outputPath, prefix + i, "png");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+            //@formatter:on
+
+			LeptonicaHelper.doMagic(outputPath, source, target);
+
+			PIX p = TesseractHelper.getPixFromPath(outputPath + "/" + target);
+
+			String name = TesseractHelper
+					.getTextFromPicture(p, TesseractHelper.DEFAULT_LANG, OcrMode.ORIGINAL, tessDataPath).trim();
+
+			if (name != null && name.length() > caseString.length() + 1) {
+				names[i] = name.substring(caseString.length() + 1).trim();
+			} else {
+				names[i] = null;
+			}
+		}
+		return names;
+	}
+
+	private static String[] extractEnemyNames(BufferedImage bufferedImage, String outputPath, String tessDataPath) {
 		String prefix = "r";
 
 		List<Rectangle> rectanglesRight = new ArrayList<>();
@@ -178,44 +285,37 @@ public class J2DImageTool {
                  // .monoInvert(threshold, darker, lighter)
                 .write(true, outputPath, prefix + i, "png");
             //@formatter:on
-            
-            String source = prefix + i + ".png";
-			String target = prefix + i + ".tif";
-            
-            boolean needsInversion = LeptonicaHelper.needsInversion(outputPath, source);
 
-            
-            
-            //@formatter:off
+			String source = prefix + i + ".png";
+			String target = prefix + i + ".tif";
+
+			boolean needsInversion = LeptonicaHelper.needsInversion(outputPath, source);
+
+			//@formatter:off
             try {
 				J2DImageTool
 					.get(ImageIO.read(new File(outputPath + "/" + source)))
 					.addCaseHint(caseString, needsInversion, 40)
 					.write(true, outputPath, prefix + i, "png");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
             //@formatter:on
 
 			LeptonicaHelper.doMagic(outputPath, source, target);
-			
+
 			PIX p = TesseractHelper.getPixFromPath(outputPath + "/" + target);
-			
-			String name = TesseractHelper.getTextFromPicture(p, TesseractHelper.DEFAULT_LANG, OcrMode.ORIGINAL, tessDataPath).trim();
-			
-			if (name != null && name.length() > caseString.length() + 1 ) {
+
+			String name = TesseractHelper
+					.getTextFromPicture(p, TesseractHelper.DEFAULT_LANG, OcrMode.ORIGINAL, tessDataPath).trim();
+
+			if (name != null && name.length() > caseString.length() + 1) {
 				names[i] = name.substring(caseString.length() + 1).trim();
 			} else {
 				names[i] = null;
 			}
 		}
-		
-		ScreenGrabResult result = new ScreenGrabResult();
-		result.setEnemies(names);
-
-		return result;
-
+		return names;
 	}
 
 }

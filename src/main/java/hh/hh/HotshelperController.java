@@ -28,8 +28,8 @@ public class HotshelperController {
 
 	@MessageMapping("/screenupdate")
 	@SendTo("/topic/updates")
-	public ScreenGrabResult greeting(ScreenGrabResult message) throws Exception {
-		Thread.sleep(3000); // simulated delay
+	public ScreenGrabResult screenupdate(ScreenGrabResult message) throws Exception {
+		System.out.println("HotshelperController.screenupdate()");
 		return message;
 	}
 

@@ -1,5 +1,7 @@
 package hh.hh.ocr;
 
+import java.util.Arrays;
+
 public class ScreenGrabResult {
 	
 	private String[] friends;
@@ -32,6 +34,10 @@ public class ScreenGrabResult {
 		this.map = map;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "ScreenGrabResult [friends=" + Arrays.toString(friends) + ", enemies=" + Arrays.toString(enemies)
+				+ ", map=" + map + "]";
+	}
 
 }

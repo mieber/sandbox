@@ -13,6 +13,8 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.stereotype.Controller;
 
+import hh.hh.ocr.TesseractHelper;
+
 @Controller
 public class SettingsService {
 
@@ -177,26 +179,28 @@ public class SettingsService {
 	}
 
 	private void exportTessdata() {
+		
+		String[] data = new String[]{TesseractHelper.MAP_LANG, TesseractHelper.DEFAULT_LANG};
+		for (String d : data) {
+			
+			File outputFile = new File(
+					getTessdataPath() + File.separator + TESSDATA_SUBPATH + File.separator + d + ".traineddata");
 
-		File outputFile = new File(
-				getTessdataPath() + File.separator + TESSDATA_SUBPATH + File.separator + "bat.traineddata");
-		if (outputFile.exists()) {
-			return;
-		}
+			try (InputStream stream = SettingsService.class.getResourceAsStream("/tessdata/" + d + ".traineddata");
+					OutputStream resStreamOut = new FileOutputStream(outputFile);) {
+				if (stream == null) {
+					throw new Exception("Cannot get resource '" + d + ".traineddata' from Jar file.");
+				}
 
-		try (InputStream stream = SettingsService.class.getResourceAsStream("/tessdata/bat.traineddata");
-				OutputStream resStreamOut = new FileOutputStream(outputFile);) {
-			if (stream == null) {
-				throw new Exception("Cannot get resource 'bat.traineddata' from Jar file.");
+				int readBytes;
+				byte[] buffer = new byte[4096];
+				while ((readBytes = stream.read(buffer)) > 0) {
+					resStreamOut.write(buffer, 0, readBytes);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-
-			int readBytes;
-			byte[] buffer = new byte[4096];
-			while ((readBytes = stream.read(buffer)) > 0) {
-				resStreamOut.write(buffer, 0, readBytes);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			
 		}
 
 	}
