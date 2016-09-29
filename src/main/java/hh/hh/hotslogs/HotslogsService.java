@@ -135,7 +135,7 @@ public class HotslogsService {
 	public void updateStatData() {
 		
 		System.out.println("HotslogsApi.getHeroMapStat()");
-		String page = MapStatistics.loadMapStatisticsPage(settings.getFirefoxDriverPath(), MapStatistics.League.Gold,
+		String page = MapStatistics.loadMapStatisticsPage(settings.getSeleniumDriverPath(), MapStatistics.League.Gold,
 				MapStatistics.League.Silver);
 		List<HeroMapStat> data = Html2DataConvert.convert(page);
 		db.storeAndDropOld(data);

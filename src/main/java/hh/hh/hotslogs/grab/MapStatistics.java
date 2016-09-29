@@ -12,7 +12,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
@@ -33,16 +34,21 @@ public class MapStatistics {
 	}
 
 	public static void main(String... strings) throws FileNotFoundException, IOException {
+		
 		Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 		root.setLevel(Level.INFO);
-		String page = loadMapStatisticsPage("C:\\Users\\msieber1\\hhelper\\geckodriver\\geckodriver.exe", League.Gold,
+		String page = loadMapStatisticsPage("C:\\Users\\msieber1\\hhelper\\geckodriver\\chromedriver.exe", League.Gold,
 				League.Silver);
 		IOUtils.write(page, new FileOutputStream(new File("C:/temp/out.html")));
 	}
 
-	public static String loadMapStatisticsPage(String geckoDriverPath, League... leagues) {
-		System.setProperty("webdriver.gecko.driver", geckoDriverPath);
-		WebDriver driver = new FirefoxDriver();
+	public static String loadMapStatisticsPage(String driverPath, League... leagues) {
+		
+		System.setProperty("webdriver.chrome.driver",  driverPath);
+		ChromeOptions options = new ChromeOptions();
+	    options.addArguments("--lang=en");
+		
+		WebDriver driver = new ChromeDriver(options);
 		driver.get("http://www.hotslogs.com/Sitewide/HeroAndMapStatistics");
 
 		selectLeagues(driver, leagues);

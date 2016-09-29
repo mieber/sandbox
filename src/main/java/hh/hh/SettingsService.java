@@ -32,7 +32,7 @@ public class SettingsService {
 		REGION("EU"), //
 		MMR("1867"), //
 		DB_PATH(HH_HOME + File.separator + "hh.db"), //
-		GECKODRIVER_PATH(HH_HOME + File.separator + "geckodriver" + File.separator + "geckodriver.exe");
+		SELENIUM_DRIVER_PATH(HH_HOME + File.separator + "seleniumdriver" + File.separator + "chromedriver.exe");
 		private String defaultValue;
 
 		private SettingsParam(String defaultValue) {
@@ -48,7 +48,7 @@ public class SettingsService {
 		checkForUpdates();
 		checkFolders();
 		exportTessdata();
-		exportFirefoxdriver();
+		exportSeleniumDriver();
 	}
 	
 	public boolean isProxyEnabled() {
@@ -97,8 +97,8 @@ public class SettingsService {
 		}
 	}
 
-	public String getFirefoxDriverPath() {
-		return properties.getProperty(SettingsParam.GECKODRIVER_PATH.name());
+	public String getSeleniumDriverPath() {
+		return properties.getProperty(SettingsParam.SELENIUM_DRIVER_PATH.name());
 	}
 
 	private void checkForUpdates() {
@@ -138,7 +138,7 @@ public class SettingsService {
 			writeDirectory.mkdirs();
 		}
 
-		writeDirectory = new File(getFirefoxDriverPath());
+		writeDirectory = new File(getSeleniumDriverPath()).getParentFile();
 		if (!writeDirectory.exists()) {
 			writeDirectory.mkdirs();
 		}
@@ -201,16 +201,16 @@ public class SettingsService {
 
 	}
 
-	private void exportFirefoxdriver() {
-		File outputFile = new File(getFirefoxDriverPath());
+	private void exportSeleniumDriver() {
+		File outputFile = new File(getSeleniumDriverPath());
 		if (outputFile.exists()) {
 			return;
 		}
 
-		try (InputStream stream = SettingsService.class.getResourceAsStream("/geckodriver/geckodriver.exe");
+		try (InputStream stream = SettingsService.class.getResourceAsStream("/seleniumdriver/chromedriver.exe");
 				OutputStream resStreamOut = new FileOutputStream(outputFile);) {
 			if (stream == null) {
-				throw new Exception("Cannot get resource 'geckodriver.exe' from Jar file.");
+				throw new Exception("Cannot get resource 'chromedriver.exe' from Jar file.");
 			}
 
 			int readBytes;
