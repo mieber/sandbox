@@ -31,6 +31,7 @@ import hh.hh.hotslogs.data.History;
 import hh.hh.hotslogs.data.HistoryResult;
 import hh.hh.hotslogs.data.Player;
 import hh.hh.hotslogs.data.Statistic;
+import hh.hh.hotslogs.data.StatsMapResult;
 import hh.hh.hotslogs.grab.Html2DataConvert;
 import hh.hh.hotslogs.grab.MapStatistics;
 import hh.hh.storage.DBController;
@@ -126,9 +127,11 @@ public class HotslogsService {
 		return wrapper;
 	}
 
-	@RequestMapping(value = "/api/stats/{map}/{hero}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<HeroMapStat> getHeroMapStat(@PathVariable String map, @PathVariable String hero) {
-		return db.load(map);
+	@RequestMapping(value = "/api/stats/map/{map}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public StatsMapResult getHeroMapStat(@PathVariable String map) {
+		StatsMapResult result = new StatsMapResult();
+		 result.setHeroMapStats(db.load(map));
+		 return result;
 	}
 	
 	@RequestMapping(value = "/api/updatestats", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)

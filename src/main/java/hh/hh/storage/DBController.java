@@ -1,5 +1,6 @@
 package hh.hh.storage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,16 @@ public class DBController {
 		repo.save(records);
 		repo.deleteOldRecords(records.get(0).getTimestamp());
 	}
-	
+
 	public List<HeroMapStat> load(String map) {
-		return repo.findByMap(map);
+		List<HeroMapStat> findByMap = repo.findByMap(map);
+		List<HeroMapStat> result = new ArrayList<>();
+		for (HeroMapStat i : findByMap) {
+			if (i.getPopularity() != null && i.getPopularity().doubleValue() > 15) {
+				result.add(i);
+			}
+		}
+		return result;
 	}
 
 }

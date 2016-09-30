@@ -11,15 +11,21 @@ app.factory("hhBestMatch", function($resource, $log) {
 	return $resource("/hh/api/bestmatch/:name");
 });
 
-app.controller('hh_controller', function($scope, $log, hhHistory, hhBestMatch) {
+app.factory("hhStatsMap", function($resource, $log) {
+	return $resource("/hh/api/stats/map/:map");
+});
+
+app.controller('hh_controller', function($scope, $log, hhHistory, hhBestMatch, hhStatsMap) {
 
 	$scope.stompClient = null;
-
+	
 	$scope.enemies = [];
 	
 	$scope.allies = [];
 	
 	$scope.map = null;
+	
+	$scope.heroMapStats = [];
 
 	$scope.connect = function() {
 		$log.info("TEST");
@@ -32,6 +38,13 @@ app.controller('hh_controller', function($scope, $log, hhHistory, hhBestMatch) {
 				$log.info('received e: ' + update.enemies)
 				$log.info('received a: ' + update.friends)
 				$log.info('received m: ' + update.map)
+				
+				$scope.map = update.map;
+				
+				var statsMap = hhStatsMap.get({ map : update.map
+				}, function(statsMap) {
+					$scope.heroMapStats = statsMap.heroMapStats;
+				});
 				
 				for (var int = 0; int < update.enemies.length; int++) {
 					
@@ -151,7 +164,7 @@ app.controller('hh_controller', function($scope, $log, hhHistory, hhBestMatch) {
 		
 		$log.info("Test");
 		
-		stompClient.send("/app/screenupdate", {}, JSON.stringify({"friends":["PandaAttack","Czarny","Zander","Ziggy69","SalazarPT","Daesu"],"enemies":["huzzler","Gurkchen","szept","Sh33p","KorzoN","Hebun"],"map":"Braxis Holdout"}));
+		stompClient.send("/app/screenupdate", {}, JSON.stringify({"friends":["PandaAttack","Czarny","Zander","Ziggy69","SalazarPT"],"enemies":["huzzler","Gurkchen","szept","Sh33p","KorzoN"],"map":"Braxis Holdout"}));
 		
 		$log.info("SENDED");
 		

@@ -17,53 +17,71 @@
 <script type="text/javascript" src="js/app.js"></script>
 <script type="text/javascript" src="js/controller.js"></script>
 
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="/webjars/angular-material/1.1.0/angular-material.css">
 <link rel="stylesheet" href="/webjars/angular-material/1.1.0/layouts/angular-material.layouts.css">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body ng-app="hh_app">
 	<div ng-controller="hh_controller" ng-cloak>
-		<md-tabs md-dynamic-height="" md-border-bottom="">
-	      <md-tab label="Draft Helper">
 	        <md-content class="md-padding">
-			<section layout="row" layout-sm="column" layout-align="center center" layout-wrap="">
-				<md-button class="md-raised" ng-click="connect()">connect</md-button>
-				<md-button class="md-raised" ng-click="disconnect()">disconnect</md-button>
-				<md-button class="md-raised" ng-click="test()">test</md-button>
-			</section>
-			<section layout="row" layout-sm="column" layout-align="center center" layout-wrap="">
+	        <md-toolbar class="md-primary">
+		      <div class="md-toolbar-tools">
+		       <md-button class="md-icon-button" aria-label="menu"><md-icon>menu</md-icon></md-button>
+		        <h3>
+		          <span>Hotshelper</span>
+		        </h3>
+		        <span flex></span>
+		        <md-button class="md-icon-button" aria-label="connect" ng-click="connect()"><md-icon>refresh</md-icon></md-button>
+		        <md-button class="md-icon-button" aria-label="disconnect" ng-click="disconnect()"><md-icon>sync_disabled</md-icon></md-button>
+		        <md-button class="md-icon-button" aria-label="test" ng-click="test()"><md-icon>check</md-icon></md-button>
+		      </div>
+		    </md-toolbar>
+		    <div layout="row">
+		    <div flex>
+			<section layout="row" layout-sm="column" layout-align="left left" layout-wrap="">
 				<div layout="column" layout-gt-xs="row">
 					<md-card flex ng-repeat="e in enemies"> 
 						<md-card-content> 
-							<form layout layout-align="center" layout-padding>
-							    <div layout="row" flex>
-							        <md-input-container class="md-block">
-							          <input ng-model="e.name" aria-label="Name">
-							        </md-input-container>
-							        <div>
-							            <md-button class="md-raised" ng-click="update($index, 0)">update</md-button>
-							        </div>
-							    </div>  
-							</form>
-							
-							<md-list-item class="md-2-line">
-							<div class="md-list-item-text">
-								<p>Id: <a href="http://www.hotslogs.com//Player/Profile?PlayerID={{e.id}}">{{e.id}}</a></p>
-								<p>MMR: {{e.mmr}}</p>
-								<p>Games: <a href="http://www.hotslogs.com/Player/MatchHistory?PlayerID={{e.id}}">{{e.numberOfGames}}</a></p>
-								<p>Hits: <a href="http://www.hotslogs.com/PlayerSearch?Name={{e.name}}">{{e.hits}}</a></p>
+							<div layout="column">
+							<div flex>
+								<md-input-container class="md-block hide-error-msg">
+								<div layout="row">
+								  <div flex><input ng-model="e.name" aria-label="Name"></div>
+								  <div flex><md-button class="md-icon-button md-primary" aria-label="reload" ng-click="update($index, 0)"><md-icon>refresh</md-icon></md-button></div>
+								</div>
+						        </md-input-container>
+							</div>	
+							<div flex>
+								<table align="left">
+									<tr>
+										<td>Id</td>
+										<td><a href="http://www.hotslogs.com//Player/Profile?PlayerID={{e.id}}">{{e.id}}</a></td>
+									</tr>
+									<tr>
+										<td>MMR</td>
+										<td>{{e.mmr}}</td>
+									</tr>
+									<tr>
+										<td>Games</td>
+										<td><a href="http://www.hotslogs.com/Player/MatchHistory?PlayerID={{e.id}}">{{e.numberOfGames}}</a></td>
+									</tr>
+									<tr>
+										<td>Hits</td>
+										<td><a href="http://www.hotslogs.com/PlayerSearch?Name={{e.name}}">{{e.hits}}</a></td>
+									</tr>
+								</table>
 							</div>
-							</md-list-item> 
 							<md-divider></md-divider>
-							<md-list-item class="md-2-line">
-							<div class="md-list-item-text">
+							<div flex>
 								<table>
 									<tr>
-										<td>Hero</td>
-										<td>Lvl</td>
-										<td>play%</td>
-										<td>win%</td>
-										<td>#</td>
+										<th>Hero</th>
+										<th>Lvl</th>
+										<th>play%</th>
+										<th>win%</th>
+										<th>#</th>
 									</tr>
 									<tr ng-repeat="s in e.statistics">
 										<td>{{s.hero}}</td>
@@ -72,10 +90,10 @@
 										<td>{{s.winrate.substr(0, s.winrate.indexOf('.'))}}%</td>
 										<td>{{s.number}}</td>
 									</tr>
-								<table>
+								</table>
 							</div>
-							</md-list-item> 
-							<div class="md-list-item-text">
+							<md-divider></md-divider>
+							<div flex>
 								<table>
 									<tr ng-repeat="n in e.matches | limitTo:15" ng-class='{historywin : n.win, historylose: !n.win}'>
 										<td>{{n.date.substr(0, n.date.indexOf('/201'))}}</td>
@@ -88,32 +106,48 @@
 					</md-card>
 				</div>
 			</section>
-			<section layout="row" layout-sm="column" layout-align="center center" layout-wrap="">
+			<section layout="row" layout-sm="column" layout-align="left left" layout-wrap="">
 				<div layout="column" layout-gt-xs="row">
 					<md-card flex ng-repeat="e in allies"> 
 						<md-card-content> 
-							<md-input-container class="md-block">
-					          <input ng-model="e.name" aria-label="Name">
-					          <md-button class="md-raised" ng-click="update($index, 1)">update</md-button>
-					        </md-input-container>
-							<md-list-item class="md-2-line">
-							<div class="md-list-item-text">
-								<p>Id: <a href="http://www.hotslogs.com//Player/Profile?PlayerID={{e.id}}">{{e.id}}</a></p>
-								<p>MMR: {{e.mmr}}</p>
-								<p>Games: <a href="http://www.hotslogs.com/Player/MatchHistory?PlayerID={{e.id}}">{{e.numberOfGames}}</a></p>
-								<p>Hits: <a href="http://www.hotslogs.com/PlayerSearch?Name={{e.name}}">{{e.hits}}</a></p>
+							<div layout="column">
+							<div flex>
+								<md-input-container class="md-block hide-error-msg">
+								<div layout="row">
+								  <div flex><input ng-model="e.name" aria-label="Name"></div>
+								  <div flex><md-button class="md-icon-button md-primary" aria-label="reload" ng-click="update($index, 1)"><md-icon>refresh</md-icon></md-button></div>
+								</div>
+						        </md-input-container>
+							</div>	
+							<div flex>
+								<table align="left">
+									<tr>
+										<td>Id</td>
+										<td><a href="http://www.hotslogs.com//Player/Profile?PlayerID={{e.id}}">{{e.id}}</a></td>
+									</tr>
+									<tr>
+										<td>MMR</td>
+										<td>{{e.mmr}}</td>
+									</tr>
+									<tr>
+										<td>Games</td>
+										<td><a href="http://www.hotslogs.com/Player/MatchHistory?PlayerID={{e.id}}">{{e.numberOfGames}}</a></td>
+									</tr>
+									<tr>
+										<td>Hits</td>
+										<td><a href="http://www.hotslogs.com/PlayerSearch?Name={{e.name}}">{{e.hits}}</a></td>
+									</tr>
+								</table>
 							</div>
-							</md-list-item> 
 							<md-divider></md-divider>
-							<md-list-item class="md-2-line">
-							<div class="md-list-item-text">
+							<div flex>
 								<table>
 									<tr>
-										<td>Hero</td>
-										<td>Lvl</td>
-										<td>play%</td>
-										<td>win%</td>
-										<td>#</td>
+										<th>Hero</th>
+										<th>Lvl</th>
+										<th>play%</th>
+										<th>win%</th>
+										<th>#</th>
 									</tr>
 									<tr ng-repeat="s in e.statistics">
 										<td>{{s.hero}}</td>
@@ -122,10 +156,10 @@
 										<td>{{s.winrate.substr(0, s.winrate.indexOf('.'))}}%</td>
 										<td>{{s.number}}</td>
 									</tr>
-								<table>
+								</table>
 							</div>
-							</md-list-item> 
-							<div class="md-list-item-text">
+							<md-divider></md-divider>
+							<div flex>
 								<table>
 									<tr ng-repeat="n in e.matches | limitTo:15" ng-class='{historywin : n.win, historylose: !n.win}'>
 										<td>{{n.date.substr(0, n.date.indexOf('/201'))}}</td>
@@ -138,24 +172,31 @@
 					</md-card>
 				</div>
 			</section>
+			</div>
+			<div flex>
+			<md-card> 
+			<md-card-content>
+				<table>
+					<tr>
+						<th>Hero</th>
+						<th>Played</th>
+						<th>Banned</th>
+						<th>Pop</th>
+						<th>Percentage</th>
+					</tr>
+					<tr ng-repeat="s in heroMapStats | orderBy:'-winPercentage'">
+						<td>{{s.hero}}</td>
+						<td>{{s.gamesPlayed}}</td>
+						<td>{{s.gamesBanned}}</td>
+						<td>{{s.popularity}}</td>
+						<td>{{s.winPercentage}}</td>
+					</tr>
+				</table>
+			</md-card-content> 
+			</md-card>
+			</div>
+			</div>
 		</md-content>
-		</md-tab>
-		<md-tab label="Settings">
-		  <md-content layout-padding="">
-		      <form name="settings">
-		        <div layout-gt-sm="row">
-		          <md-input-container class="md-block" flex-gt-sm="">
-		            <label>Hots Profile</label>
-		            <input ng-model="settings.ownProfilw">
-		          </md-input-container>
-        		  <md-input-container class="md-block" flex-gt-sm="">
-		            <label>First name</label>
-		            <input ng-model="user.firstName">
-		          </md-input-container>
-		        </div>
-		      </form>
-		  </md-content>
-		</md-tab>
 	</div>
 </body>
 </html>
