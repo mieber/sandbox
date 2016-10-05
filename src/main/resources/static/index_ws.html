@@ -33,14 +33,16 @@
 		          <span>Hotshelper</span>
 		        </h3>
 		        <span flex></span>
-		        <md-button class="md-icon-button" aria-label="connect" ng-click="connect()"><md-icon>refresh</md-icon></md-button>
-		        <md-button class="md-icon-button" aria-label="disconnect" ng-click="disconnect()"><md-icon>sync_disabled</md-icon></md-button>
-		        <md-button class="md-icon-button" aria-label="test" ng-click="test()"><md-icon>check</md-icon></md-button>
+		        <!--  see https://design.google.com/icons/ -->
+		        <md-button class="md-icon-button" title="connect to server" aria-label="connect" ng-click="connect()"><md-icon>autorenew</md-icon></md-button>
+		        <md-button class="md-icon-button" title="disconnect from server" aria-label="disconnect" ng-click="disconnect()"><md-icon>sync_disabled</md-icon></md-button>
+		        <md-button class="md-icon-button" title="populate with test data" aria-label="test" ng-click="test()"><md-icon>check</md-icon></md-button>
+		        <md-button class="md-icon-button" title="update map data from hotslogs" aria-label="update from hots" ng-click="updateFromHots()"><md-icon>cloud_download</md-icon></md-button>
 		      </div>
 		    </md-toolbar>
 		    <div layout="row">
 		    <div flex>
-			<section layout="row" layout-sm="column" layout-align="left left" layout-wrap="">
+			<section layout="row" layout-sm="column" layout-align="left left">
 				<div layout="column" layout-gt-xs="row">
 					<md-card flex ng-repeat="e in enemies"> 
 						<md-card-content> 
@@ -49,27 +51,27 @@
 								<md-input-container class="md-block hide-error-msg">
 								<div layout="row">
 								  <div flex><input ng-model="e.name" aria-label="Name"></div>
-								  <div flex><md-button class="md-icon-button md-primary" aria-label="reload" ng-click="update($index, 0)"><md-icon>refresh</md-icon></md-button></div>
+								  <div flex><md-button class="md-icon-button md-primary" alt="reload" aria-label="reload" ng-click="update($index, 0)"><md-icon>refresh</md-icon></md-button></div>
 								</div>
 						        </md-input-container>
 							</div>	
 							<div flex>
 								<table align="left">
 									<tr>
-										<td>Id</td>
-										<td><a href="http://www.hotslogs.com//Player/Profile?PlayerID={{e.id}}">{{e.id}}</a></td>
+										<td class="md-caption">Id</td>
+										<td colspan="3" style="background-color: rgb({{getColor(e.hits, 1, 3, false)}}"><a href="http://www.hotslogs.com//Player/Profile?PlayerID={{e.id}}">{{e.id}}</a> (<a href="http://www.hotslogs.com/PlayerSearch?Name={{e.name}}">{{e.hits}}</a> hits)</td>
 									</tr>
 									<tr>
-										<td>MMR</td>
+										<td class="md-caption">MMR</td>
 										<td>{{e.mmr}}</td>
+										<td class="md-caption">Winrate</td>
+										<td style="background-color: rgb({{getColor(e.winrate, 45, 55, false)}}">{{e.winrate}}%</td>
 									</tr>
 									<tr>
-										<td>Games</td>
+										<td class="md-caption">Games</td>
 										<td><a href="http://www.hotslogs.com/Player/MatchHistory?PlayerID={{e.id}}">{{e.numberOfGames}}</a></td>
-									</tr>
-									<tr>
-										<td>Hits</td>
-										<td><a href="http://www.hotslogs.com/PlayerSearch?Name={{e.name}}">{{e.hits}}</a></td>
+										<td></td>
+										<td></td>
 									</tr>
 								</table>
 							</div>
@@ -82,13 +84,15 @@
 										<th>play%</th>
 										<th>win%</th>
 										<th>#</th>
+										<th>threat</th>
 									</tr>
-									<tr ng-repeat="s in e.statistics">
+									<tr ng-repeat="s in e.statistics" style="background-color: rgb({{getColor(s.threat, 1, 40, false)}}">
 										<td>{{s.hero}}</td>
 										<td>{{s.lvl}}</td>
-										<td>{{s.percentage.substr(0, s.percentage.indexOf('.'))}}%</td>
-										<td>{{s.winrate.substr(0, s.winrate.indexOf('.'))}}%</td>
+										<td>{{s.percentage.toFixed(0)}}%</td>
+										<td>{{s.winrate.toFixed(0)}}%</td>
 										<td>{{s.number}}</td>
+										<td>{{s.threat}}</td>
 									</tr>
 								</table>
 							</div>
@@ -122,20 +126,20 @@
 							<div flex>
 								<table align="left">
 									<tr>
-										<td>Id</td>
-										<td><a href="http://www.hotslogs.com//Player/Profile?PlayerID={{e.id}}">{{e.id}}</a></td>
+										<td class="md-caption">Id</td>
+										<td colspan="3" style="background-color: rgb({{getColor(e.hits, 1, 3, false)}}"><a href="http://www.hotslogs.com//Player/Profile?PlayerID={{e.id}}">{{e.id}}</a> (Hits: <a href="http://www.hotslogs.com/PlayerSearch?Name={{e.name}}">{{e.hits}}</a>)</td>
 									</tr>
 									<tr>
-										<td>MMR</td>
+										<td class="md-caption">MMR</td>
 										<td>{{e.mmr}}</td>
+										<td class="md-caption">Winrate</td>
+										<td style="background-color: rgb({{getColor(e.winrate, 45, 55, true)}}">{{e.winrate}}%</td>
 									</tr>
 									<tr>
-										<td>Games</td>
+										<td class="md-caption">Games</td>
 										<td><a href="http://www.hotslogs.com/Player/MatchHistory?PlayerID={{e.id}}">{{e.numberOfGames}}</a></td>
-									</tr>
-									<tr>
-										<td>Hits</td>
-										<td><a href="http://www.hotslogs.com/PlayerSearch?Name={{e.name}}">{{e.hits}}</a></td>
+										<td></td>
+										<td></td>
 									</tr>
 								</table>
 							</div>
@@ -148,13 +152,15 @@
 										<th>play%</th>
 										<th>win%</th>
 										<th>#</th>
+										<th>threat</th>
 									</tr>
-									<tr ng-repeat="s in e.statistics">
+									<tr ng-repeat="s in e.statistics"  style="background-color: rgb({{getColor(s.threat, 1, 40, true)}}")>
 										<td>{{s.hero}}</td>
 										<td>{{s.lvl}}</td>
-										<td>{{s.percentage.substr(0, s.percentage.indexOf('.'))}}%</td>
-										<td>{{s.winrate.substr(0, s.winrate.indexOf('.'))}}%</td>
+										<td>{{s.percentage.toFixed(0)}}%</td>
+										<td>{{s.winrate.toFixed(0)}}%</td>
 										<td>{{s.number}}</td>
+										<td>{{s.threat}}</td>
 									</tr>
 								</table>
 							</div>
@@ -173,7 +179,7 @@
 				</div>
 			</section>
 			</div>
-			<div flex>
+			<div>
 			<md-card> 
 			<md-card-content>
 				<table>
@@ -197,6 +203,7 @@
 			</div>
 			</div>
 		</md-content>
+	<div ng-init="connect()"></div>
 	</div>
 </body>
 </html>

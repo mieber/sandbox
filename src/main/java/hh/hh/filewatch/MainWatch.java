@@ -61,7 +61,7 @@ public class MainWatch {
     }
 
     @SuppressWarnings("unchecked")
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     public void watchDirectoryPath() {
 
         WatchKey key = service.poll();

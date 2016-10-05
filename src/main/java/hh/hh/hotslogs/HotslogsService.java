@@ -112,38 +112,53 @@ public class HotslogsService {
 		return bestMatch;
 	}
 
-	@Cacheable("history")
-	@RequestMapping(value = "/api/history/{id}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public HistoryResult getMatchHistory(@PathVariable String id) {
-		System.out.println("HotslogsApi.getMatchHistory()");
+	@Cacheable("palyerStats")
+	@RequestMapping(value = "/api/stats/player/{id}/{map}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public HistoryResult getPlayerStats(@PathVariable String id, @PathVariable String map) {
+		System.out.println("HotslogsApi.getPlayerStats()");
+
+		int maxRecords = 200;
 
 		List<History> result = createHistory(id);
-		List<Statistic> stat = createStats(result);
+		List<Statistic> stat = createStats(result, maxRecords, map);
+
+		double winrate = createWinrate(result, maxRecords);
 
 		HistoryResult wrapper = new HistoryResult();
 		wrapper.setRows(result);
 		wrapper.setStatistics(stat);
+		wrapper.setWinrate(winrate);
 
 		return wrapper;
+	}
+
+	private double createWinrate(List<History> result, int maxRecords) {
+
+		long count = result.stream().limit(maxRecords).filter(History::isWin).count();
+
+		// what is larger? size of records or the max records limit? take records size if smaller than maxRecords.
+		int relevantSize = maxRecords > result.size() ? result.size() : maxRecords;
+
+		double divided = ((double) count / relevantSize) * 100d;
+		return new BigDecimal(divided).setScale(2, RoundingMode.HALF_EVEN).doubleValue();
 	}
 
 	@RequestMapping(value = "/api/stats/map/{map}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public StatsMapResult getHeroMapStat(@PathVariable String map) {
 		StatsMapResult result = new StatsMapResult();
-		 result.setHeroMapStats(db.load(map));
-		 return result;
+		result.setHeroMapStats(db.load(map));
+		return result;
 	}
-	
+
 	@RequestMapping(value = "/api/updatestats", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void updateStatData() {
-		
+
 		System.out.println("HotslogsApi.getHeroMapStat()");
 		String page = MapStatistics.loadMapStatisticsPage(settings.getSeleniumDriverPath(), MapStatistics.League.Gold,
 				MapStatistics.League.Silver);
 		List<HeroMapStat> data = Html2DataConvert.convert(page);
 		db.storeAndDropOld(data);
-	}	
-	
+	}
 
 	@RequestMapping(value = "/api/details/{id}", method = GET)
 	public List<String> getDetails(@PathVariable String id) {
@@ -201,9 +216,7 @@ public class HotslogsService {
 		return hotslogsapi.getHotsLogsPlayerDetailsByBattleTag(2, battleTag.replace('#', '_'));
 	}
 
-	private List<Statistic> createStats(List<History> input) {
-
-		int maxRecords = 200;
+	private List<Statistic> createStats(List<History> input, int maxRecords, String map) {
 
 		// number of games per hero
 		Map<String, Long> mappingHeroToNumberOfGames = input.stream().limit(maxRecords)
@@ -257,18 +270,22 @@ public class HotslogsService {
 				BigDecimal wins = new BigDecimal(mappingHeroToNumberOfWins.get(heroName));
 				BigDecimal winrate = wins.divide(countOfGamesPerHero, 2, RoundingMode.HALF_UP)
 						.multiply(BigDecimal.valueOf(100));
-				s.setWinrate(winrate.toString());
+				s.setWinrate(winrate.doubleValue());
 			} else {
-				s.setWinrate("0");
+				s.setWinrate(0d);
 			}
 
-			s.setPercentage(percentage.toString());
+			s.setPercentage(percentage.doubleValue());
+			
+			s.setThreat(ThreatCalculator.get(s, db.load(map)).calculateThreatLevel());
 
 			result.add(s);
 		}
 
 		return result;
 	}
+
+
 
 	private List<History> createHistory(String id) {
 		List<History> result = new ArrayList<>();

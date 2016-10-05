@@ -6,11 +6,13 @@ public class Statistic {
 	
 	private int lvl;
 	
-	private String percentage;
+	private double percentage;
 	
-	private String winrate;
+	private double winrate;
 	
 	private long number;
+	
+	private int threat;
 
 	public String getHero() {
 		return hero;
@@ -20,11 +22,11 @@ public class Statistic {
 		this.hero = hero;
 	}
 
-	public String getPercentage() {
+	public double getPercentage() {
 		return percentage;
 	}
 
-	public void setPercentage(String percentage) {
+	public void setPercentage(double percentage) {
 		this.percentage = percentage;
 	}
 
@@ -44,12 +46,26 @@ public class Statistic {
 		this.lvl = lvl;
 	}
 
-	public String getWinrate() {
+	public double getWinrate() {
 		return winrate;
 	}
 
-	public void setWinrate(String winrate) {
+	public void setWinrate(double winrate) {
 		this.winrate = winrate;
+	}
+
+	public int getThreat() {
+		return threat;
+	}
+
+	public void setThreat(int threat) {
+		this.threat = threat;
+	}
+
+	@Override
+	public String toString() {
+		return "Statistic [hero=" + hero + ", lvl=" + lvl + ", percentage=" + percentage + ", winrate=" + winrate
+				+ ", number=" + number + ", threat=" + threat + "]";
 	}
 
 }

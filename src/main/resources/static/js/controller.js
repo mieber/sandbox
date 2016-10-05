@@ -3,8 +3,8 @@ var app = angular.module('hh_app', [ 'ngMaterial', 'ngMessages', 'ngResource' ])
 	
 });
 
-app.factory("hhHistory", function($resource, $log) {
-	return $resource("/hh/api/history/:id");
+app.factory("hhStatsPlayer", function($resource, $log) {
+	return $resource("/hh/api/stats/player/:id/:map");
 });
 
 app.factory("hhBestMatch", function($resource, $log) {
@@ -15,7 +15,11 @@ app.factory("hhStatsMap", function($resource, $log) {
 	return $resource("/hh/api/stats/map/:map");
 });
 
-app.controller('hh_controller', function($scope, $log, hhHistory, hhBestMatch, hhStatsMap) {
+app.factory("hhUpdateStats", function($resource, $log) {
+	return $resource("hh/api/updatestats");
+});
+
+app.controller('hh_controller', function($scope, $log, hhStatsPlayer, hhBestMatch, hhStatsMap, hhUpdateStats) {
 
 	$scope.stompClient = null;
 	
@@ -50,64 +54,52 @@ app.controller('hh_controller', function($scope, $log, hhHistory, hhBestMatch, h
 					
 					var bestMatch = hhBestMatch.get({ name : update.enemies[int]
 					}, function(bestMatch) {
-						bestMatch.matches =  [ {
-							map : "loading",
-							hero : "loading",
-							lvl : "0"
-						} ];
-						
-						bestMatch.statistics =  [ {
-							hero : "loading",
-							lvl : "0",
-							percentage : "0",
-							number: 0
-						} ];
-						
 						if (!(angular.isUndefined(bestMatch.id) || bestMatch.id === null)) {
-							hhHistory.get({
-								id : bestMatch.id
+							hhStatsPlayer.get({
+								id : bestMatch.id,
+								map: update.map
 							}, function(history) {
 								
 								bestMatch.matches = history.rows;
 								bestMatch.statistics = history.statistics;
+								bestMatch.winrate = history.winrate;
 							});
+						} else {
+							bestMatch.matches =  [ {
+								hero : "nothing found"
+							} ];
 						}
 						
 					});
 					
 					$scope.enemies[int] = bestMatch;
+					$scope.enemies[int].name = update.enemies[int];
 				}
 				
 				for (var int = 0; int < update.friends.length; int++) {
 					
 					var bestMatch = hhBestMatch.get({ name : update.friends[int]
 					}, function(bestMatch) {
-						bestMatch.matches =  [ {
-							map : "loading",
-							hero : "loading",
-							lvl : "0"
-						} ];
-						
-						bestMatch.statistics =  [ {
-							hero : "loading",
-							lvl : "0",
-							percentage : "0",
-							number: 0
-						} ];
-						
 						if (!(angular.isUndefined(bestMatch.id) || bestMatch.id === null)) {
-							hhHistory.get({
-								id : bestMatch.id
+							hhStatsPlayer.get({
+								id : bestMatch.id,
+								map : update.map
 							}, function(history) {
 								
 								bestMatch.matches = history.rows;
 								bestMatch.statistics = history.statistics;
+								bestMatch.winrate = history.winrate;
 							});
+						} else {
+							bestMatch.matches =  [ {
+								hero : "nothing found"
+							} ];
 						}
 						
 					});
 					
 					$scope.allies[int] = bestMatch;
+					$scope.allies[int].name = update.friends[int];
 				}
 			});
 		});
@@ -131,33 +123,42 @@ app.controller('hh_controller', function($scope, $log, hhHistory, hhBestMatch, h
 		 $log.info("Update: " + index + "/" + row);
 		 $log.info("Update: " + element);
 		 
-		 
 		 var bestMatch = hhBestMatch.get({ name : element
 			}, function(bestMatch) {
-				bestMatch.matches =  [ {
-					map : "loading",
-					hero : "loading",
-					lvl : "0"
-				} ];
-				
 				if (!(angular.isUndefined(bestMatch.id) || bestMatch.id === null)) {
-					hhHistory.get({
-						id : bestMatch.id
+					hhStatsPlayer.get({
+						id : bestMatch.id,
+						map : $scope.map
 					}, function(history) {
 						bestMatch.matches = history.rows;
 						bestMatch.statistics = history.statistics;
+						bestMatch.winrate = history.winrate;
 					});
+				} else {
+					bestMatch.matches =  [ {
+						hero : "nothing found"
+					} ];
 				}
 				
 			});
 		 
 		if (row == 0) {
 			 $scope.enemies[index] = bestMatch;
+			 $scope.enemies[index].name = element;
 		} else {
 			$scope.allies[index] = bestMatch;
+			$scope.allies[index].name = element;
+
 		}
-			
-			
+	}
+	
+	$scope.updateFromHots = function() {
+
+		 $log.info("Update from hots started.");
+		 
+		 hhUpdateStats.get();
+		 
+		 $log.info("Done calling the rest EP. Now the pop up should come up.");
 	}
 	
 	$scope.test = function() {
@@ -167,37 +168,35 @@ app.controller('hh_controller', function($scope, $log, hhHistory, hhBestMatch, h
 		stompClient.send("/app/screenupdate", {}, JSON.stringify({"friends":["PandaAttack","Czarny","Zander","Ziggy69","SalazarPT"],"enemies":["huzzler","Gurkchen","szept","Sh33p","KorzoN"],"map":"BRAXIS HOLDOUT"}));
 		
 		$log.info("SENDED");
-		
-//		var enemies = [];
-//		enemies.push("Barsig");
-//		enemies.push("Gurkchen");
-//		enemies.push("s3phster");
-//		enemies.push("Murat");
-//		enemies.push("HellBreath");
-//		
-//		for (var int = 0; int < enemies.length; int++) {
-//			
-//			var bestMatch = hhBestMatch.get({ name : enemies[int]
-//			}, function(bestMatch) {
-//				bestMatch.matches =  [ {
-//					map : "loading",
-//					hero : "loading",
-//					lvl : "0"
-//				} ];
-//				
-//				if (!(angular.isUndefined(bestMatch.id) || bestMatch.id === null)) {
-//					hhHistory.get({
-//						id : bestMatch.id
-//					}, function(history) {
-//						bestMatch.matches = history.rows;
-//						bestMatch.statistics = history.statistics;
-//					});
-//				}
-//				
-//			});
-//			
-//			$scope.enemies[int] = bestMatch;
-//		}
 	}
+	
+	$scope.getColor = function(threatIn, min, max, inverse) {
+		
+		// normalize threat from min to max 
+		var threat = Math.max(threatIn, min);
+		threat = Math.min(threat, max);
+		
+		// normalize from 0 to 1
+		var normalized = (threat - min) / (max - min);
+		
+		var r; 
+		var g
+		
+		if (normalized <= 0.5) {
+			r = Math.min(Math.round(normalized * 255 * 2), 255);
+			g = 255;
+		} else {
+			r = 255;
+			g = Math.min(Math.round((1 - normalized) * 255 * 2), 255);
+		}
+		
+		if (inverse) {
+			return "" + g + "," + r + ",0";
+		}
+		
+		return "" + r + "," + g + ",0";
+	}
+	
+	
 
 });
