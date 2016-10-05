@@ -22,6 +22,8 @@ public enum Resolution2Rectangle {
 					new int[] { 0, 1094, 172, 183 } }, //
 			new int[] { 6, 62, 165, 32 }, //
 			new int[] { 6, 54, 158, 32 }, //
+			new int[] { 6, 106, 152, 19 }, //
+			new int[] { 24, 98, 148, 19 }, //
 			30.5d, //
 			-30.5d, //
 			new int[] { 746, 9, 1128, 42 }));
@@ -36,12 +38,14 @@ public enum Resolution2Rectangle {
 		List<Rectangle> ally = new ArrayList<>();
 		Rectangle enemyCut;
 		Rectangle allyCut;
+		Rectangle enemyHeroCut;
+		Rectangle allyHeroCut;
 		double enemyAngle;
 		double friendAngle;
 		Rectangle map;
 
 		static Res from(int width, int height, int[][] enemy, int[][] friend, int[] enemyCut, int[] allyCut,
-				double enemyAngle, double friendAngle, int[] map) {
+				int[] enemyHeroCut, int[] allyHeroCut, double enemyAngle, double friendAngle, int[] map) {
 			Res s = new Res();
 			s.width = width;
 			s.height = height;
@@ -58,6 +62,8 @@ public enum Resolution2Rectangle {
 
 			s.allyCut = from(allyCut);
 			s.enemyCut = from(enemyCut);
+			s.allyHeroCut = from(allyHeroCut);
+			s.enemyHeroCut = from(enemyHeroCut);
 			s.map = from(map);
 
 			return s;
@@ -98,6 +104,14 @@ public enum Resolution2Rectangle {
 
 	public Rectangle getAllySubRectangle() {
 		return resolutionInfo.allyCut;
+	}
+	
+	public Rectangle getEnemyHeroSubRectangle() {
+		return resolutionInfo.enemyHeroCut;
+	}
+
+	public Rectangle getAllyHeroSubRectangle() {
+		return resolutionInfo.allyHeroCut;
 	}
 
 	public double getAllyRotation() {

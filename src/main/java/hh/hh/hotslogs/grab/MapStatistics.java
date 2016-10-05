@@ -23,6 +23,8 @@ import ch.qos.logback.classic.Logger;
 
 public class MapStatistics {
 //	private static final Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+	
+	public static final String GENERIC_STATS = "Generic";
 
 	public enum League {
 		Master(0), Diamond(1), Platinum(2), Gold(3), Silver(4), Bronze(5);

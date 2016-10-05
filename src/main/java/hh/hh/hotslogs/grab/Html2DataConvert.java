@@ -44,7 +44,7 @@ public class Html2DataConvert {
 		for (Element e : select) {
 			HeroMapStat stat = new HeroMapStat();
 			stat.setTimestamp(ts);
-			stat.setMap("Generic");
+			stat.setMap(MapStatistics.GENERIC_STATS);
 			
 			Iterator<Element> c = e.children().iterator();
 //@formatter:off

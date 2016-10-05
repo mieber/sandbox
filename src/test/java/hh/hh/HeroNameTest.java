@@ -17,11 +17,12 @@ public class HeroNameTest {
 	public void test01() throws IOException {
 		int good = 0;
 		//@formatter:off
-		good += compare("player_001.jpg", "r01", new String[]{"Sylvanas", "Zagara", "Sonya", "Xul", "Valla"}, new String[]{"Raynor", "Johanna", "E.T.C.", null, "Lt. Morales"});
+		good += compare("hero_001.jpg", "r01", new String[]{"Sylvanas", "Zagara", "Sonya", "Xul", "Valla"}, new String[]{"Raynor", "Johanna", "E.T.C.", null, "Lt. Morales"});
+		good += compare("hero_002.jpg", "r01", new String[]{"Li-Ming", "Jaina", "Artanis", "Rehgar", null}, new String[]{"Kerrigan", "E.T.C.", "Zagara", null, null});
 		//@formatter:on
-		System.out.println("OVERALL CORRECT OCR: " + good + " possible: 10");
+		System.out.println("OVERALL CORRECT OCR: " + good + " possible: 20");
 		
-		Assert.assertTrue("All hero OCR should be good.", good >= 10);
+		Assert.assertTrue("All hero OCR should be good.", good >= 20);
 	}
 	
 

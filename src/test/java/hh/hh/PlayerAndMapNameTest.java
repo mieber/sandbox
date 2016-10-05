@@ -24,21 +24,23 @@ public class PlayerAndMapNameTest {
 		good += compare("player_005.jpg", "r05", new String[]{"PandaAttack", "spoff", "MrCandy87", "Apor", "Grav3"}, new String[]{"Glypost", "h0uZeR", "Lilie", "HE3AMETEH", "Kosa"}, "TOMB OF THE SPIDER QUEEN");
 		good += compare("player_006.jpg", "r06", new String[]{"PandaAttack", "Roronoa", "FrankDS", "Tigrix", "KTyJLXy"}, new String[]{"Darkology", "Vecna", "FLakhur", "TooTsi", "BrakhMaar"}, "INFERNAL SHRINES");
 		good += compare("player_007.jpg", "r07", new String[]{"Empi", "Tarantula", null, "PandaAttack", "Lop"}, new String[]{"TGLError", "TGLNewGen", "Puffy1337", "DrIrrenHouse", "Everlast"}, "GARDEN OF TERROR");
-		good += compare("player_008.jpg", "r09", new String[]{"Lixiano", "Efka", "Aurin", "PandaAttack", "Tammo"}, new String[]{"NOsFEARatu", "Petazeta", "Blaze", "Xanador", "akudgava"}, "INFERNAL SHRINES");
-		good += compare("player_009.jpg", "r10", new String[]{"alekson", "JohnLennon", "Ksandr163", "KOSM4S", "PandaAttack"}, new String[]{"ShitWisard", "ViperRUS", null, "Drapi", "TorkarusCZ"}, "DRAGON SHIRE");
-		good += compare("player_010.jpg", "r11", new String[]{"michelangelo", "Grendi", "TopQualityUA", "KOSM4S", "PandaAttack"}, new String[]{"Akwatik", "Mercury", "sagaff", "Hamabellone", "RatKing"}, "CURSED HOLLOW");
-		good += compare("player_011.jpg", "r12", new String[]{"PandaAttack", "Adelnor", null, "Falko", "OberstObst"}, new String[]{"Roomata", "Majesty", "Smesnoje", "Syndicate", "Copc"}, "INFERNAL SHRINES");
-		good += compare("player_012.jpg", "r13", new String[]{"Hien", "Firv", "Cernuros", "PandaAttack", "Aelz"}, new String[]{"Cwz", "MadBird", "Alvarou71", "sdvd", "Bulbaman"}, "SKY TEMPLE");
-		good += compare("player_013.jpg", "r14", new String[]{"Kanijo", "Sirlx", "PandaAttack", "Luke", "GM309"}, new String[]{"Krautjuchter", "Botar", "Scar", "Ripcord", "SrbinDoKoske"}, "TOWERS OF DOOM");
-		good += compare("player_014.jpg", "r16", new String[]{"Isotop", "Poki", "PandaAttack", "Zealth", "Twyzeas"}, new String[]{"Cataru", "Shéogorath", "Nunown", "Scar", "Snowi"}, "GARDEN OF TERROR");
-		good += compare("player_015.jpg", "r17", new String[]{"lumos", "PandaAttack", "va1ente", "Imperator", "HornBow"}, new String[]{"Twyzeas", "Bamzz", "Unknown", "Lambofan", "starfoxik"}, "CURSED HOLLOW");
-		good += compare("player_016.jpg", "r18", new String[]{"PandaAttack", "Andryushkaus", "huzzler", "szept", "Sh33p"}, new String[]{"Czarny", "Zander", "Ziggy69", "SalazarPT", "Daesu"}, "TOMB OF THE SPIDER QUEEN");
-		good += compare("player_017.jpg", "r19", new String[]{"Esartir", "KorzoN", "Jammy6565", "Sons1989", "PandaAttack"}, new String[]{"Hebun", "Iblis", "BillamGrill", "Hackfleisch", "Ragnors"}, "INFERNAL SHRINES");
-		good += compare("player_018.jpg", "r20", new String[]{"Xellis", "PandaAttack", "AceSephiro", "Sayr", "DarthFox"}, new String[]{"marfu", "WyDgeS", "Achille", "fabsen", "Hebun"}, "GARDEN OF TERROR");
+		good += compare("player_008.jpg", "r08", new String[]{"Lixiano", "Efka", "Aurin", "PandaAttack", "Tammo"}, new String[]{"NOsFEARatu", "Petazeta", "Blaze", "Xanador", "akudgava"}, "INFERNAL SHRINES");
+		good += compare("player_009.jpg", "r09", new String[]{"alekson", "JohnLennon", "Ksandr163", "KOSM4S", "PandaAttack"}, new String[]{"ShitWisard", "ViperRUS", null, "Drapi", "TorkarusCZ"}, "DRAGON SHIRE");
+		good += compare("player_010.jpg", "r10", new String[]{"michelangelo", "Grendi", "TopQualityUA", "KOSM4S", "PandaAttack"}, new String[]{"Akwatik", "Mercury", "sagaff", "Hamabellone", "RatKing"}, "CURSED HOLLOW");
+		good += compare("player_011.jpg", "r11", new String[]{"PandaAttack", "Adelnor", null, "Falko", "OberstObst"}, new String[]{"Roomata", "Majesty", "Smesnoje", "Syndicate", "Copc"}, "INFERNAL SHRINES");
+		good += compare("player_012.jpg", "r12", new String[]{"Hien", "Firv", "Cernuros", "PandaAttack", "Aelz"}, new String[]{"Cwz", "MadBird", "Alvarou71", "sdvd", "Bulbaman"}, "SKY TEMPLE");
+		good += compare("player_013.jpg", "r13", new String[]{"Kanijo", "Sirlx", "PandaAttack", "Luke", "GM309"}, new String[]{"Krautjuchter", "Botar", "Scar", "Ripcord", "SrbinDoKoske"}, "TOWERS OF DOOM");
+		good += compare("player_014.jpg", "r14", new String[]{"Isotop", "Poki", "PandaAttack", "Zealth", "Twyzeas"}, new String[]{"Cataru", "Shéogorath", "Nunown", "Scar", "Snowi"}, "GARDEN OF TERROR");
+		good += compare("player_015.jpg", "r15", new String[]{"lumos", "PandaAttack", "va1ente", "Imperator", "HornBow"}, new String[]{"Twyzeas", "Bamzz", "Unknown", "Lambofan", "starfoxik"}, "CURSED HOLLOW");
+		good += compare("player_016.jpg", "r16", new String[]{"PandaAttack", "Andryushkaus", "huzzler", "szept", "Sh33p"}, new String[]{"Czarny", "Zander", "Ziggy69", "SalazarPT", "Daesu"}, "TOMB OF THE SPIDER QUEEN");
+		good += compare("player_017.jpg", "r17", new String[]{"Esartir", "KorzoN", "Jammy6565", "Sons1989", "PandaAttack"}, new String[]{"Hebun", "Iblis", "BillamGrill", "Hackfleisch", "Ragnors"}, "INFERNAL SHRINES");
+		good += compare("player_018.jpg", "r18", new String[]{"Xellis", "PandaAttack", "AceSephiro", "Sayr", "DarthFox"}, new String[]{"marfu", "WyDgeS", "Achille", "fabsen", "Hebun"}, "GARDEN OF TERROR");
+		good += compare("player_019.jpg", "r19", new String[]{"Seele", "Bioshoker", "PandaAttack", "WannaFly", "Geeman"}, new String[]{null, "Kani", "Liron", "eQx", "wino"}, "SKY TEMPLE");
+		good += compare("player_020.jpg", "r20", new String[]{"Teophanus", "SleepyAsh", "PandaAttack", "Guanako", "GeorgeNaruto"}, new String[]{"iShares", "Hoghart", "PrideKinG", "Psychosis", "MitaKei"}, "INFERNAL SHRINES");
 		//@formatter:on
 		System.out.println("OVERALL CORRECT OCR: " + good + " possible: 200, wrong map gives 10 points penalty");
 		
-		Assert.assertTrue("At least 80% of OCR should be valid.", good > 160);
+		Assert.assertTrue("At least 90% of OCR should be valid.", good > 180);
 	}
 	
 

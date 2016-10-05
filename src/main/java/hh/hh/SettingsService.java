@@ -180,7 +180,7 @@ public class SettingsService {
 
 	private void exportTessdata() {
 		
-		String[] data = new String[]{TesseractHelper.MAP_LANG, TesseractHelper.DEFAULT_LANG};
+		String[] data = new String[]{TesseractHelper.MAP_LANG, TesseractHelper.DEFAULT_LANG, TesseractHelper.HERO_LANG};
 		for (String d : data) {
 			
 			File outputFile = new File(

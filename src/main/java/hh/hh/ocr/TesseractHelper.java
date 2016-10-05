@@ -38,6 +38,7 @@ public class TesseractHelper {
 	}
 
 	public static final String DEFAULT_LANG = "bat";
+	public static final String HERO_LANG = "hero";
 	public static final String MAP_LANG = "map";
 
 	public static PIX getPixFromPath(String path) {
