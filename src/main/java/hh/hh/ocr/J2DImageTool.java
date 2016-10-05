@@ -212,75 +212,43 @@ public class J2DImageTool {
 		rs.add(new Rectangle(132, 868, 172, 183));
 		rs.add(new Rectangle(0, 1094, 172, 183));
 
-		String caseString = "0p";
+		Rectangle cut = new Rectangle(7, 54, 157, 32);
+		double rotation = -30.5;
 
-		String[] names = new String[5];
-
-		for (int i = 0; i < 5; i++) {
-			Rectangle r = rs.get(i);
-			//@formatter:off
-            J2DImageTool
-                .get(bufferedImage)
-                .crop(r)
-                .rotate(-30.5)
-                .crop(new Rectangle(6, 54, 158, 32))
-                .write(true, outputPath, prefix + i, "png");
-            //@formatter:on
-
-			String source = prefix + i + ".png";
-			String target = prefix + i + ".tif";
-
-			boolean needsInversion = LeptonicaHelper.needsInversion(outputPath, source);
-
-			//@formatter:off
-            try {
-				J2DImageTool
-					.get(ImageIO.read(new File(outputPath + "/" + source)))
-					.addCaseHint(caseString, needsInversion, 40)
-					.write(true, outputPath, prefix + i, "png");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-            //@formatter:on
-
-			LeptonicaHelper.doMagic(outputPath, source, target);
-
-			PIX p = TesseractHelper.getPixFromPath(outputPath + "/" + target);
-
-			String name = TesseractHelper
-					.getTextFromPicture(p, TesseractHelper.DEFAULT_LANG, OcrMode.ORIGINAL, tessDataPath).trim();
-
-			if (name != null && name.length() > caseString.length() + 1) {
-				names[i] = name.substring(caseString.length() + 1).trim();
-			} else {
-				names[i] = null;
-			}
-		}
-		return names;
+		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, rs, cut, rotation);
 	}
 
 	private static String[] extractEnemyNames(BufferedImage bufferedImage, String outputPath, String tessDataPath) {
 		String prefix = "r";
 
-		List<Rectangle> rectanglesRight = new ArrayList<>();
-		rectanglesRight.add(new Rectangle(2380, 190, 172, 183));
-		rectanglesRight.add(new Rectangle(2252, 416, 172, 183));
-		rectanglesRight.add(new Rectangle(2380, 642, 172, 183));
-		rectanglesRight.add(new Rectangle(2252, 868, 172, 183));
-		rectanglesRight.add(new Rectangle(2380, 1094, 172, 183));
+		List<Rectangle> rs = new ArrayList<>();
+		rs.add(new Rectangle(2380, 190, 172, 183));
+		rs.add(new Rectangle(2252, 416, 172, 183));
+		rs.add(new Rectangle(2380, 642, 172, 183));
+		rs.add(new Rectangle(2252, 868, 172, 183));
+		rs.add(new Rectangle(2380, 1094, 172, 183));
 
-		String caseString = "0p";
+		Rectangle cut = new Rectangle(6, 62, 165, 32);
+		double rotation = 30.5;
 
+		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, rs, cut, rotation);
+	}
+
+	private static String[] extractNames(BufferedImage bufferedImage, String outputPath, String tessDataPath,
+			String prefix, List<Rectangle> rectanglesRight, Rectangle cut, double rotation) {
+		
+		String caseString = "Hp";
+		int additionalWidth = 50;
 		String[] names = new String[5];
 
 		for (int i = 0; i < 5; i++) {
 			Rectangle r = rectanglesRight.get(i);
 			//@formatter:off
-            J2DImageTool
+			J2DImageTool
                 .get(bufferedImage)
                 .crop(r)
-                .rotate(30.5)
-                .crop(new Rectangle(6, 62, 165, 32))
+                .rotate(rotation)
+                .crop(cut)
 //                .addCaseHint(caseString, 40)
                  // .monoInvert(threshold, darker, lighter)
                 .write(true, outputPath, prefix + i, "png");
@@ -295,7 +263,7 @@ public class J2DImageTool {
             try {
 				J2DImageTool
 					.get(ImageIO.read(new File(outputPath + "/" + source)))
-					.addCaseHint(caseString, needsInversion, 40)
+					.addCaseHint(caseString, needsInversion, additionalWidth)
 					.write(true, outputPath, prefix + i, "png");
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -309,13 +277,18 @@ public class J2DImageTool {
 			String name = TesseractHelper
 					.getTextFromPicture(p, TesseractHelper.DEFAULT_LANG, OcrMode.ORIGINAL, tessDataPath).trim();
 
+			System.out.println(name);
 			if (name != null && name.length() > caseString.length() + 1) {
-				names[i] = name.substring(caseString.length() + 1).trim();
+				if (name.substring(0, caseString.length()).contains(" ")) {
+					names[i] = name.substring(caseString.length() + 1).trim();
+				} else {
+					names[i] = name.substring(caseString.length()).trim();
+				}
 			} else {
 				names[i] = null;
 			}
 		}
 		return names;
 	}
-
+	
 }

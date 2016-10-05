@@ -164,7 +164,7 @@ app.controller('hh_controller', function($scope, $log, hhHistory, hhBestMatch, h
 		
 		$log.info("Test");
 		
-		stompClient.send("/app/screenupdate", {}, JSON.stringify({"friends":["PandaAttack","Czarny","Zander","Ziggy69","SalazarPT"],"enemies":["huzzler","Gurkchen","szept","Sh33p","KorzoN"],"map":"Braxis Holdout"}));
+		stompClient.send("/app/screenupdate", {}, JSON.stringify({"friends":["PandaAttack","Czarny","Zander","Ziggy69","SalazarPT"],"enemies":["huzzler","Gurkchen","szept","Sh33p","KorzoN"],"map":"BRAXIS HOLDOUT"}));
 		
 		$log.info("SENDED");
 		

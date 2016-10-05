@@ -5,7 +5,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # log file for maven / test output
 TESSERACT_DIR="e:/hh/dev/tesseract_3.05"
-TRAIN_DIR="e:/hh/git/sandbox/train"
+#TRAIN_DIR="e:/hh/git/sandbox/train"
+TRAIN_DIR="F:/dev/git/sandbox/train"
 
 function initvars() {
 	echo Initalizing...

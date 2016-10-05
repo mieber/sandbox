@@ -13,6 +13,6 @@ public interface HeroMapStatRepository extends JpaRepository<HeroMapStat, Long> 
     @Query(name = "HeroMapStat.deleteByNotTimestamp")
     void deleteOldRecords(@Param("timestamp") long timestamp);
 	
-	List<HeroMapStat> findByMap(@Param("map") String map);
+	List<HeroMapStat> findByMapContainingIgnoreCase(@Param("map") String map);
 
 }

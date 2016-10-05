@@ -21,7 +21,7 @@ public class DBController {
 	}
 
 	public List<HeroMapStat> load(String map) {
-		List<HeroMapStat> findByMap = repo.findByMap(map);
+		List<HeroMapStat> findByMap = repo.findByMapContainingIgnoreCase(map);
 		List<HeroMapStat> result = new ArrayList<>();
 		for (HeroMapStat i : findByMap) {
 			if (i.getPopularity() != null && i.getPopularity().doubleValue() > 15) {
