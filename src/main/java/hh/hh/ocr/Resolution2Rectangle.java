@@ -11,9 +11,9 @@ public enum Resolution2Rectangle {
 			new int[][] { //
 					new int[] { 2380, 190, 172, 183 }, //
 					new int[] { 2252, 416, 172, 183 }, //
-					new int[] { 2380, 642, 172, 183 }, //
-					new int[] { 2252, 868, 172, 183 }, //
-					new int[] { 2380, 1094, 172, 183 } }, //
+					new int[] { 2380, 641, 172, 183 }, //
+					new int[] { 2252, 867, 172, 183 }, //
+					new int[] { 2380, 1092, 172, 183 } }, //
 			new int[][] { //
 					new int[] { 0, 190, 172, 183 }, //
 					new int[] { 132, 416, 172, 183 }, //
@@ -26,7 +26,33 @@ public enum Resolution2Rectangle {
 			new int[] { 24, 98, 148, 19 }, //
 			30.5d, //
 			-30.5d, //
-			new int[] { 746, 9, 1128, 42 }));
+			new int[] { 746, 9, 1128, 42 }, //
+			24, //
+			7)),
+
+	RESOLUTION_1920_1080(Res.from(1920, //
+			1080, //
+			new int[][] { //
+					new int[] { 1785, 142, 129, 138 }, //
+					new int[] { 1689, 312, 129, 138 }, //
+					new int[] { 1785, 481, 129, 138 }, //
+					new int[] { 1689, 650, 129, 138 }, //
+					new int[] { 1785, 819, 129, 138 } }, //
+			new int[][] { //
+					new int[] { 0, 142, 129, 138 }, //
+					new int[] { 99, 312, 129, 138 }, //
+					new int[] { 0, 481, 129, 138 }, //
+					new int[] { 99, 650, 129, 138 }, //
+					new int[] { 0, 819, 129, 138 } }, //
+			new int[] { 5, 46, 123, 24 }, //
+			new int[] { 5, 40, 118, 24 }, //
+			new int[] { 5, 79, 114, 15 }, //
+			new int[] { 18, 73, 111, 15 }, //
+			30.5d, //
+			-30.5d, //
+			new int[] { 560, 7, 844, 31 }, //
+			18, //
+			4));
 
 	private Res resolutionInfo;
 
@@ -43,9 +69,12 @@ public enum Resolution2Rectangle {
 		double enemyAngle;
 		double friendAngle;
 		Rectangle map;
+		int fontSize;
+		int fontOffset;
 
 		static Res from(int width, int height, int[][] enemy, int[][] friend, int[] enemyCut, int[] allyCut,
-				int[] enemyHeroCut, int[] allyHeroCut, double enemyAngle, double friendAngle, int[] map) {
+				int[] enemyHeroCut, int[] allyHeroCut, double enemyAngle, double friendAngle, int[] map, int fontSize,
+				int fontOffset) {
 			Res s = new Res();
 			s.width = width;
 			s.height = height;
@@ -65,6 +94,8 @@ public enum Resolution2Rectangle {
 			s.allyHeroCut = from(allyHeroCut);
 			s.enemyHeroCut = from(enemyHeroCut);
 			s.map = from(map);
+			s.fontSize = fontSize;
+			s.fontOffset = fontOffset;
 
 			return s;
 		}
@@ -105,7 +136,7 @@ public enum Resolution2Rectangle {
 	public Rectangle getAllySubRectangle() {
 		return resolutionInfo.allyCut;
 	}
-	
+
 	public Rectangle getEnemyHeroSubRectangle() {
 		return resolutionInfo.enemyHeroCut;
 	}
@@ -124,6 +155,14 @@ public enum Resolution2Rectangle {
 
 	public Rectangle getMapRectangle() {
 		return resolutionInfo.map;
+	}
+
+	public int getFontSize() {
+		return resolutionInfo.fontSize;
+	}
+
+	public int getFontOffset() {
+		return resolutionInfo.fontOffset;
 	}
 
 }
