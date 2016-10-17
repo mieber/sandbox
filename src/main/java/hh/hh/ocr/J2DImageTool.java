@@ -7,9 +7,19 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.imageio.ImageIO;
 
@@ -113,7 +123,8 @@ public class J2DImageTool {
 		return this;
 	}
 
-	public J2DImageTool addCaseHint(String string, boolean needsInversion, int additionalWidth, int fontSize, int fontOffset) {
+	public J2DImageTool addCaseHint(String string, boolean needsInversion, int additionalWidth, int fontSize,
+			int fontOffset) {
 
 		BufferedImage t = new BufferedImage(image.getWidth() + additionalWidth, image.getHeight(), image.getType());
 		Graphics2D g = t.createGraphics();
@@ -147,23 +158,67 @@ public class J2DImageTool {
 
 		Resolution2Rectangle resInfo = Resolution2Rectangle.get(width, height);
 
-		String[] enemies = extractEnemyNames(bufferedImage, resInfo, outputPath, tessDataPath);
-		String[] allies = extractAllyNames(bufferedImage, resInfo, outputPath, tessDataPath);
-		String[] enemyHeroes = extractEnemyHeroes(bufferedImage, resInfo, outputPath, tessDataPath);
-		String[] allyHeroes = extractAllyHeroes(bufferedImage, resInfo, outputPath, tessDataPath);
-		String map = extractMapName(bufferedImage, resInfo, outputPath, tessDataPath);
+		final ScreenGrabResult result = new ScreenGrabResult();
 
-		J2DImageTool.get(bufferedImage).write(true, outputPath, "test", "png");
+		List<Callable<Void>> cs = new ArrayList<>();
 
-		ScreenGrabResult result = new ScreenGrabResult();
-		result.setEnemies(enemies);
-		result.setFriends(allies);
-		result.setEnemyHeroes(validateHeroNames(enemyHeroes));
-		result.setFriendHeroes(validateHeroNames(allyHeroes));
-		result.setMap(map);
+		cs.add(new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				result.setEnemies(extractEnemyNames(deepCopy(bufferedImage), resInfo, outputPath, tessDataPath));
+				return null;
+			}
+		});
+
+		cs.add(new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				result.setFriends(extractAllyNames(deepCopy(bufferedImage), resInfo, outputPath, tessDataPath));
+				return null;
+			}
+		});
+
+		cs.add(new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				result.setEnemyHeroes(validateHeroNames(
+						extractEnemyHeroes(deepCopy(bufferedImage), resInfo, outputPath, tessDataPath)));
+				return null;
+			}
+		});
+
+		cs.add(new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				result.setFriendHeroes(validateHeroNames(
+						extractAllyHeroes(deepCopy(bufferedImage), resInfo, outputPath, tessDataPath)));
+				return null;
+			}
+		});
+
+		cs.add(new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				result.setMap(extractMapName(deepCopy(bufferedImage), resInfo, outputPath, tessDataPath));
+				return null;
+			}
+		});
+
+		ExecutorService taskExecutor = Executors.newFixedThreadPool(5);
+		try {
+			taskExecutor.invokeAll(cs);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		return result;
+	}
 
+	static BufferedImage deepCopy(BufferedImage bi) {
+		ColorModel cm = bi.getColorModel();
+		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		WritableRaster raster = bi.copyData(null);
+		return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 	}
 
 	private static String[] validateHeroNames(String[] heroes) {
@@ -242,9 +297,10 @@ public class J2DImageTool {
 
 		String prefix = "hl";
 		Rectangle rectangle = res.getAllyHeroSubRectangle();
+		double rotation = res.getAllyRotation();
 		List<Rectangle> rs = res.getAllyRectangles();
 
-		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, null, 0, rectangle, rs,
+		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, null, rotation, rectangle, rs,
 				TesseractHelper.HERO_LANG, res.getFontSize(), res.getFontOffset());
 	}
 
@@ -253,9 +309,10 @@ public class J2DImageTool {
 
 		String prefix = "hr";
 		Rectangle rectangle = res.getEnemyHeroSubRectangle();
+		double rotation = res.getEnemyRotation();
 		List<Rectangle> rs = res.getEnemyRectangles();
 
-		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, null, 0, rectangle, rs,
+		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, null, rotation, rectangle, rs,
 				TesseractHelper.HERO_LANG, res.getFontSize(), res.getFontOffset());
 	}
 
