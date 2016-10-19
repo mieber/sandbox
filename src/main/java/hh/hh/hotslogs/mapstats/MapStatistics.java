@@ -1,4 +1,4 @@
-package hh.hh.hotslogs.grab;
+package hh.hh.hotslogs.mapstats;
 
 import java.io.File;
 import java.io.FileNotFoundException;

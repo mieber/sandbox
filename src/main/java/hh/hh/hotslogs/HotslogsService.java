@@ -32,10 +32,12 @@ import hh.hh.hotslogs.data.HistoryResult;
 import hh.hh.hotslogs.data.Player;
 import hh.hh.hotslogs.data.Statistic;
 import hh.hh.hotslogs.data.StatsMapResult;
-import hh.hh.hotslogs.grab.Html2DataConvert;
-import hh.hh.hotslogs.grab.MapStatistics;
+import hh.hh.hotslogs.herostats.HeroHtml2DataConvert;
+import hh.hh.hotslogs.mapstats.MapHtml2DataConvert;
+import hh.hh.hotslogs.mapstats.MapStatistics;
 import hh.hh.storage.DBController;
 import hh.hh.storage.HeroMapStat;
+import hh.hh.storage.HeroWinStatistics;
 
 @RestController
 @RequestMapping("hh")
@@ -62,6 +64,9 @@ public class HotslogsService {
 
 		@RequestLine("GET /Player/MatchHistory?PlayerID={id}")
 		String history(@Param("id") String id);
+
+		@RequestLine("GET /Sitewide/HeroDetails?Hero={hero}")
+		String heroDetails(@Param("hero") String hero);
 	}
 
 	interface HotslogsApi {
@@ -80,7 +85,7 @@ public class HotslogsService {
 	@Cacheable("hotsIds")
 	@RequestMapping(value = "/api/name/{name}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Player> getHotsIds(@PathVariable String name) {
-		System.out.println("HotslogsApi.getHotsIds()");
+		System.out.println("HotslogsApi.getHotsIds(): " + name);
 		List<Player> result = new ArrayList<>();
 		Document doc = Jsoup.parse(hotslogs.playerSearch(name));
 		Elements titles = doc.getElementsByTag("title");
@@ -115,7 +120,7 @@ public class HotslogsService {
 	@Cacheable("palyerStats")
 	@RequestMapping(value = "/api/stats/player/{id}/{map}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public HistoryResult getPlayerStats(@PathVariable String id, @PathVariable String map) {
-		System.out.println("HotslogsApi.getPlayerStats()");
+		System.out.println("HotslogsApi.getPlayerStats(): " + id + "/" + map);
 
 		int maxRecords = 200;
 
@@ -154,16 +159,33 @@ public class HotslogsService {
 	public void updateStatData() {
 
 		System.out.println("HotslogsApi.getHeroMapStat()");
+		System.out.println("Update of Mapstats");
+		
+		long ts = System.currentTimeMillis();
 		String page = MapStatistics.loadMapStatisticsPage(settings.getSeleniumDriverPath(), MapStatistics.League.Gold,
 				MapStatistics.League.Silver);
-		List<HeroMapStat> data = Html2DataConvert.convert(page);
-		db.storeAndDropOld(data);
+		List<HeroMapStat> data = MapHtml2DataConvert.convert(page, ts);
+		db.storeAndDropOldMapStats(data);
+		
+		List<String> allHeroNames = db.getAllHeroNames();
+		
+		List<HeroWinStatistics> allHeroStats = new ArrayList<>();
+		for (String hero : allHeroNames) {
+			System.out.println("Updating Hero stats: " + hero);
+			
+			String html = hotslogs.heroDetails(hero);
+			List<HeroWinStatistics> heroStats = HeroHtml2DataConvert.convert(hero, html, ts);
+			allHeroStats.addAll(heroStats);
+		}
+		
+		db.storeAndDropOldHeroWinStats(allHeroStats);
+		
 	}
 
 	@RequestMapping(value = "/api/details/{id}", method = GET)
 	public List<String> getDetails(@PathVariable String id) {
 
-		System.out.println("HotslogsApi.getDetails()");
+		System.out.println("HotslogsApi.getDetails(): " + id);
 		List<String> result = new ArrayList<>();
 
 		Document doc = Jsoup.parse(hotslogs.playerDetail(id));
@@ -276,7 +298,7 @@ public class HotslogsService {
 			}
 
 			s.setPercentage(percentage.doubleValue());
-			
+
 			s.setThreat(ThreatCalculator.get(s, db.load(map)).calculateThreatLevel());
 
 			result.add(s);
@@ -284,8 +306,6 @@ public class HotslogsService {
 
 		return result;
 	}
-
-
 
 	private List<History> createHistory(String id) {
 		List<History> result = new ArrayList<>();

@@ -354,14 +354,20 @@ public class J2DImageTool {
 			if (text == null) {
 				// do nothing
 			} else if (caseString == null || caseString.isEmpty()) {
-				result.setText(text.trim());
+				text = text.trim();
 			} else if (text.length() > caseString.length() + 1) {
 				if (text.substring(0, caseString.length()).contains(" ")) {
-					result.setText(text.substring(caseString.length() + 1).trim());
+					text = text.substring(caseString.length() + 1).trim();
 				} else {
-					result.setText(text.substring(caseString.length()).trim());
+					text = text.substring(caseString.length()).trim();
 				}
 			}
+			
+			if (text == null || text.isEmpty() || text.length() < 3) {
+				text = null;
+			}
+			result.setText(text);
+			
 			names.add(result);
 		}
 		return names;

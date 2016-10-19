@@ -68,16 +68,4 @@ public class Reactor implements FileEventListener {
 		return r.stream().map(SingleWordResult::getText).collect(Collectors.toList());
 	}
 
-	private static String[] validateHeroNames(String[] heroes) {
-
-		for (int i = 0; i < heroes.length; i++) {
-			String hero = heroes[i];
-			if (hero == null || hero.isEmpty() || hero.length() < 3) {
-				heroes[i] = null;
-			}
-		}
-
-		return heroes;
-	}
-
 }

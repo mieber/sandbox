@@ -1,4 +1,4 @@
-package hh.hh.hotslogs.grab;
+package hh.hh.hotslogs.mapstats;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,18 +17,17 @@ import org.jsoup.select.Elements;
 import hh.hh.hotslogs.TagHelper;
 import hh.hh.storage.HeroMapStat;
 
-public class Html2DataConvert {
+public class MapHtml2DataConvert {
 
 	public static void main(String... strings) throws FileNotFoundException, IOException {
-		convert(IOUtils.toString(new FileInputStream(new File("c:/temp/out.html"))));
+		convert(IOUtils.toString(new FileInputStream(new File("c:/temp/out.html"))), System.currentTimeMillis());
 	}
 
-	public static final List<HeroMapStat> convert(String html) {
+	public static final List<HeroMapStat> convert(String html, long ts) {
 
 		Document document = Jsoup.parse(html);
 
 		List<HeroMapStat> result = new ArrayList<>();
-		long ts = System.currentTimeMillis();
 		result = doGenericStatsPart(result, document, ts);
 		result = doMapsStatsPart(result, document, ts);
 		
