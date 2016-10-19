@@ -2,6 +2,7 @@ package hh.hh;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -10,6 +11,7 @@ import org.junit.Test;
 
 import hh.hh.ocr.J2DImageTool;
 import hh.hh.ocr.ScreenGrabResult;
+import hh.hh.ocr.SingleWordResult;
 
 public class HeroNameTest {
 	
@@ -32,37 +34,37 @@ public class HeroNameTest {
 		
 		BufferedImage image = ImageIO.read(J2DImageTool.class.getResourceAsStream("/" + file));
 		ScreenGrabResult result = J2DImageTool.extractNames(image, SettingsService.HH_HOME, SettingsService.HH_HOME);
-		String[] enemies = result.getEnemyHeroes();
-		String[] allies = result.getFriendHeroes();
+		List<SingleWordResult> enemies = result.getEnemyHeroes();
+		List<SingleWordResult> allies = result.getFriendHeroes();
 
 		System.out.println("***** " + prefix + " / " + file + ":");
 		
 		System.out.println("ALLIES");
 		System.out.println("Marker\tExpected\tActual");
 		
-		for (int i = 0; i < allies.length; i++) {
+		for (int i = 0; i < allies.size(); i++) {
 			
-			if (expectedAllyHeroes[i] == null || expectedAllyHeroes[i].equalsIgnoreCase(allies[i])) {
+			if (expectedAllyHeroes[i] == null || expectedAllyHeroes[i].equalsIgnoreCase(allies.get(i).getText())) {
 				System.out.print("+\t");
 				good++;
 			} else {
 				System.out.print("-\t");
 			}
-			System.out.println(expectedAllyHeroes[i] + "\t" + allies[i]);
+			System.out.println(expectedAllyHeroes[i] + "\t" + allies.get(i).getText());
 			
 		}
 		
 		System.out.println("ENEMIES");
 		System.out.println("Marker\tExpected\tActual");
-		for (int i = 0; i < enemies.length; i++) {
+		for (int i = 0; i < enemies.size(); i++) {
 			
-			if (expectedEnemyHeroes[i] == null || expectedEnemyHeroes[i].equalsIgnoreCase(enemies[i])) {
+			if (expectedEnemyHeroes[i] == null || expectedEnemyHeroes[i].equalsIgnoreCase(enemies.get(i).getText())) {
 				System.out.print("+\t");
 				good++;
 			} else {
 				System.out.print("-\t");
 			}
-			System.out.println(expectedEnemyHeroes[i] + "\t" + enemies[i]);
+			System.out.println(expectedEnemyHeroes[i] + "\t" + enemies.get(i).getText());
 			
 		}
 		

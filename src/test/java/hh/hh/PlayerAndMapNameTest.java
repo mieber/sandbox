@@ -2,6 +2,7 @@ package hh.hh;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -10,6 +11,7 @@ import org.junit.Test;
 
 import hh.hh.ocr.J2DImageTool;
 import hh.hh.ocr.ScreenGrabResult;
+import hh.hh.ocr.SingleWordResult;
 
 public class PlayerAndMapNameTest {
 
@@ -61,12 +63,12 @@ public class PlayerAndMapNameTest {
 
 		BufferedImage image = ImageIO.read(J2DImageTool.class.getResourceAsStream("/" + file));
 		ScreenGrabResult result = J2DImageTool.extractNames(image, SettingsService.HH_HOME, SettingsService.HH_HOME);
-		String[] enemies = result.getEnemies();
-		String[] allies = result.getFriends();
+		List<SingleWordResult> enemies = result.getEnemies();
+		List<SingleWordResult> allies = result.getFriends();
 
 		System.out.println("***** " + file + ":");
 
-		if (map.equals(result.getMap())) {
+		if (map.equals(result.getMap().getText())) {
 			System.out.println("MAP: " + map + "/" + result.getMap());
 		} else {
 			System.out.println("!!! MAP: " + map + "/" + result.getMap());
@@ -76,29 +78,29 @@ public class PlayerAndMapNameTest {
 		System.out.println("ALLIES");
 		System.out.println("Marker\tExpected\tActual");
 
-		for (int i = 0; i < allies.length; i++) {
+		for (int i = 0; i < allies.size(); i++) {
 
-			if (expectedAllies[i] == null || expectedAllies[i].equalsIgnoreCase(allies[i])) {
+			if (expectedAllies[i] == null || expectedAllies[i].equalsIgnoreCase(allies.get(i).getText())) {
 				System.out.print("+\t");
 				good++;
 			} else {
 				System.out.print("-\t");
 			}
-			System.out.println(expectedAllies[i] + "\t" + allies[i]);
+			System.out.println(expectedAllies[i] + "\t" + allies.get(i));
 
 		}
 
 		System.out.println("ENEMIES");
 		System.out.println("Marker\tExpected\tActual");
-		for (int i = 0; i < enemies.length; i++) {
+		for (int i = 0; i < enemies.size(); i++) {
 
-			if (expectedEnemies[i] == null || expectedEnemies[i].equalsIgnoreCase(enemies[i])) {
+			if (expectedEnemies[i] == null || expectedEnemies[i].equalsIgnoreCase(enemies.get(i).getText())) {
 				System.out.print("+\t");
 				good++;
 			} else {
 				System.out.print("-\t");
 			}
-			System.out.println(expectedEnemies[i] + "\t" + enemies[i]);
+			System.out.println(expectedEnemies[i] + "\t" + enemies.get(i));
 
 		}
 
