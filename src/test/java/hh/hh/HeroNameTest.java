@@ -21,10 +21,11 @@ public class HeroNameTest {
 		//@formatter:off
 		good += compare("hero_001.jpg", "r01", new String[]{"Sylvanas", "Zagara", "Sonya", "Xul", "Valla"}, new String[]{"Raynor", "Johanna", "E.T.C.", null, "Lt. Morales"});
 		good += compare("hero_002.jpg", "r01", new String[]{"Li-Ming", "Jaina", "Artanis", "Rehgar", null}, new String[]{"Kerrigan", "E.T.C.", "Zagara", null, null});
+		good += compare("hero_003.jpg", "r01", new String[]{null, null, null, null, null}, new String[]{"Kael'thas", null, null, null, null});
 		//@formatter:on
-		System.out.println("OVERALL CORRECT OCR: " + good + " possible: 20");
+		System.out.println("OVERALL CORRECT OCR: " + good + " possible: 17");
 		
-		Assert.assertTrue("All hero OCR should be good.", good >= 20);
+		Assert.assertTrue("All hero OCR should be good.", good >= 17);
 	}
 	
 
@@ -44,7 +45,9 @@ public class HeroNameTest {
 		
 		for (int i = 0; i < allies.size(); i++) {
 			
-			if (expectedAllyHeroes[i] == null || expectedAllyHeroes[i].equalsIgnoreCase(allies.get(i).getText())) {
+			if (expectedAllyHeroes[i] == null) {
+				System.out.print(".\t");
+			} else if (expectedAllyHeroes[i].equalsIgnoreCase(allies.get(i).getText())) {
 				System.out.print("+\t");
 				good++;
 			} else {
@@ -57,8 +60,9 @@ public class HeroNameTest {
 		System.out.println("ENEMIES");
 		System.out.println("Marker\tExpected\tActual");
 		for (int i = 0; i < enemies.size(); i++) {
-			
-			if (expectedEnemyHeroes[i] == null || expectedEnemyHeroes[i].equalsIgnoreCase(enemies.get(i).getText())) {
+			if (expectedEnemyHeroes[i] == null) {
+				System.out.print(".\t");
+			} else if (expectedEnemyHeroes[i].equalsIgnoreCase(enemies.get(i).getText())) {
 				System.out.print("+\t");
 				good++;
 			} else {

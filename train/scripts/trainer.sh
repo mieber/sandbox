@@ -9,12 +9,15 @@ TRAIN_DIR="e:/hh/git/sandbox/train"
 #TRAIN_DIR="F:/dev/git/sandbox/train"
 
 FONT[0]="Metronic_W01_Bold"
-#FONT[1]="Metronic_W01_Regular"
+FONT[1]="Metronic_W01_Regular"
 FONT_NAME[0]="MetronicW01-Bold Bold"
-#FONT_NAME[1]="MetronicW01-Regular"
+FONT_NAME[1]="MetronicW01-Regular"
 
-OUTPUT_LANG="tst"
-LANG_DATA="testdata.txt"
+OUTPUT_LANG="hero"
+LANG_DATA="testdata.hero.txt"
+
+# OPTIONAL! Leave empty -> ="" if you dont want to use it. It will skip the step wordlist.
+WORDLIST="wordlistfile.hero.txt"
 
 function initvars() {
 	echo Initalizing...
@@ -106,6 +109,16 @@ function addprefix() {
 	done
 }
 
+function wordlist() {
+	if [ -z "$WORDLIST" ]; then
+		echo wordlist file not set. skipping this step...
+	fi
+	if [ -n "$WORDLIST" ]; then
+		echo creating word-dawg file...
+		$TESSERACT_DIR/wordlist2dawg.exe $TRAIN_DIR/trainlangdata/$WORDLIST $RESULT_DIR/$OUTPUT_LANG.word-dawg $WORK_DIR/unicharset
+	fi
+}
+
 function combine() {
 	echo combining...
 	$TESSERACT_DIR/combine_tessdata.exe $RESULT_DIR/$OUTPUT_LANG.
@@ -140,14 +153,18 @@ do
         --combine)
         	combine
         ;;
+        --wordlist)
+        	wordlist
+       	;;
         --full)
-           #clean
-           #text2image
+           clean
+           text2image
            train
            unicharset
            mftraining
            cntraining
            addprefix
+           wordlist
            combine
         ;;
         --help)
@@ -159,6 +176,7 @@ do
            echo "	mftraining"
            echo "	cntraining"
            echo "	addprefix"
+           echo "   wordlist"
            echo "	combine"
         ;;
         *) echo "unknown option -- $1"

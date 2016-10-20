@@ -22,6 +22,8 @@ import javax.imageio.ImageIO;
 import hh.hh.ocr.TesseractHelper.OcrMode;
 
 public class J2DImageTool {
+	
+	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(5);
 
 	private BufferedImage image;
 
@@ -196,9 +198,9 @@ public class J2DImageTool {
 			}
 		});
 
-		ExecutorService taskExecutor = Executors.newFixedThreadPool(5);
+		
 		try {
-			taskExecutor.invokeAll(cs);
+			EXECUTOR.invokeAll(cs);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
