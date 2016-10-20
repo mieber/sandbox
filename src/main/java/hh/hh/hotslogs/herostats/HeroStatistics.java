@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import hh.hh.handler.ScreenshotModel;
@@ -28,8 +29,10 @@ public class HeroStatistics {
 		}
 
 		List<HeroMapStat> load = db.load(model.getMap(), 5);
+
 		// create map with hero name to overall map stats
-		Map<String, HeroMapStat> globalStatsMap = load.stream().collect(Collectors.toMap(HeroMapStat::getHero, c -> c));
+		Map<String, HeroMapStat> globalStatsMap = load.stream().collect(Collectors.toMap(HeroMapStat::getHero, c -> c,
+				(first, second) -> first, () -> new TreeMap<String, HeroMapStat>(String.CASE_INSENSITIVE_ORDER)));
 
 		// 2 x create result map with hero to empty object
 		Map<String, HeroStat> resultAllyMap = load.stream()
@@ -56,6 +59,10 @@ public class HeroStatistics {
 			// example: jaina = thisHero , rehgar = otherHero
 			// Jaina has a 52 winchange globaly
 			HeroMapStat globalStat = globalStatsMap.get(hero);
+			if (globalStat == null) {
+				// invalid hero name...
+				continue;
+			}
 			double globalWin = globalStat.getWinPercentage();
 
 			// Jaina: -50 + 52 = +2
@@ -74,11 +81,12 @@ public class HeroStatistics {
 				} else {
 					heroMapStat = resultEnemyMap.get(otherHero);
 				}
-
+				
 				if (heroMapStat == null) {
 					// adjustment for a hero that is below our popularity level
 					continue;
 				}
+				
 
 				// stat with rehgar: 47
 				double winRate = winStat.getWin();
@@ -100,7 +108,7 @@ public class HeroStatistics {
 				winPercentage = winPercentage + winRateAdjustment;
 				heroMapStat.setWinPercentage(round(winPercentage, 2));
 
-				log(hero, otherHero, winStat, winRateAdjustment, ally);
+//				log(hero, otherHero, winStat, winRateAdjustment, ally);
 
 			}
 		}
@@ -108,7 +116,7 @@ public class HeroStatistics {
 
 	private static void log(String hero, String otherHero, HeroWinStatistics s, Double winRateAdjustment,
 			boolean ally) {
-		if ("Rexxar".equals(otherHero)) {
+		if ("Zagara".equals(otherHero)) {
 
 			System.out.println(((ally && s.isWith() || !ally && !s.isWith()) ? "ALLY\t" : "ENEMY\t") + hero + "\t "
 					+ (s.isWith() ? "WITH " : " VS  ") + otherHero + "\t by " + round(winRateAdjustment, 1));
