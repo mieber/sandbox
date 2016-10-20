@@ -72,6 +72,9 @@ public class HotslogsService {
 
 		@RequestLine("GET /Sitewide/HeroDetails?Hero={hero}")
 		String heroDetails(@Param("hero") String hero);
+		
+		@RequestLine("GET /Rankings?Region={region}&GameMode=4&League={league}")
+		String playerRankings(@Param("region") int region, @Param("league") String league);
 	}
 
 	interface HotslogsApi {

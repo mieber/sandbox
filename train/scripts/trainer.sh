@@ -13,11 +13,11 @@ FONT[1]="Metronic_W01_Regular"
 FONT_NAME[0]="MetronicW01-Bold Bold"
 FONT_NAME[1]="MetronicW01-Regular"
 
-OUTPUT_LANG="hero"
-LANG_DATA="testdata.hero.txt"
+OUTPUT_LANG="def"
+LANG_DATA="testdata.txt"
 
 # OPTIONAL! Leave empty -> ="" if you dont want to use it. It will skip the step wordlist.
-WORDLIST="wordlistfile.hero.txt"
+WORDLIST="wordlistfile.names.txt"
 
 function initvars() {
 	echo Initalizing...
