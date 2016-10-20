@@ -19,9 +19,9 @@ public class HeroStatistics {
 
 	public static StatsHeroResult create(DBController db, ScreenshotModel model) {
 
-		List<String> allyHeroes = model.getFriendHeroes().stream().filter(Objects::nonNull)
+		List<String> allyHeroes = model.getFriendHeroes().stream().filter(Objects::nonNull).map(String::toUpperCase)
 				.collect(Collectors.toList());
-		List<String> enemyHeroes = model.getEnemyHeroes().stream().filter(Objects::nonNull)
+		List<String> enemyHeroes = model.getEnemyHeroes().stream().filter(Objects::nonNull).map(String::toUpperCase)
 				.collect(Collectors.toList());
 
 		if (allyHeroes.isEmpty() && enemyHeroes.isEmpty()) {
@@ -36,11 +36,13 @@ public class HeroStatistics {
 
 		// 2 x create result map with hero to empty object
 		Map<String, HeroStat> resultAllyMap = load.stream()
-				.filter(x -> !allyHeroes.contains(x.getHero()) && !enemyHeroes.contains(x.getHero()))
-				.collect(Collectors.toMap(HeroMapStat::getHero, c -> new HeroStat(c.getHero(), 0d)));
+				.filter(x -> !allyHeroes.contains(x.getHero().toUpperCase()) && !enemyHeroes.contains(x.getHero().toUpperCase()))
+				.collect(Collectors.toMap(HeroMapStat::getHero, c -> new HeroStat(c.getHero(), 0d),
+						(first, second) -> first, () -> new TreeMap<String, HeroStat>(String.CASE_INSENSITIVE_ORDER)));
 		Map<String, HeroStat> resultEnemyMap = load.stream()
-				.filter(x -> !allyHeroes.contains(x.getHero()) && !enemyHeroes.contains(x.getHero()))
-				.collect(Collectors.toMap(HeroMapStat::getHero, c -> new HeroStat(c.getHero(), 0d)));
+				.filter(x -> !allyHeroes.contains(x.getHero().toUpperCase()) && !enemyHeroes.contains(x.getHero().toUpperCase()))
+				.collect(Collectors.toMap(HeroMapStat::getHero, c -> new HeroStat(c.getHero(), 0d),
+						(first, second) -> first, () -> new TreeMap<String, HeroStat>(String.CASE_INSENSITIVE_ORDER)));
 
 		handleHeroes(db, allyHeroes, globalStatsMap, resultAllyMap, resultEnemyMap, true);
 		handleHeroes(db, enemyHeroes, globalStatsMap, resultAllyMap, resultEnemyMap, false);
@@ -81,12 +83,11 @@ public class HeroStatistics {
 				} else {
 					heroMapStat = resultEnemyMap.get(otherHero);
 				}
-				
+
 				if (heroMapStat == null) {
 					// adjustment for a hero that is below our popularity level
 					continue;
 				}
-				
 
 				// stat with rehgar: 47
 				double winRate = winStat.getWin();
@@ -108,7 +109,7 @@ public class HeroStatistics {
 				winPercentage = winPercentage + winRateAdjustment;
 				heroMapStat.setWinPercentage(round(winPercentage, 2));
 
-//				log(hero, otherHero, winStat, winRateAdjustment, ally);
+				 log(hero, otherHero, winStat, winRateAdjustment, ally);
 
 			}
 		}
