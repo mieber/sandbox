@@ -15,11 +15,15 @@ app.factory("hhStatsMap", function($resource, $log) {
 	return $resource("/hh/api/stats/map/:map");
 });
 
+app.factory("hhStatsHero", function($resource, $log) {
+	return $resource("/hh/api/stats/hero");
+});
+
 app.factory("hhUpdateStats", function($resource, $log) {
 	return $resource("hh/api/updatestats");
 });
 
-app.controller('hh_controller', function($scope, $log, hhStatsPlayer, hhBestMatch, hhStatsMap, hhUpdateStats) {
+app.controller('hh_controller', function($scope, $log, hhStatsPlayer, hhBestMatch, hhStatsMap, hhUpdateStats, hhStatsHero) {
 
 	$scope.stompClient = null;
 	
@@ -50,10 +54,14 @@ app.controller('hh_controller', function($scope, $log, hhStatsPlayer, hhBestMatc
 					$scope.heroMapStats = statsMap.heroMapStats;
 				});
 				
+				var statsHero = hhStatsHero.save(update, function(statsHero) {
+					$scope.allyHeroWinStats = statsHero.allyStats;
+					$scope.enemyHeroWinStats = statsHero.enemyStats;
+				});
+				
 				for (var int = 0; int < update.enemies.length; int++) {
 					
-					var bestMatch = hhBestMatch.get({ name : update.enemies[int]
-					}, function(bestMatch) {
+					var bestMatch = hhBestMatch.get({ name : update.enemies[int] }, function(bestMatch) {
 						if (!(angular.isUndefined(bestMatch.id) || bestMatch.id === null)) {
 							hhStatsPlayer.get({
 								id : bestMatch.id,
@@ -165,7 +173,7 @@ app.controller('hh_controller', function($scope, $log, hhStatsPlayer, hhBestMatc
 		
 		$log.info("Test");
 		
-		stompClient.send("/app/screenupdate", {}, JSON.stringify({"friends":["PandaAttack","Czarny","Zander","Ziggy69","SalazarPT"],"enemies":["huzzler","Gurkchen","szept","Sh33p","KorzoN"],"map":"BRAXIS HOLDOUT"}));
+		stompClient.send("/app/screenupdate", {}, JSON.stringify({"friends":["PandaAttack","Czarny","Zander","Ziggy69","SalazarPT"],"enemies":["huzzler","Gurkchen","szept","Sh33p","KorzoN"],"friendHeroes":["Muradin", "Jaina", "Zagara", "Brightwing", null], "enemyHeroes":["Kerrigan", "Falstad", "Malfurion", "Diablo", "Xul"],"map":"BRAXIS HOLDOUT"}));
 		
 		$log.info("SENDED");
 	}

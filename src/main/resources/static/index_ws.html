@@ -80,11 +80,11 @@
 								<table>
 									<tr>
 										<th>Hero</th>
-										<th>Lvl</th>
-										<th>play%</th>
-										<th>win%</th>
+										<th>L</th>
+										<th>play</th>
+										<th>win</th>
 										<th>#</th>
-										<th>threat</th>
+										<th>!</th>
 									</tr>
 									<tr ng-repeat="s in e.statistics" style="background-color: rgb({{getColor(s.threat, 1, 40, false)}}">
 										<td>{{s.hero}}</td>
@@ -148,11 +148,11 @@
 								<table>
 									<tr>
 										<th>Hero</th>
-										<th>Lvl</th>
-										<th>play%</th>
-										<th>win%</th>
+										<th>L</th>
+										<th>play</th>
+										<th>win</th>
 										<th>#</th>
-										<th>threat</th>
+										<th>!</th>
 									</tr>
 									<tr ng-repeat="s in e.statistics"  style="background-color: rgb({{getColor(s.threat, 1, 40, true)}}")>
 										<td>{{s.hero}}</td>
@@ -184,17 +184,58 @@
 			<md-card-content>
 				<table>
 					<tr>
+						<th colspan="5">{{map}} win percentages</th>
+					</tr>
+					<tr>
 						<th>Hero</th>
-						<th>Played</th>
-						<th>Banned</th>
+						<th>Play</th>
+						<th>Ban</th>
 						<th>Pop</th>
-						<th>Percentage</th>
+						<th>%</th>
 					</tr>
 					<tr ng-repeat="s in heroMapStats | orderBy:'-winPercentage'">
 						<td>{{s.hero}}</td>
 						<td>{{s.gamesPlayed}}</td>
 						<td>{{s.gamesBanned}}</td>
 						<td>{{s.popularity}}</td>
+						<td>{{s.winPercentage}}</td>
+					</tr>
+				</table>
+			</md-card-content> 
+			</md-card>
+			</div>
+			<div>
+			<md-card> 
+			<md-card-content>
+				<table>
+					<tr>
+						<th colspan="2">As ally</th>
+					</tr>
+					<tr>
+						<th>Hero</th>
+						<th>%</th>
+					</tr>
+					<tr ng-repeat="s in allyHeroWinStats | orderBy:'-winPercentage'">
+						<td>{{s.hero}}</td>
+						<td>{{s.winPercentage}}</td>
+					</tr>
+				</table>
+			</md-card-content> 
+			</md-card>
+			</div>
+			<div>
+			<md-card> 
+			<md-card-content>
+				<table>
+					<tr>
+						<th colspan="2">As enemy</th>
+					</tr>
+					<tr>
+						<th>Hero</th>
+						<th>%</th>
+					</tr>
+					<tr ng-repeat="s in enemyHeroWinStats | orderBy:'winPercentage'">
+						<td>{{s.hero}}</td>
 						<td>{{s.winPercentage}}</td>
 					</tr>
 				</table>

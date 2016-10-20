@@ -1,11 +1,13 @@
 package hh.hh.hotslogs;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,18 +23,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import feign.Param;
 import feign.RequestLine;
 import hh.hh.SettingsService;
+import hh.hh.handler.ScreenshotModel;
 import hh.hh.hotslogs.data.History;
 import hh.hh.hotslogs.data.HistoryResult;
 import hh.hh.hotslogs.data.Player;
 import hh.hh.hotslogs.data.Statistic;
+import hh.hh.hotslogs.data.StatsHeroResult;
 import hh.hh.hotslogs.data.StatsMapResult;
 import hh.hh.hotslogs.herostats.HeroHtml2DataConvert;
+import hh.hh.hotslogs.herostats.HeroStatistics;
 import hh.hh.hotslogs.mapstats.MapHtml2DataConvert;
 import hh.hh.hotslogs.mapstats.MapStatistics;
 import hh.hh.storage.DBController;
@@ -150,10 +156,21 @@ public class HotslogsService {
 
 	@RequestMapping(value = "/api/stats/map/{map}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public StatsMapResult getHeroMapStat(@PathVariable String map) {
+		System.out.println("HotslogsService.getHeroMapStat(): " + map);
 		StatsMapResult result = new StatsMapResult();
-		result.setHeroMapStats(db.load(map));
+		result.setHeroMapStats(db.load(map, 5));
 		return result;
 	}
+	
+	@RequestMapping(value = "/api/stats/hero", method = POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public StatsHeroResult getHeroWinStat(@RequestBody ScreenshotModel model) {
+		System.out.println("HotslogsService.getHeroWinStat(): " + model);
+	
+		StatsHeroResult result = HeroStatistics.create(db, model);
+		
+		return result;
+	}
+	
 
 	@RequestMapping(value = "/api/updatestats", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void updateStatData() {
@@ -299,7 +316,7 @@ public class HotslogsService {
 
 			s.setPercentage(percentage.doubleValue());
 
-			s.setThreat(ThreatCalculator.get(s, db.load(map)).calculateThreatLevel());
+			s.setThreat(ThreatCalculator.get(s, db.load(map, 2)).calculateThreatLevel());
 
 			result.add(s);
 		}
