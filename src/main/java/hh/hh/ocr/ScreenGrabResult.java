@@ -1,64 +1,65 @@
 package hh.hh.ocr;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class ScreenGrabResult {
 
-	private String[] friends;
+	private List<SingleWordResult> friends;
 
-	private String[] enemies;
+	private List<SingleWordResult> enemies;
 
-	private String[] friendHeroes;
+	private List<SingleWordResult> friendHeroes;
 
-	private String[] enemyHeroes;
+	private List<SingleWordResult> enemyHeroes;
 
-	private String map;
+	private SingleWordResult map;
 
-	public String[] getFriends() {
+	public List<SingleWordResult> getFriends() {
 		return friends;
 	}
 
-	public void setFriends(String[] friends) {
+	public void setFriends(List<SingleWordResult> friends) {
 		this.friends = friends;
 	}
 
-	public String[] getEnemies() {
+	public List<SingleWordResult> getEnemies() {
 		return enemies;
 	}
 
-	public void setEnemies(String[] enemies) {
+	public void setEnemies(List<SingleWordResult> enemies) {
 		this.enemies = enemies;
 	}
 
-	public String getMap() {
+	public SingleWordResult getMap() {
 		return map;
 	}
 
-	public void setMap(String map) {
+	public void setMap(SingleWordResult map) {
 		this.map = map;
 	}
 
-	public String[] getFriendHeroes() {
+	public List<SingleWordResult> getFriendHeroes() {
 		return friendHeroes;
 	}
 
-	public void setFriendHeroes(String[] friendHeroes) {
+	public void setFriendHeroes(List<SingleWordResult> friendHeroes) {
 		this.friendHeroes = friendHeroes;
 	}
 
-	public String[] getEnemyHeroes() {
+	public List<SingleWordResult> getEnemyHeroes() {
 		return enemyHeroes;
 	}
 
-	public void setEnemyHeroes(String[] enemyHeroes) {
+	public void setEnemyHeroes(List<SingleWordResult> enemyHeroes) {
 		this.enemyHeroes = enemyHeroes;
 	}
 
 	@Override
 	public String toString() {
-		return "ScreenGrabResult [friends=" + Arrays.toString(friends) + ", enemies=" + Arrays.toString(enemies)
-				+ ", friendHeroes=" + Arrays.toString(friendHeroes) + ", enemyHeroes=" + Arrays.toString(enemyHeroes)
-				+ ", map=" + map + "]";
+		return "ScreenGrabResult [friends=" + friends + ", enemies=" + enemies + ", friendHeroes=" + friendHeroes
+				+ ", enemyHeroes=" + enemyHeroes + ", map=" + map + "]";
 	}
+
+	
 
 }

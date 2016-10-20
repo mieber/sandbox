@@ -52,7 +52,7 @@ public class SettingsService {
 		exportTessdata();
 		exportSeleniumDriver();
 	}
-	
+
 	public boolean isProxyEnabled() {
 		return BooleanUtils.toBoolean(properties.getProperty(SettingsParam.PROXY_ENABLED.name()));
 	}
@@ -68,7 +68,7 @@ public class SettingsService {
 	public String getProxyUrl() {
 		return properties.getProperty(SettingsParam.PROXY_URL.name());
 	}
-	
+
 	public String getDbPath() {
 		return properties.getProperty(SettingsParam.DB_PATH.name());
 	}
@@ -179,10 +179,11 @@ public class SettingsService {
 	}
 
 	private void exportTessdata() {
-		
-		String[] data = new String[]{TesseractHelper.MAP_LANG, TesseractHelper.DEFAULT_LANG, TesseractHelper.HERO_LANG};
+
+		String[] data = new String[] { TesseractHelper.MAP_LANG, TesseractHelper.DEFAULT_LANG, TesseractHelper.ALT_LANG,
+				TesseractHelper.HERO_LANG, TesseractHelper.RUSSIAN_LANG };
 		for (String d : data) {
-			
+
 			File outputFile = new File(
 					getTessdataPath() + File.separator + TESSDATA_SUBPATH + File.separator + d + ".traineddata");
 
@@ -200,9 +201,7 @@ public class SettingsService {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-			
 		}
-
 	}
 
 	private void exportSeleniumDriver() {

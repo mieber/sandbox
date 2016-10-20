@@ -1,18 +1,18 @@
 package hh.hh.hotslogs.data;
 
-import java.util.List;
+import java.util.Collection;
 
 import hh.hh.storage.HeroMapStat;
 
 public class StatsMapResult {
 	
-	private List<HeroMapStat> heroMapStats;
+	private Collection<HeroMapStat> heroMapStats;
 
-	public List<HeroMapStat> getHeroMapStats() {
+	public Collection<HeroMapStat> getHeroMapStats() {
 		return heroMapStats;
 	}
 
-	public void setHeroMapStats(List<HeroMapStat> heroMapStats) {
+	public void setHeroMapStats(Collection<HeroMapStat> heroMapStats) {
 		this.heroMapStats = heroMapStats;
 	}
 	

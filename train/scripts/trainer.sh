@@ -5,8 +5,19 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # log file for maven / test output
 TESSERACT_DIR="e:/hh/dev/tesseract_3.05"
-#TRAIN_DIR="e:/hh/git/sandbox/train"
-TRAIN_DIR="F:/dev/git/sandbox/train"
+TRAIN_DIR="e:/hh/git/sandbox/train"
+#TRAIN_DIR="F:/dev/git/sandbox/train"
+
+FONT[0]="Metronic_W01_Bold"
+FONT[1]="Metronic_W01_Regular"
+FONT_NAME[0]="MetronicW01-Bold Bold"
+FONT_NAME[1]="MetronicW01-Regular"
+
+OUTPUT_LANG="def"
+LANG_DATA="testdata.txt"
+
+# OPTIONAL! Leave empty -> ="" if you dont want to use it. It will skip the step wordlist.
+WORDLIST="wordlistfile.names.txt"
 
 function initvars() {
 	echo Initalizing...
@@ -42,48 +53,77 @@ function clean() {
 
 function text2image() {
 	echo Starting text2Image
-	$TESSERACT_DIR/text2image.exe --text=$TRAIN_DIR/trainlangdata/testdata.txt --outputbase=$WORK_DIR/bat.Metronic_W01_Bold.exp0 --font='MetronicW01-Bold Bold' --fonts_dir= $LOG
-	$TESSERACT_DIR/text2image.exe --text=$TRAIN_DIR/trainlangdata/testdata.txt --outputbase=$WORK_DIR/bat.Metronic_W01_Regular.exp0 --font='MetronicW01-Regular' --fonts_dir= $LOG
-	# $TESSERACT_DIR/text2image.exe --text=$TRAIN_DIR/trainlangdata/testdata.txt --outputbase=$WORK_DIR/bat.Metronic_W01_Semibold.exp0 --font='MetronicW01-Semibold Semi-Bold' --fonts_dir= $LOG
+	
+	for ((i=0;i<${#FONT[@]};++i)); do
+		$TESSERACT_DIR/text2image.exe --text=$TRAIN_DIR/trainlangdata/$LANG_DATA --outputbase=$WORK_DIR/$OUTPUT_LANG.${FONT[i]}.exp0 --font="${FONT_NAME[i]}" --fonts_dir= $LOG
+	done
 }
 
 function train() {
     echo Training...
-    $TESSERACT_DIR/tesseract.exe $WORK_DIR/bat.Metronic_W01_Bold.exp0.tif $WORK_DIR/bat.Metronic_W01_Bold.exp0 box.train.stderr $LOG
- 	$TESSERACT_DIR/tesseract.exe $WORK_DIR/bat.Metronic_W01_Regular.exp0.tif $WORK_DIR/bat.Metronic_W01_Regular.exp0 box.train.stderr $LOG
- 	# $TESSERACT_DIR/tesseract.exe $WORK_DIR/bat.Metronic_W01_Semibold.exp0.tif $WORK_DIR/bat.Metronic_W01_Semibold.exp0 box.train.stderr $LOG
+    for ((i=0;i<${#FONT[@]};++i)); do
+    	$TESSERACT_DIR/tesseract.exe $WORK_DIR/$OUTPUT_LANG.${FONT[i]}.exp0.tif $WORK_DIR/$OUTPUT_LANG.${FONT[i]}.exp0 box.train.stderr $LOG
+    done
 }
 
 function unicharset() {
 	echo Unicharset...
-	# $TESSERACT_DIR/unicharset_extractor.exe -D $WORK_DIR $WORK_DIR/bat.Metronic_W01_Bold.exp0.box $WORK_DIR/bat.Metronic_W01_Regular.exp0.box $WORK_DIR/bat.Metronic_W01_Semibold.exp0.box $LOG
-	$TESSERACT_DIR/unicharset_extractor.exe -D $WORK_DIR $WORK_DIR/bat.Metronic_W01_Bold.exp0.box $WORK_DIR/bat.Metronic_W01_Regular.exp0.box $LOG
+	
+	local tmp=""
+	for ((i=0;i<${#FONT[@]};++i)); do
+		tmp+="$WORK_DIR/$OUTPUT_LANG.${FONT[i]}.exp0.box "
+	done
+	
+	#tmp e.g. = $WORK_DIR/bat.Metronic_W01_Bold.exp0.box $WORK_DIR/bat.Metronic_W01_Regular.exp0.box $WORK_DIR/bat.Metronic_W01_Semibold.exp0.box
+	$TESSERACT_DIR/unicharset_extractor.exe -D $WORK_DIR $tmp $LOG
 	$TESSERACT_DIR/set_unicharset_properties.exe -U $WORK_DIR/unicharset -O $WORK_DIR/unicharset_props --script_dir=$TRAIN_DIR/trainlangdata $LOG
 }
 
 function mftraining() {
 	echo mftraining...
-	# $TESSERACT_DIR/mftraining.exe -D $RESULT_DIR -F $TRAIN_DIR/trainlangdata/font_properties -U $WORK_DIR/unicharset -O $RESULT_DIR/unicharset $WORK_DIR/bat.Metronic_W01_Bold.exp0.tr $WORK_DIR/bat.Metronic_W01_Semibold.exp0.tr $WORK_DIR/bat.Metronic_W01_Regular.exp0.tr $LOG
-	$TESSERACT_DIR/mftraining.exe -D $RESULT_DIR -F $TRAIN_DIR/trainlangdata/font_properties -U $WORK_DIR/unicharset -O $RESULT_DIR/unicharset $WORK_DIR/bat.Metronic_W01_Bold.exp0.tr $WORK_DIR/bat.Metronic_W01_Regular.exp0.tr $LOG
+	
+	local tmp=""
+	for ((i=0;i<${#FONT[@]};++i)); do
+		tmp+="$WORK_DIR/$OUTPUT_LANG.${FONT[i]}.exp0.tr "
+	done
+	
+	#tmp e.g. $RESULT_DIR/unicharset $WORK_DIR/bat.Metronic_W01_Bold.exp0.tr $WORK_DIR/bat.Metronic_W01_Semibold.exp0.tr $WORK_DIR/bat.Metronic_W01_Regular.exp0.tr
+	$TESSERACT_DIR/mftraining.exe -D $RESULT_DIR -F $TRAIN_DIR/trainlangdata/font_properties -U $WORK_DIR/unicharset -O $RESULT_DIR/unicharset $tmp $LOG
 }
 
 function cntraining() {
 	echo cntraining...
-	# $TESSERACT_DIR/cntraining.exe -D $RESULT_DIR $WORK_DIR/bat.Metronic_W01_Bold.exp0.tr $WORK_DIR/bat.Metronic_W01_Semibold.exp0.tr $WORK_DIR/bat.Metronic_W01_Regular.exp0.tr $LOG
-	$TESSERACT_DIR/cntraining.exe -D $RESULT_DIR $WORK_DIR/bat.Metronic_W01_Bold.exp0.tr $WORK_DIR/bat.Metronic_W01_Regular.exp0.tr $LOG
+	
+	local tmp=""
+	for ((i=0;i<${#FONT[@]};++i)); do
+		tmp+="$WORK_DIR/$OUTPUT_LANG.${FONT[i]}.exp0.tr "
+	done
+	#tmp e.g. $WORK_DIR/bat.Metronic_W01_Bold.exp0.tr $WORK_DIR/bat.Metronic_W01_Semibold.exp0.tr $WORK_DIR/bat.Metronic_W01_Regular.exp0.tr
+	$TESSERACT_DIR/cntraining.exe -D $RESULT_DIR $tmp $LOG
 }
 
 function addprefix() {
 	echo adding prefix...
 	for entry in `ls $RESULT_DIR`; do
-    	mv "$RESULT_DIR/$entry" "$RESULT_DIR/bat.$entry"
+    	mv "$RESULT_DIR/$entry" "$RESULT_DIR/$OUTPUT_LANG.$entry"
 	done
+}
+
+function wordlist() {
+	if [ -z "$WORDLIST" ]; then
+		echo wordlist file not set. skipping this step...
+	fi
+	if [ -n "$WORDLIST" ]; then
+		echo creating word-dawg file...
+		$TESSERACT_DIR/wordlist2dawg.exe $TRAIN_DIR/trainlangdata/$WORDLIST $RESULT_DIR/$OUTPUT_LANG.word-dawg $WORK_DIR/unicharset
+	fi
 }
 
 function combine() {
 	echo combining...
-	$TESSERACT_DIR/combine_tessdata.exe $RESULT_DIR/bat.
+	$TESSERACT_DIR/combine_tessdata.exe $RESULT_DIR/$OUTPUT_LANG.
 }
+
 
 initvars
 while test $# -gt 0
@@ -113,6 +153,9 @@ do
         --combine)
         	combine
         ;;
+        --wordlist)
+        	wordlist
+       	;;
         --full)
            clean
            text2image
@@ -121,6 +164,7 @@ do
            mftraining
            cntraining
            addprefix
+           wordlist
            combine
         ;;
         --help)
@@ -132,6 +176,7 @@ do
            echo "	mftraining"
            echo "	cntraining"
            echo "	addprefix"
+           echo "   wordlist"
            echo "	combine"
         ;;
         *) echo "unknown option -- $1"

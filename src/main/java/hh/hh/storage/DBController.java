@@ -8,36 +8,55 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
-import hh.hh.hotslogs.grab.MapStatistics;
+import hh.hh.hotslogs.mapstats.MapStatistics;
 
 @Controller
 public class DBController {
 
 	@Autowired
-	private HeroMapStatRepository repo;
+	private HeroMapStatRepository heroMapRepo;
+
+	@Autowired
+	private HeroWinStatRepository heroWinRepo;
 
 	@Transactional
-	public void storeAndDropOld(List<HeroMapStat> records) {
+	public void storeAndDropOldMapStats(List<HeroMapStat> records) {
 
-		repo.save(records);
-		repo.deleteOldRecords(records.get(0).getTimestamp());
+		heroMapRepo.save(records);
+		heroMapRepo.deleteOldRecords(records.get(0).getTimestamp());
 	}
 
-	public List<HeroMapStat> load(String map) {
-		List<HeroMapStat> findByMap = repo.findByMapContainingIgnoreCase(map);
+	@Transactional
+	public void storeAndDropOldHeroWinStats(List<HeroWinStatistics> records) {
+
+		heroWinRepo.save(records);
+		heroWinRepo.deleteOldRecords(records.get(0).getTimestamp());
+	}
+
+	public List<HeroMapStat> load(String map, int minPopularity) {
+		List<HeroMapStat> findByMap = heroMapRepo.findByMapContainingIgnoreCase(map);
 		List<HeroMapStat> result = new ArrayList<>();
 		for (HeroMapStat i : findByMap) {
-			if (i.getPopularity() != null && i.getPopularity().doubleValue() > 10) {
+			if (i.getPopularity() != null && i.getPopularity().doubleValue() > minPopularity) {
 				result.add(i);
 			}
 		}
 		return result;
 	}
-	
+
 	public List<String> getAllHeroNames() {
 		try {
-			List<HeroMapStat> r = repo.findByMapContainingIgnoreCase(MapStatistics.GENERIC_STATS);
+			List<HeroMapStat> r = heroMapRepo.findByMapContainingIgnoreCase(MapStatistics.GENERIC_STATS);
 			return r.stream().map(HeroMapStat::getHero).collect(Collectors.toList());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public List<HeroWinStatistics> getHeroStats(String hero) {
+		try {
+			return heroWinRepo.findByThisHeroContainingIgnoreCase(hero);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

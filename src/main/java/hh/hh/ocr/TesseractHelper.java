@@ -1,6 +1,5 @@
 package hh.hh.ocr;
 
-import static org.bytedeco.javacpp.lept.pixDestroy;
 import static org.bytedeco.javacpp.lept.pixRead;
 
 import java.io.UnsupportedEncodingException;
@@ -8,9 +7,12 @@ import java.io.UnsupportedEncodingException;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.lept.PIX;
 import org.bytedeco.javacpp.tesseract;
+import org.bytedeco.javacpp.tesseract.ResultIterator;
 import org.bytedeco.javacpp.tesseract.TessBaseAPI;
 
 public class TesseractHelper {
+	
+	
 
 	/**
 	 * https://code.google.com/archive/p/tesseract-ocr-extradocs/wikis/Cube.wiki
@@ -30,14 +32,16 @@ public class TesseractHelper {
 		OcrMode(int type) {
 			this.type = type;
 		}
-
+		
 		int type() {
 			return type;
 		}
 
 	}
 
-	public static final String DEFAULT_LANG = "bat";
+	public static final String DEFAULT_LANG = "def";
+	public static final String ALT_LANG = "alt";
+	public static final String RUSSIAN_LANG = "rus";
 	public static final String HERO_LANG = "hero";
 	public static final String MAP_LANG = "map";
 
@@ -46,16 +50,11 @@ public class TesseractHelper {
 		return image;
 	}
 
-	public static String getTextFromPicture(PIX image, String tessDataPath) {
-		return getTextFromPicture(image, DEFAULT_LANG, OcrMode.ORIGINAL, tessDataPath);
+	public static SingleWordResult getTextFromPicture(String path, String tessData, OcrMode mode, String tessDataPath) {
+		
+		
+		try (TessBaseAPI api = new TessBaseAPI(); PIX image = TesseractHelper.getPixFromPath(path)) {
 
-	}
-
-	public static String getTextFromPicture(PIX image, String tessData, OcrMode mode, String tessDataPath) {
-		BytePointer outText;
-
-		TessBaseAPI api = new TessBaseAPI();
-		try {
 			/*@formatter:off
 			
             PSM_OSD_ONLY                0   Orientation and script detection only.
@@ -119,30 +118,38 @@ public class TesseractHelper {
 
 			if (image == null) {
 				return null;
-
 			}
-
-			outText = api.GetUTF8Text();
-			String string;
-			try {
-				string = outText.getString("UTF8");
-			} catch (UnsupportedEncodingException e) {
-				string = outText.getString();
+			
+			SingleWordResult result = new SingleWordResult();
+			
+			try (BytePointer outText = api.GetUTF8Text();) {
+				ResultIterator iter = api.GetIterator();
+				if (iter != null) {
+					do {
+						float c = iter.Confidence(tesseract.RIL_WORD);
+						if (c > 0.1) {
+							result.setConfidence(c);
+						}
+					} while (iter.Next(tesseract.RIL_WORD));
+				}
+				
+				String text = null;
+				
+				try {
+					text = outText.getString("UTF8");
+				} catch (UnsupportedEncodingException e) {
+					text = outText.getString();
+				}
+				
+				if (text != null) {
+					text = text.trim();
+				}
+				
+				result.setText(text);
 			}
-
-			// Destroy used object and release memory
-			api.End();
-			outText.deallocate();
-			pixDestroy(image);
-			api.close();
-			return string;
-		} finally {
-			try {
-				api.close();
-			} finally {
-
-			}
-		}
+			
+			return result;
+		} 
 	}
 
 }

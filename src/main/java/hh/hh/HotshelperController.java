@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import hh.hh.ocr.ScreenGrabResult;
+import hh.hh.handler.ScreenshotModel;
 
 @Controller
 @EnableAutoConfiguration
@@ -28,14 +28,13 @@ public class HotshelperController {
 
 	@MessageMapping("/screenupdate")
 	@SendTo("/topic/updates")
-	public ScreenGrabResult screenupdate(ScreenGrabResult message) throws Exception {
+	public ScreenshotModel screenupdate(ScreenshotModel message) throws Exception {
 		System.out.println("HotshelperController.screenupdate()");
 		return message;
 	}
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(HotshelperController.class, args);
-
 	}
 
 }

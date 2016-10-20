@@ -11,23 +11,19 @@ import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.imageio.ImageIO;
-
-import org.bytedeco.javacpp.lept.PIX;
 
 import hh.hh.ocr.TesseractHelper.OcrMode;
 
 public class J2DImageTool {
+	
+	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(5);
 
 	private BufferedImage image;
 
@@ -181,8 +177,7 @@ public class J2DImageTool {
 		cs.add(new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				result.setEnemyHeroes(validateHeroNames(
-						extractEnemyHeroes(deepCopy(bufferedImage), resInfo, outputPath, tessDataPath)));
+				result.setEnemyHeroes(extractEnemyHeroes(deepCopy(bufferedImage), resInfo, outputPath, tessDataPath));
 				return null;
 			}
 		});
@@ -190,8 +185,7 @@ public class J2DImageTool {
 		cs.add(new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				result.setFriendHeroes(validateHeroNames(
-						extractAllyHeroes(deepCopy(bufferedImage), resInfo, outputPath, tessDataPath)));
+				result.setFriendHeroes(extractAllyHeroes(deepCopy(bufferedImage), resInfo, outputPath, tessDataPath));
 				return null;
 			}
 		});
@@ -204,9 +198,9 @@ public class J2DImageTool {
 			}
 		});
 
-		ExecutorService taskExecutor = Executors.newFixedThreadPool(5);
+		
 		try {
-			taskExecutor.invokeAll(cs);
+			EXECUTOR.invokeAll(cs);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -221,20 +215,8 @@ public class J2DImageTool {
 		return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 	}
 
-	private static String[] validateHeroNames(String[] heroes) {
-
-		for (int i = 0; i < heroes.length; i++) {
-			String hero = heroes[i];
-			if (hero == null || hero.isEmpty() || hero.length() < 3) {
-				heroes[i] = null;
-			}
-		}
-
-		return heroes;
-	}
-
-	private static String extractMapName(BufferedImage bufferedImage, Resolution2Rectangle res, String outputPath,
-			String tessDataPath) {
+	private static SingleWordResult extractMapName(BufferedImage bufferedImage, Resolution2Rectangle res,
+			String outputPath, String tessDataPath) {
 
 		// public Rectangle(int x, int y, int width, int height)
 		Rectangle r = res.getMapRectangle();
@@ -258,16 +240,15 @@ public class J2DImageTool {
 
 		LeptonicaHelper.doMagic(outputPath, "map.png", "map.tif");
 
-		PIX p = TesseractHelper.getPixFromPath(outputPath + "/" + "map.tif");
+		String p = outputPath + "/map.tif";
 
-		String name = TesseractHelper.getTextFromPicture(p, TesseractHelper.MAP_LANG, OcrMode.ORIGINAL, tessDataPath)
-				.trim();
-
-		return name;
+		SingleWordResult result = TesseractHelper.getTextFromPicture(p, TesseractHelper.MAP_LANG, OcrMode.ORIGINAL,
+				tessDataPath);
+		return result;
 	}
 
-	private static String[] extractAllyNames(BufferedImage bufferedImage, Resolution2Rectangle res, String outputPath,
-			String tessDataPath) {
+	private static List<SingleWordResult> extractAllyNames(BufferedImage bufferedImage, Resolution2Rectangle res,
+			String outputPath, String tessDataPath) {
 
 		String prefix = "l";
 		String caseString = "Ly";
@@ -276,11 +257,11 @@ public class J2DImageTool {
 		List<Rectangle> rs = res.getAllyRectangles();
 
 		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, caseString, rotation, rectangle, rs,
-				TesseractHelper.DEFAULT_LANG, res.getFontSize(), res.getFontOffset());
+				TesseractHelper.DEFAULT_LANG, null, res.getFontSize(), res.getFontOffset());
 	}
 
-	private static String[] extractEnemyNames(BufferedImage bufferedImage, Resolution2Rectangle res, String outputPath,
-			String tessDataPath) {
+	private static List<SingleWordResult> extractEnemyNames(BufferedImage bufferedImage, Resolution2Rectangle res,
+			String outputPath, String tessDataPath) {
 
 		String prefix = "r";
 		String caseString = "Ly";
@@ -289,11 +270,11 @@ public class J2DImageTool {
 		List<Rectangle> rs = res.getEnemyRectangles();
 
 		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, caseString, rotation, rectangle, rs,
-				TesseractHelper.DEFAULT_LANG, res.getFontSize(), res.getFontOffset());
+				TesseractHelper.DEFAULT_LANG, null, res.getFontSize(), res.getFontOffset());
 	}
 
-	private static String[] extractAllyHeroes(BufferedImage bufferedImage, Resolution2Rectangle res, String outputPath,
-			String tessDataPath) {
+	private static List<SingleWordResult> extractAllyHeroes(BufferedImage bufferedImage, Resolution2Rectangle res,
+			String outputPath, String tessDataPath) {
 
 		String prefix = "hl";
 		Rectangle rectangle = res.getAllyHeroSubRectangle();
@@ -301,11 +282,11 @@ public class J2DImageTool {
 		List<Rectangle> rs = res.getAllyRectangles();
 
 		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, null, rotation, rectangle, rs,
-				TesseractHelper.HERO_LANG, res.getFontSize(), res.getFontOffset());
+				TesseractHelper.HERO_LANG, null, res.getFontSize(), res.getFontOffset());
 	}
 
-	private static String[] extractEnemyHeroes(BufferedImage bufferedImage, Resolution2Rectangle res, String outputPath,
-			String tessDataPath) {
+	private static List<SingleWordResult> extractEnemyHeroes(BufferedImage bufferedImage, Resolution2Rectangle res,
+			String outputPath, String tessDataPath) {
 
 		String prefix = "hr";
 		Rectangle rectangle = res.getEnemyHeroSubRectangle();
@@ -313,14 +294,14 @@ public class J2DImageTool {
 		List<Rectangle> rs = res.getEnemyRectangles();
 
 		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, null, rotation, rectangle, rs,
-				TesseractHelper.HERO_LANG, res.getFontSize(), res.getFontOffset());
+				TesseractHelper.HERO_LANG, null, res.getFontSize(), res.getFontOffset());
 	}
 
-	private static String[] extractNames(BufferedImage bufferedImage, String outputPath, String tessDataPath,
-			String prefix, String caseString, double rotation, Rectangle rectangle, List<Rectangle> rs, String lang,
-			int fontSize, int fontOffset) {
+	private static List<SingleWordResult> extractNames(BufferedImage bufferedImage, String outputPath,
+			String tessDataPath, String prefix, String caseString, double rotation, Rectangle rectangle,
+			List<Rectangle> rs, String lang, String alternativeLang, int fontSize, int fontOffset) {
 
-		String[] names = new String[5];
+		List<SingleWordResult> names = new ArrayList<>();
 
 		for (int i = 0; i < 5; i++) {
 			Rectangle r = rs.get(i);
@@ -354,21 +335,42 @@ public class J2DImageTool {
 
 			LeptonicaHelper.doMagic(outputPath, source, target);
 
-			PIX p = TesseractHelper.getPixFromPath(outputPath + "/" + target);
+			String p = outputPath + "/" + target;
 
-			String name = TesseractHelper.getTextFromPicture(p, lang, OcrMode.ORIGINAL, tessDataPath).trim();
-
-			if (name == null) {
-				names[i] = null;
-			} else if (caseString == null || caseString.isEmpty()) {
-				names[i] = name.trim();
-			} else if (name.length() > caseString.length() + 1) {
-				if (name.substring(0, caseString.length()).contains(" ")) {
-					names[i] = name.substring(caseString.length() + 1).trim();
+			SingleWordResult result = TesseractHelper.getTextFromPicture(p, lang, OcrMode.ORIGINAL, tessDataPath);
+			if (result.getConfidence() < 65.0f && alternativeLang != null) {
+				SingleWordResult alt = TesseractHelper.getTextFromPicture(p, alternativeLang, OcrMode.ORIGINAL,
+						tessDataPath);
+				if (alt.getConfidence() > result.getConfidence()) {
+					System.out.println("REPLACED! " + result.getText() + " / " + alt.getText() + " | "
+							+ result.getConfidence() + " / " + alt.getConfidence());
+					result = alt;
 				} else {
-					names[i] = name.substring(caseString.length()).trim();
+					System.out.println("LOW! " + result.getText() + " / " + alt.getText() + " | "
+							+ result.getConfidence() + " / " + alt.getConfidence());
 				}
 			}
+
+			String text = result.getText();
+
+			if (text == null) {
+				// do nothing
+			} else if (caseString == null || caseString.isEmpty()) {
+				text = text.trim();
+			} else if (text.length() > caseString.length() + 1) {
+				if (text.substring(0, caseString.length()).contains(" ")) {
+					text = text.substring(caseString.length() + 1).trim();
+				} else {
+					text = text.substring(caseString.length()).trim();
+				}
+			}
+			
+			if (text == null || text.isEmpty() || text.length() < 3) {
+				text = null;
+			}
+			result.setText(text);
+			
+			names.add(result);
 		}
 		return names;
 	}
