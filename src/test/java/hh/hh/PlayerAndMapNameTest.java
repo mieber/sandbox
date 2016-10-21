@@ -20,7 +20,11 @@ public class PlayerAndMapNameTest {
 
 	private List<String> errors;
 
+	private List<String> caseErrors;
+
 	private int possible = 0;
+
+	private int halfPoints = 0;
 
 	private int good = 0;
 
@@ -29,22 +33,32 @@ public class PlayerAndMapNameTest {
 		possible = 0;
 		good = 0;
 		errors = new ArrayList<>();
+		caseErrors = new ArrayList<>();
 	}
 
 	@After
 	public void log() {
 
+		good = good + (halfPoints / 2);
+
 		System.out.println("OVERALL CORRECT OCR: " + good + " possible: " + possible + " -> " + (100 * good / possible)
 				+ "%, wrong map gives 10 points penalty");
 
-		if (errors.size() > 0) {
-			System.out.println("**** Error Overview");
-			System.out.println("Expected\tActual");
-			for (String e : errors) {
+		if (caseErrors.size() > 0) {
+			System.out.println("**** Case Issues");
+			System.out.println("\tMarker\tExpected\tActual");
+			for (String e : caseErrors) {
 				System.out.println(e);
 			}
 		}
 
+		if (errors.size() > 0) {
+			System.out.println("**** Error Overview");
+			System.out.println("\tMarker\tExpected\tActual");
+			for (String e : errors) {
+				System.out.println(e);
+			}
+		}
 
 	}
 
@@ -117,21 +131,30 @@ public class PlayerAndMapNameTest {
 	}
 
 	private void compareNames(String[] expected, List<SingleWordResult> actual) {
-		System.out.println("Marker\tExpected\tActual");
+		System.out.println("\tMarker\tExpected\tActual");
 		for (int i = 0; i < actual.size(); i++) {
+			
+			String message = "\t" + expected[i] + "\t" + actual.get(i);
 
 			if (expected[i] == null) {
-				System.out.print(".\t");
+				System.out.println("." + message);
 			} else if (expected[i].equalsIgnoreCase(actual.get(i).getText())) {
-				System.out.print("+\t");
-				good++;
+				if (expected[i].equals(actual.get(i).getText())) {
+					System.out.println("+" + message);
+					good++;
+				} else {
+					System.out.println("~" + message);
+					caseErrors.add("~" + message);
+					halfPoints++;
+				}
+
 				possible++;
 			} else {
-				System.out.print("-\t");
-				errors.add(expected[i] + "\t" + actual.get(i));
+				System.out.println("-" + message);
+				errors.add("-" + message);
 				possible++;
 			}
-			System.out.println(expected[i] + "\t" + actual.get(i));
+			
 		}
 	}
 
