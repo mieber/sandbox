@@ -25,3 +25,8 @@ html, button {
 md-input-container.hide-error-msg .md-errors-spacer:empty {
 	display: none;
 }
+
+.largeSerif {
+	font-size: large;
+    font-family: serif;
+}
