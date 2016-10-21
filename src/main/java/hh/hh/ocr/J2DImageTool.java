@@ -14,15 +14,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.imageio.ImageIO;
 
 import hh.hh.ocr.TesseractHelper.OcrMode;
 
 public class J2DImageTool {
-	
+
 	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(5);
 
 	private BufferedImage image;
@@ -198,11 +200,19 @@ public class J2DImageTool {
 			}
 		});
 
-		
+		List<Future<Void>> all = new ArrayList<>();
 		try {
-			EXECUTOR.invokeAll(cs);
+			all = EXECUTOR.invokeAll(cs);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		}
+
+		for (Future<Void> f : all) {
+			try {
+				f.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		return result;
@@ -238,7 +248,7 @@ public class J2DImageTool {
 		}
         //@formatter:on
 
-		LeptonicaHelper.doMagic(outputPath, "map.png", "map.tif");
+		LeptonicaHelper.doMagic(outputPath, "map.png", "map.tif", 3);
 
 		String p = outputPath + "/map.tif";
 
@@ -257,7 +267,8 @@ public class J2DImageTool {
 		List<Rectangle> rs = res.getAllyRectangles();
 
 		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, caseString, rotation, rectangle, rs,
-				TesseractHelper.DEFAULT_LANG, TesseractHelper.RUSSIAN_LANG, res.getFontSize(), res.getFontOffset());
+				TesseractHelper.DEFAULT_LANG, TesseractHelper.RUSSIAN_LANG, res.getFontSize(), res.getFontOffset(),
+				res.getUsmHalfWidth());
 	}
 
 	private static List<SingleWordResult> extractEnemyNames(BufferedImage bufferedImage, Resolution2Rectangle res,
@@ -270,7 +281,8 @@ public class J2DImageTool {
 		List<Rectangle> rs = res.getEnemyRectangles();
 
 		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, caseString, rotation, rectangle, rs,
-				TesseractHelper.DEFAULT_LANG, TesseractHelper.RUSSIAN_LANG, res.getFontSize(), res.getFontOffset());
+				TesseractHelper.DEFAULT_LANG, TesseractHelper.RUSSIAN_LANG, res.getFontSize(), res.getFontOffset(),
+				res.getUsmHalfWidth());
 	}
 
 	private static List<SingleWordResult> extractAllyHeroes(BufferedImage bufferedImage, Resolution2Rectangle res,
@@ -282,7 +294,7 @@ public class J2DImageTool {
 		List<Rectangle> rs = res.getAllyRectangles();
 
 		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, null, rotation, rectangle, rs,
-				TesseractHelper.HERO_LANG, null, res.getFontSize(), res.getFontOffset());
+				TesseractHelper.HERO_LANG, null, res.getFontSize(), res.getFontOffset(), res.getUsmHalfWidth());
 	}
 
 	private static List<SingleWordResult> extractEnemyHeroes(BufferedImage bufferedImage, Resolution2Rectangle res,
@@ -294,12 +306,12 @@ public class J2DImageTool {
 		List<Rectangle> rs = res.getEnemyRectangles();
 
 		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, null, rotation, rectangle, rs,
-				TesseractHelper.HERO_LANG, null, res.getFontSize(), res.getFontOffset());
+				TesseractHelper.HERO_LANG, null, res.getFontSize(), res.getFontOffset(), res.getUsmHalfWidth());
 	}
 
 	private static List<SingleWordResult> extractNames(BufferedImage bufferedImage, String outputPath,
 			String tessDataPath, String prefix, String caseString, double rotation, Rectangle rectangle,
-			List<Rectangle> rs, String lang, String alternativeLang, int fontSize, int fontOffset) {
+			List<Rectangle> rs, String lang, String alternativeLang, int fontSize, int fontOffset, int usmHalfWidth) {
 
 		List<SingleWordResult> names = new ArrayList<>();
 
@@ -317,36 +329,37 @@ public class J2DImageTool {
 			String source = prefix + i + ".png";
 			String target = prefix + i + ".tif";
 
-			if (!(caseString == null || caseString.isEmpty())) {
+			LeptonicaHelper.doMagic(outputPath, source, target, usmHalfWidth);
 
-				boolean needsInversion = LeptonicaHelper.needsInversion(outputPath, source);
+			if (!(caseString == null || caseString.isEmpty())) {
 
 				//@formatter:off
 	            try {
 					J2DImageTool
-						.get(ImageIO.read(new File(outputPath + "/" + source)))
-						.addCaseHint(caseString, needsInversion, 40, fontSize, fontOffset)
-						.write(true, outputPath, prefix + i, "png");
+						.get(ImageIO.read(new File(outputPath + "/" + target)))
+						.addCaseHint(caseString, false, 115, fontSize, fontOffset)
+						.write(true, outputPath, prefix + i, "tif");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 	            //@formatter:on
 			}
 
-			LeptonicaHelper.doMagic(outputPath, source, target);
-
 			String p = outputPath + "/" + target;
 
 			SingleWordResult result = TesseractHelper.getTextFromPicture(p, lang, OcrMode.ORIGINAL, tessDataPath);
-			if (result.getConfidence() < 70.0f && alternativeLang != null) {
+			if (result.getConfidence() < 75.0f && alternativeLang != null) {
 				SingleWordResult alt = TesseractHelper.getTextFromPicture(p, alternativeLang, OcrMode.ORIGINAL,
 						tessDataPath);
 				// we need an improvement of at least 5 points
-				if (alt.getConfidence() > result.getConfidence() + 5) {
+				if (alt.getConfidence() > result.getConfidence() + 4f) {
 					System.out.println("REPLACED! " + result.getText() + " / " + alt.getText() + " | "
 							+ result.getConfidence() + " / " + alt.getConfidence());
 					result = alt;
-				} 
+				} else {
+					System.out.println("LOW! " + result.getText() + " / " + alt.getText() + " | "
+							+ result.getConfidence() + " / " + alt.getConfidence());
+				}
 			}
 
 			String text = result.getText();
@@ -362,12 +375,9 @@ public class J2DImageTool {
 					text = text.substring(caseString.length()).trim();
 				}
 			}
-			
-			if (text == null || text.isEmpty() || text.length() < 3) {
-				text = null;
-			}
+
 			result.setText(text);
-			
+
 			names.add(result);
 		}
 		return names;

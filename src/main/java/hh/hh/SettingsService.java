@@ -40,6 +40,10 @@ public class SettingsService {
 		private SettingsParam(String defaultValue) {
 			this.defaultValue = defaultValue;
 		}
+
+		public String getDefaultValue() {
+			return defaultValue;
+		}
 	}
 
 	private Properties properties;
