@@ -257,7 +257,7 @@ public class J2DImageTool {
 		List<Rectangle> rs = res.getAllyRectangles();
 
 		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, caseString, rotation, rectangle, rs,
-				TesseractHelper.DEFAULT_LANG, null, res.getFontSize(), res.getFontOffset());
+				TesseractHelper.DEFAULT_LANG, TesseractHelper.RUSSIAN_LANG, res.getFontSize(), res.getFontOffset());
 	}
 
 	private static List<SingleWordResult> extractEnemyNames(BufferedImage bufferedImage, Resolution2Rectangle res,
@@ -270,7 +270,7 @@ public class J2DImageTool {
 		List<Rectangle> rs = res.getEnemyRectangles();
 
 		return extractNames(bufferedImage, outputPath, tessDataPath, prefix, caseString, rotation, rectangle, rs,
-				TesseractHelper.DEFAULT_LANG, null, res.getFontSize(), res.getFontOffset());
+				TesseractHelper.DEFAULT_LANG, TesseractHelper.RUSSIAN_LANG, res.getFontSize(), res.getFontOffset());
 	}
 
 	private static List<SingleWordResult> extractAllyHeroes(BufferedImage bufferedImage, Resolution2Rectangle res,
@@ -338,17 +338,15 @@ public class J2DImageTool {
 			String p = outputPath + "/" + target;
 
 			SingleWordResult result = TesseractHelper.getTextFromPicture(p, lang, OcrMode.ORIGINAL, tessDataPath);
-			if (result.getConfidence() < 65.0f && alternativeLang != null) {
+			if (result.getConfidence() < 70.0f && alternativeLang != null) {
 				SingleWordResult alt = TesseractHelper.getTextFromPicture(p, alternativeLang, OcrMode.ORIGINAL,
 						tessDataPath);
-				if (alt.getConfidence() > result.getConfidence()) {
+				// we need an improvement of at least 5 points
+				if (alt.getConfidence() > result.getConfidence() + 5) {
 					System.out.println("REPLACED! " + result.getText() + " / " + alt.getText() + " | "
 							+ result.getConfidence() + " / " + alt.getConfidence());
 					result = alt;
-				} else {
-					System.out.println("LOW! " + result.getText() + " / " + alt.getText() + " | "
-							+ result.getConfidence() + " / " + alt.getConfidence());
-				}
+				} 
 			}
 
 			String text = result.getText();

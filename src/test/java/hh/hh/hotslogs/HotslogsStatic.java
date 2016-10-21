@@ -1,19 +1,13 @@
 package hh.hh.hotslogs;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.Iterator;
 
-import org.apache.commons.io.FileUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import feign.Feign;
 import feign.okhttp.OkHttpClient;
@@ -23,36 +17,23 @@ import hh.hh.storage.HeroWinStatistics;
 public class HotslogsStatic {
 
 	public static void main(String[] args) throws IOException {
-		
-		String hero = "Greymane";
 
-		 OkHttpClient client = new OkHttpClient(new okhttp3.OkHttpClient.Builder()
-		 .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.206.246.20", 8080))).build());
-		
-		 Hotslogs hl = Feign.builder().client(client).target(Hotslogs.class, "http://www.hotslogs.com/");
-		 
-		 String html = hl.playerRankings(2, "Gold");
-		 
-		 try (PrintWriter out = new PrintWriter("c:/temp/herorankings.html")) {
-			 out.println(html);
-			 } catch (FileNotFoundException e) {
-			 // TODO Auto-generated catch block
-			 e.printStackTrace();
-			 }
-		 
-		 FileWriter writer = new FileWriter("c:/temp/herorankings.html");
-		 writer.write(html);
-		 
-			
-		// try (PrintWriter out = new PrintWriter("c:/temp/heroDetails.html")) {
-		// out.println(doc.toString());
-		// } catch (FileNotFoundException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		OkHttpClient client = new OkHttpClient(new okhttp3.OkHttpClient.Builder()
+				.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.206.246.20", 8080))).build());
+
+		Hotslogs hl = Feign.builder().client(client).target(Hotslogs.class, "http://www.hotslogs.com/");
+
+		String html = hl.playerRankings(2, "Gold");
+
+		try (PrintWriter out = new PrintWriter("c:/temp/herorankings.html")) {
+			out.println(html);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
 	}
 
-	private static void handleRow(Element tr, HeroWinStatistics stat) {
+	public static void handleRow(Element tr, HeroWinStatistics stat) {
 		//@formatter:off
 //		<div class="tab-pane" id="winRateVsOtherHeroes"> 
 		
