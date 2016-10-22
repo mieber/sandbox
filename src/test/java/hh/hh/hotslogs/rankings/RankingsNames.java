@@ -33,7 +33,7 @@ public class RankingsNames {
 
 		Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 		root.setLevel(Level.INFO);
-		loadPage("C:\\Users\\msieber1\\hhelper\\seleniumdriver\\chromedriver.exe", League.Gold);
+		loadPage("C:\\Users\\msieber1\\hhelper\\seleniumdriver\\chromedriver.exe", League.Diamond);
 
 	}
 
@@ -44,37 +44,52 @@ public class RankingsNames {
 		options.addArguments("--lang=en");
 
 		WebDriver driver = new ChromeDriver(options);
-		driver.get("http://www.hotslogs.com//Rankings?Region=2&GameMode=4&League=Silver");
-
-		try (FileWriter fw = new FileWriter("c:/temp/silver.txt", true);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw)) {
+		
+		for (League league : leagues) {
+			System.out.println("Starting to load league: " + league.name());
 			
-			for (int i = 0; i < 165; i++) {
-				List<String> names = extractNames(driver.getPageSource());
-				
-				for (String n : names) {
-					out.println(n);
+			driver.get("http://www.hotslogs.com//Rankings?Region=2&GameMode=4&League=" + league.name());
+			
+			int numberOfPages = getNumberOfPages(driver);
+			
+			System.out.println("Number of Pages for league: " + numberOfPages);
+
+			try (FileWriter fw = new FileWriter("c:/temp/" + league.name() + ".txt", true);
+					BufferedWriter bw = new BufferedWriter(fw);
+					PrintWriter out = new PrintWriter(bw)) {
+
+				for (int i = 1; i <= numberOfPages; i++) {
+					
+					if (i % 25 == 0) {
+						System.out.println("Page " + i + " of " + numberOfPages);
+					}
+					
+					List<String> names = extractNames(driver.getPageSource());
+					for (String n : names) {
+						out.println(n);
+					}
+
+					openNextPage(driver);
 				}
-				
-				openNextPage(driver);
 			}
-		} 
+		}
+		
+		
 
 		driver.quit();
 	}
 
 	private static List<String> extractNames(String pageSource) {
-		
+
 		Document d = Jsoup.parse(pageSource);
 		Elements rows = d.getElementById("ctl00_MainContent_RadGridRankings_ctl00").select("tbody > tr");
-		
+
 		List<String> names = new ArrayList<>();
-		
+
 		for (Element tr : rows) {
 			handleRow(tr, names);
 		}
-		
+
 		return names;
 	}
 
@@ -126,6 +141,33 @@ public class RankingsNames {
 			}
 		});
 
+	}
+
+	private static int getNumberOfPages(WebDriver driver) {
+		// <div class="rgWrap rgInfoPart">
+		//  <strong>16371</strong> items in <strong>164</strong> pages
+		// </div>
+		List<WebElement> es = driver.findElements(By.className("rgInfoPart"));
+		for (WebElement e : es) {
+			String text = e.getText();
+			// 17610 items in 177 pages
+			String search = " items in ";
+			int start = text.indexOf(search) + search.length();
+			int end = text.indexOf(" pages");
+			
+			String pages = text.substring(start, end);
+			
+			System.out.println(text);
+			System.out.println("Pages >" + pages + "<");
+			
+			try {
+				return Integer.parseInt(pages);
+			} catch (NumberFormatException e1) {
+				System.out.println(pages + " is not a valid number.");
+			}
+		}
+		
+		throw new RuntimeException("The page structure changed.");
 	}
 
 }

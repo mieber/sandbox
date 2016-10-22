@@ -34,7 +34,7 @@ public class HeroNameTest {
 		int good = 0;
 		
 		BufferedImage image = ImageIO.read(J2DImageTool.class.getResourceAsStream("/" + file));
-		ScreenGrabResult result = J2DImageTool.extractNames(image, SettingsService.HH_HOME, SettingsService.HH_HOME);
+		ScreenGrabResult result = J2DImageTool.extractNames(image, SettingsService.SettingsParam.FILE_OUTPUT.getDefaultValue(), SettingsService.HH_HOME);
 		List<SingleWordResult> enemies = result.getEnemyHeroes();
 		List<SingleWordResult> allies = result.getFriendHeroes();
 
