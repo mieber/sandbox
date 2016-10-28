@@ -45,7 +45,7 @@
 			<section layout="row" layout-sm="column" layout-align="left left">
 				<div layout="column" layout-gt-xs="row">
 					<md-card flex ng-repeat="e in enemies"> 
-						<md-card-content> 
+						<md-card-content ng-class="{greyCard : e.hits > 1}"> 
 							<div layout="column">
 							<div flex>
 								<md-input-container class="md-block hide-error-msg">
@@ -113,7 +113,7 @@
 			<section layout="row" layout-sm="column" layout-align="left left" layout-wrap="">
 				<div layout="column" layout-gt-xs="row">
 					<md-card flex ng-repeat="e in allies"> 
-						<md-card-content> 
+						<md-card-content ng-class="{greyCard : e.hits > 1}">
 							<div layout="column">
 							<div flex>
 								<md-input-container class="md-block hide-error-msg">
