@@ -118,7 +118,7 @@ public class TagHelper {
 //			<td style="display:none;"><font color="#3BE33B">Assassin</font></td>
         td = iterator.next();
 //			<td style="display:none;"><font color="#3BE33B">Burst Damage</font></td>
-        td = iterator.next();
+//        td = iterator.next();
 //		</tr>
 		//@formatter:on 
         

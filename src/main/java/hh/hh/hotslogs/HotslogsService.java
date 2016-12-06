@@ -5,10 +5,14 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -258,17 +262,19 @@ public class HotslogsService {
 	}
 
 	private List<Statistic> createStats(List<History> input, int maxRecords, String map) {
+		
+		List<History> filtered = doInitialFiltering(input, maxRecords);
 
 		// number of games per hero
-		Map<String, Long> mappingHeroToNumberOfGames = input.stream().limit(maxRecords)
+		Map<String, Long> mappingHeroToNumberOfGames = filtered.stream()
 				.collect(Collectors.groupingBy(History::getHero, Collectors.counting()));
 
 		// number of wins per hero
-		Map<String, Long> mappingHeroToNumberOfWins = input.stream().limit(maxRecords).filter(History::isWin)
+		Map<String, Long> mappingHeroToNumberOfWins = filtered.stream().filter(History::isWin)
 				.collect(Collectors.groupingBy(History::getHero, Collectors.counting()));
 
 		// max hero lvl over all games
-		Map<String, Optional<History>> mappingHeroToMaxLvl = input.stream().limit(maxRecords).collect(
+		Map<String, Optional<History>> mappingHeroToMaxLvl = filtered.stream().collect(
 				Collectors.groupingBy(History::getHero, Collectors.maxBy(Comparator.comparingInt(History::getLvl))));
 
 		// sort desc by number of games
@@ -296,8 +302,8 @@ public class HotslogsService {
 				s.setLvl(0);
 			}
 
-			int sizeOfHistory = input.size();
-			if (input.size() > maxRecords) {
+			int sizeOfHistory = filtered.size();
+			if (filtered.size() > maxRecords) {
 				sizeOfHistory = maxRecords;
 			}
 
@@ -324,6 +330,33 @@ public class HotslogsService {
 		}
 
 		return result;
+	}
+
+	private List<History> doInitialFiltering(List<History> input, int maxRecords) {
+		
+		LocalDate xDaysAgo = LocalDate.now().minusDays(90);
+		
+		List<History> limited = input.stream().limit(maxRecords).collect(Collectors.toList());
+		
+		for (Iterator<History> replayIterator = limited.iterator(); replayIterator.hasNext();) {
+			History history = replayIterator.next();
+			String date = history.getDate();
+			
+//			Example Data
+//			3/31/2015 10:39:04 AM
+//			3/31/2015 10:15:57 AM
+//			3/29/2015 12:16:41 PM
+//			3/29/2015 11:43:50 AM
+//			3/29/2015 11:14:39 AM
+			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern ( "M/d/y h:m:s a" , Locale.US );
+			LocalDate replayDate = LocalDate.parse (  date , formatter );
+
+			if (replayDate.isBefore(xDaysAgo)) {
+				replayIterator.remove();
+			}
+		}
+		return limited;
 	}
 
 	private List<History> createHistory(String id) {

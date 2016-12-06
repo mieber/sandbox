@@ -30,3 +30,7 @@ md-input-container.hide-error-msg .md-errors-spacer:empty {
 	font-size: large;
     font-family: serif;
 }
+
+.greyCard {
+	background-color: grey;
+}
